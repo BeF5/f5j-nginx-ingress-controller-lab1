@@ -5,7 +5,7 @@
 ========
 
 -  事前にラボ環境へのInviteを行っておりますので、メールをご確認ください
--  利用するコマンド： git , jq , sudo, curl
+-  利用するコマンド： git , jq , sudo, curl, make, kubectl(kubenetes環境)
 -  NGINX Trialライセンスの取得、ラボ実施ユーザのHome Directoryへ配置
 
 ラボ環境 (UDF(Unified Demonstration Framework)) コンポーネントへの接続
@@ -30,7 +30,7 @@ Windows Jump HostからCLIの操作を行う場合、以下タブからRDP Clien
 
 .. NOTE::
    | RDPのUser名、パスワードはDETAILSをクリックし、GeneralのタブのCredentialsの項目を参照ください
-   | ``user`` でログインしてください 
+   | ``Administrator`` でログインしてください 
 
    - .. image:: ./media/udf_jumpbox_loginuser.png
        :width: 200
