@@ -23,8 +23,8 @@ NGINX Plusの基本的な動作や仕様について紹介しております。
 -----
 以下の資料を参考にご覧いただけます。一部内容を変更してラボの内容としております
 
-`これから始めるNGINX基本セミナー～Ingress Controller編 <https://www.slideshare.net/Nginx/nginx-back-to-basics-ingress-controller-japanese-webinar>`__
-`ThinkIT:NGINX Ingress Controllerの柔軟なアプリケーション制御、具体的なユースケースと設定方法を理解する <https://thinkit.co.jp/article/18771>`__
+- `これから始めるNGINX基本セミナー～Ingress Controller編 <https://www.slideshare.net/Nginx/nginx-back-to-basics-ingress-controller-japanese-webinar>`__
+- `ThinkIT:NGINX Ingress Controllerの柔軟なアプリケーション制御、具体的なユースケースと設定方法を理解する <https://thinkit.co.jp/article/18771>`__
 
 Webinar(プレゼンテーション・デモ)
 -----
