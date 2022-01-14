@@ -79,7 +79,7 @@ Container Image のPush
 	kubectl apply -f common/ns-and-sa.yaml
 	kubectl apply -f rbac/rbac.yaml
 	kubectl apply -f rbac/ap-rbac.yaml
-   kubectl apply -f rbac/apdos-rbac.yaml
+	kubectl apply -f rbac/apdos-rbac.yaml
 	kubectl apply -f common/default-server-secret.yaml
 	kubectl apply -f common/nginx-config.yaml
 	kubectl apply -f common/ingress-class.yaml
@@ -91,9 +91,9 @@ Container Image のPush
 	kubectl apply -f common/crds/appprotect.f5.com_aplogconfs.yaml
 	kubectl apply -f common/crds/appprotect.f5.com_appolicies.yaml
 	kubectl apply -f common/crds/appprotect.f5.com_apusersigs.yaml
-   kubectl apply -f common/crds/appprotectdos.f5.com_apdoslogconfs.yaml
-   kubectl apply -f common/crds/appprotectdos.f5.com_apdospolicies.yaml
-   kubectl apply -f common/crds/appprotectdos.f5.com_dosprotectedresources.yaml
+	kubectl apply -f common/crds/appprotectdos.f5.com_apdoslogconfs.yaml
+	kubectl apply -f common/crds/appprotectdos.f5.com_apdospolicies.yaml
+	kubectl apply -f common/crds/appprotectdos.f5.com_dosprotectedresources.yaml
 
 
 4. NGINX Ingress Controllerの実行
@@ -112,14 +112,14 @@ argsで指定するパラメータの詳細は [Command-line Arguments](https://
 
 ::
 
-   ** 省略 **
+      ** 省略 **
       spec:
          serviceAccountName: nginx-ingress
          containers:
          - image: registry.example.com/root/nic/nginxplus-ingress-nap-dos:2.1.0  # 対象のレジストリを指定してください
          imagePullPolicy: IfNotPresent
          name: nginx-plus-ingress
-   ** 省略 **
+      ** 省略 **
          args:
             - -nginx-plus
             - -nginx-configmaps=$(POD_NAMESPACE)/nginx-config
@@ -194,19 +194,17 @@ NodePortをデプロイします。
 
 ::
    
-   ## cd ~/kubernetes-ingress/deployments
-   kubectl apply -f service/nodeport.yaml
+	## cd ~/kubernetes-ingress/deployments
+	kubectl apply -f service/nodeport.yaml
 
-   ** 実行結果サンプル **
+	** 実行結果サンプル **
 	service/nginx-ingress created
 
 	kubectl get svc -n nginx-ingress
 
-   ** 実行結果サンプル **
-   NAME            TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-   nginx-ingress   NodePort   10.108.250.160   <none>        80:32692/TCP,443:31957/TCP   5s
-
-
+	** 実行結果サンプル **
+	NAME            TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+	nginx-ingress   NodePort   10.108.250.160   <none>        80:32692/TCP,443:31957/TCP   5s
 
 このコマンドを実行した結果、Kubernetes の Worker Nodeでそれぞれのサービスに対しポートが割り当てられています。
 図の内容を確認してください。
