@@ -12,23 +12,23 @@ F5 Labs - Index
 座学資料
 ========
 
-このラボはNGINX Plusのインストールから各種設定を行っていただけます。
+このラボはNGINX Plus Ingress Controller のインストールから各種設定を行っていただけます。
 
 NGINX Plusの基本的な動作や仕様について紹介しております。
 
 | 基本的な解説資料は以下を参照してください。
-| (このラボはこのセミナーでご紹介した内容を一部抜粋しております)
+| (ラボの実施内容と異なりますが、参考資料としてご利用いただけます)
 
 セミナー資料
 -----
 以下の資料を参考にご覧いただけます。一部内容を変更してラボの内容としております
 
-`これから始めるNGINX技術解説～セキュリティ編 <https://www.slideshare.net/Nginx/nginx-back-to-basics-part-3-security-japanese-version>`__
+`これから始めるNGINX基本セミナー～Ingress Controller編 <https://www.slideshare.net/Nginx/nginx-back-to-basics-ingress-controller-japanese-webinar>`__
 
 Webinar(プレゼンテーション・デモ)
 -----
 
-`これから始めるNGINX技術解説～セキュリティ編 <https://www.nginx.co.jp/resources/webinars/nginx-back-to-basic-3-security-jp//>`__
+`これから始めるNGINX基本セミナー～Ingress Controller編 <https://www.nginx.co.jp/resources/webinars/nginx-back-to-basic-ingress-controller-jp/>`__
 
 
 
