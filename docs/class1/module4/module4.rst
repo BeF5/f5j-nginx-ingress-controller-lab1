@@ -39,7 +39,7 @@
 - ``kubectl exec -it <NGINX Ingress Controller pod> -n nginx-ingress -- bash`` コマンドを実行し、NGINX Ingress ControllerのShellを操作することが可能です
 - 以下フォルダの各ファイルが適切な設定となっているかご確認ください。意図したファイルが生成されていない場合にはリソースの作成に失敗している可能性がありますのでログをご確認ください。
 
-.. list-table:: File
+.. list-table::
     :widths: 20 40 20 
     :header-rows: 1
     :stub-columns: 1
