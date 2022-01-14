@@ -1,13 +1,15 @@
 NGINX Ingress Controller 環境のセットアップ
-====
+####
 
 NGINX Plus / NGINX App Protect Ingress ControllerのDockerイメージ作成
-----
+====
+
 
 | 以下の手順に従ってNGINX Ingress Controllerのイメージを作成します  
 | 参考： `Installation with Manifests <https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-manifests/>`__
 
-#. 環境セットアップ
+1. 環境セットアップ
+----
 
 ファイルの取得します
 
@@ -27,8 +29,8 @@ NGINX Plus / NGINX App Protect Ingress ControllerのDockerイメージ作成
    cp ~/nginx-repo* .
    ls nginx-repo.*
 
-#. コンテナイメージの作成
-
+2. コンテナイメージの作成
+----
 
 | NGINX Plus ＋ NGINX App Protectのコンテナイメージを作成します
 | 参考： `Building the Ingress Controller Image <https://docs.nginx.com/nginx-ingress-controller/installation/building-ingress-controller-image>`__
@@ -66,7 +68,8 @@ Container Image のPush
    docker push registry.example.com/root/nic/nginxplus-ingress-nap-dos:2.1.0
 
 
-#. NGINX Ingress Controller環境のセットアップ
+3. NGINX Ingress Controller環境のセットアップ
+----
 
 先程の手順で取得したGitHubのフォルダへ移動し、必要となるリソースをデプロイします。
 
@@ -93,7 +96,8 @@ Container Image のPush
    kubectl apply -f common/crds/appprotectdos.f5.com_dosprotectedresources.yaml
 
 
-#. NGINX Ingress Controllerの実行
+4. NGINX Ingress Controllerの実行
+----
 
 NGINX Ingress Controllerのpodを実行します。DeploymentとDaemonSetによる実行が可能ですが、のこの記事ではDeploymentで実行します。DaemonSetで実行したい場合にはマニュアルを参照して適切に読み替えて進めてください。
 
@@ -154,7 +158,8 @@ argsで指定するパラメータの詳細は [Command-line Arguments](https://
    nginx-ingress   1/1     1            1           2m52s
 
 
-#. NGINX Ingress Controller を外部へ NodePort で公開する
+5. NGINX Ingress Controller を外部へ NodePort で公開する
+----
 
 本ラボの環境ではKubernetesへのアクセスを受けるため、NGINX Ingress Controllerを外部へNodePortで公開します。
 以下コマンドで設定の内容を確認します。type NodePortでHTTP、HTTPSで待ち受ける設定であることを確認します。
