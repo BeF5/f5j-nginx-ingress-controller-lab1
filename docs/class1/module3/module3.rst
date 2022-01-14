@@ -29,6 +29,10 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/traffic-splitting
 
+IPアドレスによる通信の制御 (Access Controll)
+====
+
+https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/access-control
 
 URL Path の 変換 (Rewrite)
 ====
