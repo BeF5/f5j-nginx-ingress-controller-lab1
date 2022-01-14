@@ -5,12 +5,14 @@
 ====
 
 各パートでKubernetes環境にデプロイしたアプリケーションの動作が期待した通りとならない場合の切り分けについてご紹介します。
+その他の対応方法のヒントは `NGINX Docs <https://docs.nginx.com/nginx-ingress-controller/troubleshooting/troubleshoot-ingress-controller/>`__ をご覧ください
+
 
 1.	各リソースのデプロイに失敗する
 ----
 
 - ``kubectl describe <resource type> <resource name> (-n <namespace>)`` コマンドの結果を確認し、リソースのデプロイでエラーが発生していないか確認してください
-- ``kubectl logs <pod name> (-n <namespace>)``コマンドの結果を確認し、PODのログメッセージを確認し、エラーが発生していないか確認してください
+- ``kubectl logs <pod name> (-n <namespace>)`` コマンドの結果を確認し、PODのログメッセージを確認し、エラーが発生していないか確認してください
 
 2.	リソースは正しく作成できたが設定が反映されない
 ----
@@ -34,7 +36,7 @@
 ----
 
 - NGINX Ingress Controllerは本書で紹介のVirtualServer / VirtualServerRoute / PolicyやIngressにより設定を行うと、それらの内容からNGINXの設定ファイルに変換し、その内容を反映しています
-- 「kubectl exec -it <NGINX Ingress Controller pod> -n nginx-ingress」 -- bash」コマンドを実行し、NGINX Ingress ControllerのShellを操作することが可能です
+- ``kubectl exec -it <NGINX Ingress Controller pod> -n nginx-ingress -- bash`` コマンドを実行し、NGINX Ingress ControllerのShellを操作することが可能です
 - 以下フォルダの各ファイルが適切な設定となっているかご確認ください。意図したファイルが生成されていない場合にはリソースの作成に失敗している可能性がありますのでログをご確認ください。
 
 .. list-table:: File
