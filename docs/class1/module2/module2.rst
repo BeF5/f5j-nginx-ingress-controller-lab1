@@ -89,8 +89,101 @@ Container Image のPush
 	kubectl apply -f common/crds/appprotect.f5.com_appolicies.yaml
 	kubectl apply -f common/crds/appprotect.f5.com_apusersigs.yaml
 	kubectl apply -f common/crds/appprotectdos.f5.com_apdoslogconfs.yaml
-	kubectl apply -f common/crds/appprotectdos.f5.com_apdospolicies.yaml
+   kubectl apply -f common/crds/appprotectdos.f5.com_apdospolicy.yaml
 	kubectl apply -f common/crds/appprotectdos.f5.com_dosprotectedresources.yaml
+
+
+
+
+
+4. NGINX App Protect Dosで利用するArbitratorを実行
+====
+
+Deploymentの内容を確認
+
+::
+
+   ## cd ~/kubernetes-ingress/deployments
+   cat deployment/appprotect-dos-arb.yaml
+
+   ** 実行結果サンプル **
+	apiVersion: apps/v1
+	kind: Deployment
+	metadata:
+	  name: appprotect-dos-arb
+	  namespace: nginx-ingress
+	spec:
+	  replicas: 1
+	  selector:
+	    matchLabels:
+	      app: appprotect-dos-arb
+	  template:
+	    metadata:
+	      labels:
+	        app: appprotect-dos-arb
+	    spec:
+	      containers:
+	      - name: appprotect-dos-arb
+	        image: docker-registry.nginx.com/nap-dos/app_protect_dos_arb:1.1.0
+	        imagePullPolicy: IfNotPresent
+	        resources:
+	          limits:
+	            memory: "128Mi"
+	            cpu: "500m"
+	        ports:
+	          - containerPort: 3000
+	        securityContext:
+	          allowPrivilegeEscalation: false
+	          runAsUser: 1001
+	          capabilities:
+	            drop:
+	              - ALL
+
+
+	cat service/appprotect-dos-arb-svc.yaml
+
+	** 実行結果サンプル **
+	apiVersion: v1
+	kind: Service
+	metadata:
+	  name: svc-appprotect-dos-arb
+	  namespace: nginx-ingress
+	spec:
+	  selector:
+	    app: appprotect-dos-arb
+	  ports:
+	    - name: arb
+	      port: 3000
+	      protocol: TCP
+	      targetPort: 3000
+
+デプロイ
+::
+
+   kubectl apply -f deployment/appprotect-dos-arb.yaml
+   kubectl apply -f service/appprotect-dos-arb-svc.yaml
+
+
+デプロイ結果を確認
+::
+
+   kubectl get deployment -n nginx-ingress
+
+   ** 実行結果サンプル **
+   NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
+   appprotect-dos-arb   1/1     1            1           4m32s
+
+   kubectl get pod -n nginx-ingress
+
+   ** 実行結果サンプル **
+   NAME                                  READY   STATUS    RESTARTS   AGE
+   appprotect-dos-arb-5d89486bbc-pkbrg   1/1     Running   0          4m43s
+
+   kubectl get svc -n nginx-ingress
+
+   ** 実行結果サンプル **
+   NAME                     TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
+   svc-appprotect-dos-arb   ClusterIP   None         <none>        3000/TCP   6s
 
 
 4. NGINX Ingress Controllerの実行
@@ -122,7 +215,7 @@ argsで指定するパラメータの詳細は [Command-line Arguments](https://
             - -nginx-configmaps=$(POD_NAMESPACE)/nginx-config
             - -default-server-tls-secret=$(POD_NAMESPACE)/default-server-secret
             - -enable-app-protect                            # App Protect WAFを有効にします
-            #- -enable-app-protect-dos                        # App Protect DoSを利用する場合、有効にします
+            - -enable-app-protect-dos                        # App Protect DoSを利用する場合、有効にします
             #- -v=3 # Enables extensive logging. Useful for troubleshooting.
             #- -report-ingress-status
             #- -external-service=nginx-ingress
@@ -142,16 +235,14 @@ argsで指定するパラメータの詳細は [Command-line Arguments](https://
    ** 実行結果サンプル **
    deployment.apps/nginx-ingress created
 
-   kubectl get pods --namespace=nginx-ingress
+   kubectl get pods --namespace=nginx-ingress | grep nginx-ingress
    
    ** 実行結果サンプル **
-   NAME                             READY   STATUS             RESTARTS   AGE
    nginx-ingress-7f67968b56-d8gf5       1/1     Running   0          3s
 
-   kubectl get deployment -n nginx-ingress
+   kubectl get deployment -n nginx-ingress | grep nginx-ingress
 
    ** 実行結果サンプル **
-   NAME            READY   UP-TO-DATE   AVAILABLE   AGE
    nginx-ingress   1/1     1            1           2m52s
 
 
@@ -197,10 +288,9 @@ NodePortをデプロイします。
 	** 実行結果サンプル **
 	service/nginx-ingress created
 
-	kubectl get svc -n nginx-ingress
+	kubectl get svc -n nginx-ingress | grep nginx-ingress
 
 	** 実行結果サンプル **
-	NAME            TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
 	nginx-ingress   NodePort   10.108.250.160   <none>        80:32692/TCP,443:31957/TCP   5s
 
 このコマンドを実行した結果、Kubernetes の Worker Nodeでそれぞれのサービスに対しポートが割り当てられています。
