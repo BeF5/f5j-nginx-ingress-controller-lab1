@@ -41,12 +41,6 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 ::
 
     ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
-    kubectl get virtualserver cafe
-    
-    ** 実行結果サンプル **
-    NAME   STATE   HOST               IP    PORTS   AGE
-    cafe   Valid   cafe.example.com                 16s
-
     kubectl get deployment
 
     ** 実行結果サンプル **
@@ -54,12 +48,16 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
     coffee   2/2     2            2           1m
     tea      1/1     1            1           1m
 
-
-    kubectl get secret  | grep cafe
+    kubectl get secret  | grep cafe-secret
 
     ** 実行結果サンプル **
     cafe-secret           kubernetes.io/tls                     2      1m
 
+    kubectl get vs
+    
+    ** 実行結果サンプル **
+    NAME   STATE   HOST               IP    PORTS   AGE
+    cafe   Valid   cafe.example.com                 94s
 
 
 動作確認
@@ -609,6 +607,8 @@ Virtual Serverの内容を確認
 
 
 ::
+
+    ## cd ~/kubernetes-ingress/examples/custom-resources/traffic-splitting
     > split.txt ;\
     for i in {1..20}; \
     do curl -s -H "Host: cafe.example.com" http://localhost/coffee | grep "Server name" >> split.txt ; \
@@ -624,6 +624,7 @@ Virtual Serverの内容を確認
 
 ::
     
+    ## cd ~/kubernetes-ingress/examples/custom-resources/traffic-splitting
     kubectl delete -f cafe-virtual-server.yaml
     kubectl delete -f cafe.yaml
     rm split.txt
@@ -640,6 +641,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 ::
 
+    cd ~/kubernetes-ingress/examples/custom-resources/access-control
     kubectl apply -f webapp.yaml
     
     ** 実行結果サンプル **
@@ -752,6 +754,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 curlコマンドで動作を確認します。以下のように通信が ``拒否`` されていることが確認できます
 
 ::
+
     curl -H "Host:webapp.example.com" http://localhost/
 
     ** 実行結果サンプル **
@@ -767,6 +770,7 @@ curlコマンドで動作を確認します。以下のように通信が ``拒�
 
 ::
     
+    ## cd ~/kubernetes-ingress/examples/custom-resources/access-control
     kubectl apply -f access-control-policy-allow.yaml
 
     ** 実行結果サンプル **
@@ -814,11 +818,26 @@ curlコマンドで動作を確認します。以下のように通信が ``許�
     Request ID: 752997339b21d94210fc911cb41f7216
     
 
-
-
-動作確認
 リソースの削除
-** 実行結果サンプル **
+
+::
+    
+    ## cd ~/kubernetes-ingress/examples/custom-resources/access-control
+    kubectl apply -f access-control-policy-allow.yaml
+    
+    ** 実行結果サンプル **
+    policy.k8s.nginx.org "webapp-policy" deleted
+
+    kubectl delete -f virtual-server.yaml
+    
+    ** 実行結果サンプル **
+    virtualserver.k8s.nginx.org "webapp" deleted
+    
+    kubectl delete -f webapp.yaml
+    
+    ** 実行結果サンプル **
+    deployment.apps "webapp" deleted
+    service "webapp-svc" deleted
 
 
 URL Path の 変換 (Rewrite)
