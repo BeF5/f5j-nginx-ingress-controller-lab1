@@ -425,7 +425,6 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
     virtualserver.k8s.nginx.org/cafe created
 
 リソースを確認
-** 実行結果サンプル **
 
 ::
 
@@ -509,10 +508,126 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/traffic-splitting
 
 サンプルアプリケーションをデプロイ
+
+::
+
+    cd ~/kubernetes-ingress/examples/custom-resources/traffic-splitting
+    
+    kubectl create -f cafe.yaml
+    
+    ** 実行結果サンプル **
+    deployment.apps/coffee-v1 created
+    service/coffee-v1-svc created
+    deployment.apps/coffee-v2 created
+    service/coffee-v2-svc created
+    
+    kubectl create -f cafe-virtual-server.yaml
+    
+    ** 実行結果サンプル **
+    virtualserver.k8s.nginx.org/cafe created
+
+
+Virtual Serverの内容を確認
+
+.. code-block:: yaml
+   :linenos:
+    
+    apiVersion: k8s.nginx.org/v1
+    kind: VirtualServer
+    metadata:
+      name: cafe
+    spec:
+      host: cafe.example.com
+      upstreams:
+      - name: coffee-v1
+        service: coffee-v1-svc
+        port: 80
+      - name: coffee-v2
+        service: coffee-v2-svc
+        port: 80
+      routes:
+      - path: /coffee
+        splits:
+        - weight: 90
+          action:
+            pass: coffee-v1
+        - weight: 10
+          action:
+            pass: coffee-v2
+
+
 リソースを確認
+
+::
+    
+    kubectl get deployment
+    
+    ** 実行結果サンプル **
+    NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+    coffee-v1   2/2     2            2           19s
+    coffee-v2   2/2     2            2           19s
+    
+    
+    kubectl get pod -o wide
+    
+    ** 実行結果サンプル **
+    NAME                         READY   STATUS    RESTARTS   AGE   IP               NODE          NOMINATED NODE   READINESS GATES
+    coffee-v1-6b78998db9-h4jkb   1/1     Running   0          25s   192.168.127.47   ip-10-1-1-9   <none>           <none>
+    coffee-v1-6b78998db9-nn42z   1/1     Running   0          25s   192.168.127.44   ip-10-1-1-9   <none>           <none>
+    coffee-v2-748cbbb49f-llpb6   1/1     Running   0          25s   192.168.127.45   ip-10-1-1-9   <none>           <none>
+    coffee-v2-748cbbb49f-vrpzx   1/1     Running   0          25s   192.168.127.46   ip-10-1-1-9   <none>           <none>
+    
+    
+    kubectl get vs
+    
+    ** 実行結果サンプル **
+    NAME   STATE   HOST               IP    PORTS   AGE
+    cafe   Valid   cafe.example.com                 26s
+
+
 動作確認
+
+::
+    
+    curl -s -H "Host: cafe.example.com" http://localhost/coffee
+    
+    ** 実行結果サンプル **
+    Server address: 192.168.127.44:8080
+    Server name: coffee-v1-6b78998db9-nn42z
+    Date: 17/Jan/2022:12:26:49 +0000
+    URI: /coffee
+    Request ID: c127f0f724eb1b3becd57603b6d603ea
+    
+    curl -s -H "Host: cafe.example.com" http://localhost/coffee
+    
+    ** 実行結果サンプル **
+    Server address: 192.168.127.45:8080
+    Server name: coffee-v2-748cbbb49f-llpb6
+    Date: 17/Jan/2022:12:26:37 +0000
+    URI: /coffee
+    Request ID: 357237a3fea498b6efd90c929d526e64
+
+
+::
+    > split.txt ;\
+    for i in {1..20}; \
+    do curl -s -H "Host: cafe.example.com" http://localhost/coffee | grep "Server name" >> split.txt ; \
+    done ; \
+    echo -n "v1:" ; grep v1 split.txt  | wc -l ; echo -n "v2:"  ; grep v2 split.txt  | wc -l
+    
+    ** 実行結果サンプル **
+    v1:18
+    v2:2
+
+
 リソースの削除
-** 実行結果サンプル **
+
+::
+    
+    kubectl delete -f cafe-virtual-server.yaml
+    kubectl delete -f cafe.yaml
+    rm split.txt
+
 
 
 IPアドレスによる通信の制御 (Access Control)
@@ -520,6 +635,190 @@ IPアドレスによる通信の制御 (Access Control)
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/access-control
 
+
+サンプルアプリケーションをデプロイ
+
+::
+
+    kubectl apply -f webapp.yaml
+    
+    ** 実行結果サンプル **
+    deployment.apps/webapp created
+    service/webapp-svc created
+    
+    kubectl apply -f access-control-policy-deny.yaml
+    
+    ** 実行結果サンプル **
+    policy.k8s.nginx.org/webapp-policy created
+    
+    kubectl apply -f virtual-server.yaml
+    
+    ** 実行結果サンプル **
+    virtualserver.k8s.nginx.org/webapp created
+
+
+リソースを確認
+
+::
+
+    kubectl get pod
+    
+    ** 実行結果サンプル **
+    NAME                     READY   STATUS    RESTARTS   AGE
+    webapp-64d444885-j4q7z   1/1     Running   0          2m7s
+    
+    kubectl get deployment
+    
+    ** 実行結果サンプル **
+    NAME     READY   UP-TO-DATE   AVAILABLE   AGE
+    webapp   1/1     1            1           2m13s
+    
+    kubectl get vs
+    
+    ** 実行結果サンプル **
+    NAME     STATE   HOST                 IP    PORTS   AGE
+    webapp   Valid   webapp.example.com                 2m8s
+    
+    kubectl get policy
+    
+    ** 実行結果サンプル **
+    NAME            STATE   AGE
+    webapp-policy   Valid   2m18s
+    
+    kubectl describe vs
+    
+    ** 実行結果サンプル **
+    Name:         webapp
+    Namespace:    default
+    Labels:       <none>
+    Annotations:  <none>
+    API Version:  k8s.nginx.org/v1
+    Kind:         VirtualServer
+    
+    ** 省略 **
+    
+    Spec:
+      Host:  webapp.example.com
+      Policies:
+        Name:  webapp-policy
+      Routes:
+        Action:
+          Pass:  webapp
+        Path:    /
+      Upstreams:
+        Name:     webapp
+        Port:     80
+        Service:  webapp-svc
+    Status:
+      External Endpoints:
+        Ip:
+        Ports:
+      Message:  Configuration for default/webapp was added or updated
+      Reason:   AddedOrUpdated
+      State:    Valid
+
+
+| VSに ``webapp-policy`` が割り当てられていることが確認できます。
+| コマンドを実行しPolicyの内容を確認します。Policyの内容が ``Spec`` に記載されています。
+
+::
+    
+    kubectl describe policy
+    
+    ** 実行結果サンプル **
+    Name:         webapp-policy
+    Namespace:    default
+    Labels:       <none>
+    Annotations:  <none>
+    API Version:  k8s.nginx.org/v1
+    Kind:         Policy
+    
+    ** 省略 **
+    
+    Spec:
+      Access Control:
+        Deny:
+          10.0.0.0/8
+    Status:
+      Message:  Policy default/webapp-policy was added or updated
+      Reason:   AddedOrUpdated
+      State:    Valid
+    Events:
+      Type    Reason          Age                  From                      Message
+      ----    ------          ----                 ----                      -------
+      Normal  AddedOrUpdated  61s (x3 over 2m31s)  nginx-ingress-controller  Policy default/webapp-policy was added or updated
+
+
+curlコマンドで動作を確認します。以下のように通信が ``拒否`` されていることが確認できます
+
+::
+    curl -H "Host:webapp.example.com" http://localhost/
+
+    ** 実行結果サンプル **
+    <html>
+    <head><title>403 Forbidden</title></head>
+    <body>
+    <center><h1>403 Forbidden</h1></center>
+    <hr><center>nginx/1.21.3</center>
+    </body>
+    </html>
+
+``webapp-policy`` の内容を変更します
+
+::
+    
+    kubectl apply -f access-control-policy-allow.yaml
+
+    ** 実行結果サンプル **
+    policy.k8s.nginx.org/webapp-policy configured
+
+
+コマンドを実行しPolicyの内容を確認します。Policyの内容が ``Spec`` に記載されています。
+
+::
+
+    
+    kubectl describe policy
+    
+    ** 実行結果サンプル **
+    Name:         webapp-policy
+    Namespace:    default
+    Labels:       <none>
+    Annotations:  <none>
+    API Version:  k8s.nginx.org/v1
+    Kind:         Policy
+    
+    ** 省略 **
+    
+    Spec:
+      Access Control:
+        Allow:
+          10.0.0.0/8
+    Status:
+      Message:  Policy default/webapp-policy was added or updated
+      Reason:   AddedOrUpdated
+      State:    Valid
+
+
+curlコマンドで動作を確認します。以下のように通信が ``許可`` されていることが確認できます
+
+::
+    
+    curl -H "Host:webapp.example.com" http://localhost/
+
+    ** 実行結果サンプル **
+    Server address: 192.168.127.48:8080
+    Server name: webapp-64d444885-j4q7z
+    Date: 17/Jan/2022:12:48:51 +0000
+    URI: /
+    Request ID: 752997339b21d94210fc911cb41f7216
+    
+
+
+
+動作確認
+リソースの削除
+** 実行結果サンプル **
 
 
 URL Path の 変換 (Rewrite)
