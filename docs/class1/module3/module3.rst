@@ -823,7 +823,7 @@ curlコマンドで動作を確認します。以下のように通信が ``許�
 ::
     
     ## cd ~/kubernetes-ingress/examples/custom-resources/access-control
-    kubectl apply -f access-control-policy-allow.yaml
+    kubectl delete -f access-control-policy-allow.yaml
     
     ** 実行結果サンプル **
     policy.k8s.nginx.org "webapp-policy" deleted
@@ -844,6 +844,212 @@ URL Path の 変換 (Rewrite)
 ====
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/rewrites
+
+
+| Rewrite を用いて、URL Path を書換え、後段のサービスに転送することが可能です。
+| まずVirtual Serverの定義内容を確認します。
+| route に 3つのPathを定義し、rewritePath でURLの書換えを行います。
+| 該当のPathでそれぞれのサービスに適したPathの書換えルールを定義します。
+
+
+.. code-block:: yaml
+   :linenos:
+    
+    apiVersion: k8s.nginx.org/v1
+    kind: VirtualServer
+    metadata:
+      name: cafe
+    spec:
+      host: cafe.example.com
+      upstreams:
+      - name: tea
+        service: tea-svc
+        port: 80
+      - name: coffee
+        service: coffee-svc
+        port: 80
+      routes:
+      - path: /tea/
+        action:
+          proxy:
+            upstream: tea
+            rewritePath: /
+      - path: /coffee
+        action:
+          proxy:
+            upstream: coffee
+            rewritePath: /beans
+      - path: ~ /(\w+)/(.+\.(?:gif|jpg|png)$)
+        action:
+          proxy:
+            upstream: tea
+            rewritePath: /service/$1/image/$2
+
+
+書換えのルールを表にまとめます。
+
+=============================== ========= ==================== ===================================
+Path                            一致タイプ Rewrite              結果
+=============================== ========= ==================== ===================================
+/tea/                           完全一致   /                    /tea/abc -> \n/abc
+/coffee                         完全一致   /beans               /coffee/def/ghi -> \n/beans/def/ghi
+~ /(\w+)/(.+\.(?:gif|jpg|png)$) 正規表現   /service/$1/image/$2 /cafe/top.jpg -> \n/service/cafe/image/top.jpg
+=============================== ========= ==================== ===================================
+
+正規表現のルールは、以下サイトを利用し確認いただけます
+`debuggex <https://www.debuggex.com/>`__
+``PCRE`` をプルダウンより選択し、上部に ``正規表現のルール`` 、下部に ``評価する文字列`` を入力し、結果を確認できます
+
+
+サンプルアプリケーションをデプロイ
+
+::
+    
+    cd ~/kubernetes-ingress/examples/custom-resources/rewrites
+    cat << EOF > rewrite-virtual-server.yaml
+    apiVersion: k8s.nginx.org/v1
+    kind: VirtualServer
+    metadata:
+      name: cafe
+    spec:
+      host: cafe.example.com
+      upstreams:
+      - name: tea
+        service: tea-svc
+        port: 80
+      - name: coffee
+        service: coffee-svc
+        port: 80
+      routes:
+      - path: /tea/
+        action:
+          proxy:
+            upstream: tea
+            rewritePath: /
+      - path: /coffee
+        action:
+          proxy:
+            upstream: coffee
+            rewritePath: /beans
+      - path: ~ /(\w+)/(.+\.(?:gif|jpg|png)$)
+        action:
+          proxy:
+            upstream: tea
+            rewritePath: /service/$1/image/$2
+    EOF
+
+    kubectl apply -f ../basic-configuration/cafe.yaml
+
+    ** 実行結果サンプル **
+    deployment.apps/coffee created
+    service/coffee-svc created
+    deployment.apps/tea created
+    service/tea-svc created
+
+    kubectl apply -f rewrite-virtual-server.yaml
+
+    ** 実行結果サンプル **
+    virtualserver.k8s.nginx.org/cafe created
+
+
+リソースを確認
+
+::
+
+    kubectl get pod
+
+    ** 実行結果サンプル **
+    NAME                      READY   STATUS    RESTARTS   AGE
+    coffee-7c86d7d67c-ws2t8   1/1     Running   0          39m
+    coffee-7c86d7d67c-zt5tr   1/1     Running   0          39m
+    tea-5c457db9-ksljs        1/1     Running   0          39m
+
+    kubectl get deployment
+
+    ** 実行結果サンプル **
+    NAME     READY   UP-TO-DATE   AVAILABLE   AGE
+    coffee   2/2     2            2           39m
+    tea      1/1     1            1           39m
+
+    kubectl get vs
+
+    ** 実行結果サンプル **
+    NAME   STATE   HOST               IP    PORTS   AGE
+    cafe   Valid   cafe.example.com                 39m
+
+
+動作確認
+
+::
+
+    curl -H "Host:cafe.example.com" http://localhost/tea/
+
+    ** 実行結果サンプル **
+    Server address: 192.168.127.40:8080
+    Server name: tea-5c457db9-ksljs
+    Date: 17/Jan/2022:14:22:46 +0000
+    URI: /
+    Request ID: 2576a16546e7d17467e04da2ab794109
+
+    curl -H "Host:cafe.example.com" http://localhost/tea/abc
+
+    ** 実行結果サンプル **
+    Server address: 192.168.127.40:8080
+    Server name: tea-5c457db9-ksljs
+    Date: 17/Jan/2022:14:22:14 +0000
+    URI: /abc
+    Request ID: 5ce49a600fb24a40340ba6edad91ffb2
+
+    curl -H "Host:cafe.example.com" http://localhost/coffee
+
+    ** 実行結果サンプル **
+    Server address: 192.168.127.39:8080
+    Server name: coffee-7c86d7d67c-zt5tr
+    Date: 17/Jan/2022:14:22:40 +0000
+    URI: /beans
+    Request ID: 9b15d10a624faee145b875b8f83460e3
+
+    curl -H "Host:cafe.example.com" http://localhost/coffee/def/ghi
+
+    ** 実行結果サンプル **
+    Server address: 192.168.127.39:8080
+    Server name: coffee-7c86d7d67c-zt5tr
+    Date: 17/Jan/2022:14:22:27 +0000
+    URI: /beans/def/ghi
+    Request ID: f70d98547c615a145b2a40ddfe5884a4
+    
+    curl -H "Host:cafe.example.com" http://localhost/cafe/top.jpg
+    
+    ** 実行結果サンプル **
+    Server address: 192.168.127.40:8080
+    Server name: tea-5c457db9-ksljs
+    Date: 17/Jan/2022:14:23:02 +0000
+    URI: /service/cafe/image/top.jpg
+    Request ID: 38c3cf24e3f5e0cdfe451b0d646c0e1d
+   
+
+リソースの削除
+
+::
+    
+    ## cd ~/kubernetes-ingress/examples/custom-resources/rewrites
+    
+    kubectl delete -f ../basic-configuration/cafe.yaml
+    
+    ** 実行結果サンプル **
+    deployment.apps "coffee" deleted
+    service "coffee-svc" deleted
+    deployment.apps "tea" deleted
+    service "tea-svc" deleted
+    
+    kubectl delete -f rewrite-virtual-server.yaml
+    
+    ** 実行結果サンプル **
+    virtualserver.k8s.nginx.org "cafe" deleted
+
+
+
+
 
 TCP / UDP の分散設定
 ====
