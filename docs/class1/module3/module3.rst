@@ -529,6 +529,8 @@ Virtual Serverの内容を確認
 
 .. code-block:: yaml
    :linenos:
+   :caption: cafe-virtual-server.yaml
+   :name: cafe-virtual-server.yaml
     
     apiVersion: k8s.nginx.org/v1
     kind: VirtualServer
@@ -900,15 +902,15 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
     * - /tea/
       - 完全一致
       - /
-      - /tea/abc -> \n/abc
+      - /tea/abc -> /abc
     * - /coffee 
       - 完全一致
       - /beans
-      - /coffee/def/ghi -> \n/beans/def/ghi
+      - /coffee/def/ghi -> /beans/def/ghi
     * - ~ /(\w+)/(.+\.(?:gif|jpg|png)$)
       - 正規表現
       - /service/$1/image/$2
-      - /cafe/top.jpg -> \n/service/cafe/image/top.jpg
+      - /cafe/top.jpg -> /service/cafe/image/top.jpg
 
 
 
@@ -1107,6 +1109,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 .. code-block:: yaml
   :linenos:
+  :caption: jwk-secret.yaml
   :name: jwk-secret.yaml
 
   apiVersion: v1
@@ -1178,7 +1181,8 @@ VSで利用するPolicyについて確認します。まずVSの内容は以下�
   :linenos:
   :caption: virtual-server.yaml
   :name: virtual-server.yaml
-    
+  :emphasize-lines: 8
+
     apiVersion: k8s.nginx.org/v1
     kind: VirtualServer
     metadata:
