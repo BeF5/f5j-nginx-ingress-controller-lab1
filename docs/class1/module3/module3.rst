@@ -1145,18 +1145,22 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 各パラメータ内容は以下の通り
 
 .. list-table::
-    :widths: 20 80
+    :widths: 2 6 2 
     :header-rows: 1
     :stub-columns: 1
 
     * - **Parameter**
       - **意味**
+      - **Link**
     * - k
       - k (key value) パラメータは, kty octで利用する base64url encodeされたKey文字列をもつ
+      - `JSON Web Algorithms (JWA) 6.4.1 "k" <https://www.rfc-editor.org/rfc/rfc7518.txt>`__
     * - kty
       - kty (key type) パラメータは, RSA や EC といった暗号アルゴリズムファミリーを示す
+      - `JSON Web Key (JWK) 4.1 "kty" <https://openid-foundation-japan.github.io/rfc7517.ja.html#ktyDef>`__
     * - kid
       - kid (key ID) パラメータは特定の鍵を識別するために用いられる
+      - `JSON Web Key (JWK) 4.5 "kid" <https://openid-foundation-japan.github.io/rfc7517.ja.html#kidDef>`__
 
 
 | `"k" : JSON Web Algorithms (JWA) 6.4.1 "k" <https://www.rfc-editor.org/rfc/rfc7518.txt>`__
