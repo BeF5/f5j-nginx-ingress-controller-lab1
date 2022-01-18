@@ -1,4 +1,4 @@
-NGINX Ingress Controller の動作確認
+NICによるWebアプリの通信制御
 ####
 
 この章では、実際にデプロイしたNGINX Ingress Controllerを使い、様々なサンプルアプリケーションを動作させ、その設定方法や動きを確認いただきます。
@@ -782,7 +782,6 @@ curlコマンドで動作を確認します。以下のように通信が ``拒�
 コマンドを実行しPolicyの内容を確認します。Policyの内容が ``Spec`` に記載されています。
 
 ::
-
     
     kubectl describe policy
     
@@ -856,7 +855,9 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 .. code-block:: yaml
    :linenos:
-    
+   :caption: 作成する rewrite-virtual-server.yaml の内容
+   :name: 作成する rewrite-virtual-server.yaml の内容
+
     apiVersion: k8s.nginx.org/v1
     kind: VirtualServer
     metadata:
@@ -1069,7 +1070,6 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 
 
-
 Ingress Controller で JWT Validation のデプロイ
 ====
 
@@ -1181,7 +1181,6 @@ VSで利用するPolicyについて確認します。まずVSの内容は以下�
   :linenos:
   :caption: virtual-server.yaml
   :name: virtual-server.yaml
-  :emphasize-lines: 8
 
     apiVersion: k8s.nginx.org/v1
     kind: VirtualServer
@@ -1314,19 +1313,6 @@ curlコマンドで動作を確認します。以下のように通信が ``許�
     deployment.apps "webapp" deleted
     service "webapp-svc" deleted
 
-
-gRPC
-====
-
-https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/grpc-services
-
-
-Custom Log Format
-====
-
-https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-log-format
-
-
 Ingress Controller で OIDC RPのデプロイ
 ====
 
@@ -1346,6 +1332,18 @@ TCP / UDP の分散設定
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/basic-tcp-udp
 
 
+Ingress MTLS
+====
+
+https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/ingress-mtls
+
+
+Egress MTLS
+====
+
+https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/egress-mtls
+
+
 Ingress Controller で WAF機能(NGINX App Protect WAF) のデプロイ
 ====
 
@@ -1356,4 +1354,6 @@ Ingress Controller で 高度なDoS対策機能(NGINX App Protect DoS) のデプ
 ====
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/dos
+
+
 
