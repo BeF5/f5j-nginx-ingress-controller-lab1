@@ -9,7 +9,7 @@ NICによるWebアプリの通信制御
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/basic-configuration
 
-サンプルアプリケーション、NGINX Ingress Controller の設定をデプロイ
+#. サンプルアプリケーション、NGINX Ingress Controller の設定をデプロイ
 
 ::
     
@@ -18,7 +18,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
     kubectl create -f cafe-secret.yaml
     kubectl create -f cafe-virtual-server.yaml
 
-作成したリソースを確認
+#. 作成したリソースを確認
 
 ::
 
@@ -42,7 +42,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
     cafe   Valid   cafe.example.com                 94s
 
 
-動作確認
+#. 動作確認
 
 ::
 
@@ -165,7 +165,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
     Request ID: af1466d1fc1b7481cb82352885f9cbc2
 
 
-リソースの削除
+#. リソースの削除
 
 ::
 
@@ -183,7 +183,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 この章ではシンプルなWebアプリケーションをデプロイします。
 NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といったリソースを使うことで、権限と設定範囲を適切に管理することが可能です。
 
-サンプルアプリケーションをデプロイ
+#. サンプルアプリケーションをデプロイ
 
 ::
     
@@ -195,7 +195,7 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
     kubectl create -f cafe-secret.yaml
     kubectl create -f cafe-virtual-server.yaml
 
-リソースを確認
+#. リソースを確認
 
 ::
         
