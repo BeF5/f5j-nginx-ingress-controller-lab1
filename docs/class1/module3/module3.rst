@@ -1051,15 +1051,244 @@ Path                            一致タイプ Rewrite              結果
 
 
 
-TCP / UDP の分散設定
-====
-
-https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/basic-tcp-udp
 
 Ingress Controller で JWT Validation のデプロイ
 ====
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/jwt
+
+サンプルアプリケーションをデプロイ
+
+::
+
+    cd ~/kubernetes-ingress/examples/custom-resources/jwt/
+    
+    kubectl apply -f webapp.yaml
+    
+    ** 実行結果サンプル **
+    deployment.apps/webapp created
+    service/webapp-svc created
+    
+    kubectl apply -f jwk-secret.yaml
+    
+    ** 実行結果サンプル **
+    secret/jwk-secret created
+    
+    kubectl apply -f jwt.yaml
+    
+    ** 実行結果サンプル **
+    policy.k8s.nginx.org/jwt-policy created
+    
+    kubectl apply -f virtual-server.yaml
+    
+    ** 実行結果サンプル **
+    virtualserver.k8s.nginx.org/webapp created
+
+
+利用するファイルの内容を確認します
+
+まず、JWK(Json Web Key)としてVirtual ServerのPolicy内で指定するsecretの内容を確認します
+
+.. code-block:: yaml
+  :linenos:
+  :caption: jwk-secret.yaml
+  :name: jwk-secret.yaml
+
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: jwk-secret
+  type: nginx.org/jwk
+  data:
+    jwk: eyJrZXlzIjoKICAgIFt7CiAgICAgICAgImsiOiJabUZ1ZEdGemRHbGphbmQwIiwKICAgICAgICAia3R5Ijoib2N0IiwKICAgICAgICAia2lkIjoiMDAwMSIKICAgIH1dCn0K
+
+``jwk`` というKeyに対し、 ``値`` として文字列が指定されていることが確認できます。
+文字列の内容をbase64 decodeします
+
+::
+
+    # echo -n <jwk に指定された文字列> | base64 -d
+    echo -n "eyJrZXlzIjoKICAgIFt7CiAgICAgICAgImsiOiJabUZ1ZEdGemRHbGphbmQwIiwKICAgICAgICAia3R5Ijoib2N0IiwKICAgICAgICAia2lkIjoiMDAwMSIKICAgIH1dCn0K" | base64 -d
+
+出力結果が以下となります
+
+.. code-block:: json
+  :lineos:
+  :caption: jwk
+  :name: jwk
+
+    {"keys":
+        [{
+            "k":"ZmFudGFzdGljand0",
+            "kty":"oct",
+            "kid":"0001"
+        }]
+    }
+ 
+
+各パラメータ内容は以下の通り
+
+
+========= ================================================================================ ========
+parameter 意味                                                                              link
+========= ================================================================================ ========
+k         k (key value) パラメータは, kty octで利用する base64url encodeされたKey文字列をもつ  ``__
+kty       kty (key type) パラメータは, RSA や EC といった暗号アルゴリズムファミリーを示す       ``__
+kid       kid (key ID) パラメータは特定の鍵を識別するために用いられる.                         ``__
+========= ================================================================================ ========
+
+| `"k" : JSON Web Algorithms (JWA) 6.4.1 "k" <https://www.rfc-editor.org/rfc/rfc7518.txt>`__
+| `"kty" : JSON Web Key (JWK) 4.1 "kty" <https://openid-foundation-japan.github.io/rfc7517.ja.html#ktyDef>`__
+| `"kid" : JSON Web Key (JWK) 4.5 "kid" <https://openid-foundation-japan.github.io/rfc7517.ja.html#kidDef>`__
+
+kty "oct" で利用する Keyの内容をBase64 Decodeした結果は以下の通り
+
+::
+
+    echo -n "ZmFudGFzdGljand0" | base64 -d
+
+    ** 実行結果サンプル **
+    fantasticjwt
+
+
+VSで利用するPolicyについて確認します。まずVSの内容は以下です
+
+.. code-block:: yaml
+  :linenos:
+  :caption: virtual-server.yaml
+  :name: virtual-server.yaml
+
+apiVersion: k8s.nginx.org/v1
+kind: VirtualServer
+metadata:
+  name: webapp
+spec:
+  host: webapp.example.com
+  policies:
+  - name: jwt-policy
+  upstreams:
+  - name: webapp
+    service: webapp-svc
+    port: 80
+  routes:
+  - path: /
+    action:
+      pass: webapp
+
+hostに対し ``jwt-policy`` というポリシーが適用されていることが確認できます。
+では次に、Policyの内容を確認します
+
+.. code-block:: yaml
+  :linenos:
+  :caption: jwt.yaml
+  :name: jwt.yaml
+
+apiVersion: k8s.nginx.org/v1
+kind: Policy
+metadata:
+  name: jwt-policy
+spec:
+  jwt:
+    realm: MyProductAPI
+    secret: jwk-secret
+    token: $http_token
+
+| 先程VSの内容で確認したように、 ``jwt-policy`` という名前のPolicyとなります。
+| specにPolicyの設定が記述されています。secretに先程作成した ``jwt-secret`` が指定されており、
+| tokenとして参照する内容は、 ``token`` というhttp headerの値とするため、 ``$http_token`` を指定しています。
+
+
+クライアントがリクエストする際に利用するJWTのサンプルの内容を確認します。
+
+
+リソースを確認
+
+::
+
+    ## cd ~/kubernetes-ingress/examples/custom-resources/jwt/
+    
+    kubectl get deployment
+    
+    ** 実行結果サンプル **
+    NAME     READY   UP-TO-DATE   AVAILABLE   AGE
+    webapp   1/1     1            1           23s
+    
+    kubectl get secret | grep jwk
+    
+    ** 実行結果サンプル **
+    jwk-secret            nginx.org/jwk                         1      40s
+    
+    kubectl get policy
+    
+    ** 実行結果サンプル **
+    NAME         STATE   AGE
+    jwt-policy   Valid   38s
+    
+    kubectl get vs
+    
+    ** 実行結果サンプル **
+    NAME     STATE   HOST                 IP    PORTS   AGE
+    webapp   Valid   webapp.example.com                 35s
+    
+
+動作確認
+
+Policyが適用されたVSにJWTをHeaderに付与していないため、通信に対し ``401 Authorization required`` が応答されていることを確認します
+
+::
+
+    curl -H "Host:webapp.example.com" http://localhost/
+    
+    ** 実行結果サンプル **
+    <html>
+    <head><title>401 Authorization Required</title></head>
+    <body>
+    <center><h1>401 Authorization Required</h1></center>
+    <hr><center>nginx/1.21.3</center>
+    </body>
+    </html>
+
+curlコマンドで動作を確認します。以下のように通信が ``許可`` されていることが確認できます
+
+::
+
+    curl -H "Host:webapp.example.com" http://localhost/ -H "Token: `cat token.jwt`"
+    
+    ** 実行結果サンプル **
+    Server address: 192.168.127.57:8080
+    Server name: webapp-64d444885-r5fnt
+    Date: 18/Jan/2022:12:49:59 +0000
+    URI: /
+    Request ID: 86182122eec0392769b4d86d64653419
+    cat token.jwt
+    eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6IjAwMDEifQ.eyJuYW1lIjoiUXVvdGF0aW9uIFN5c3RlbSIsInN1YiI6InF1b3RlcyIsImlzcyI6Ik15IEFQSSBHYXRld2F5In0.ggVOHYnVFB8GVPE-VOIo3jD71gTkLffAY0hQOGXPL2I
+
+
+リソースの削除
+
+::
+
+    kubectl delete -f virtual-server.yaml
+    
+    ** 実行結果サンプル **
+    virtualserver.k8s.nginx.org "webapp" deleted
+
+    kubectl delete -f jwt.yaml
+
+    ** 実行結果サンプル **
+    policy.k8s.nginx.org "jwt-policy" deleted
+    
+    kubectl delete -f jwk-secret.yaml
+
+    ** 実行結果サンプル **
+    secret "jwk-secret" deleted
+    
+    kubectl delete -f webapp.yaml
+
+    ** 実行結果サンプル **
+    deployment.apps "webapp" deleted
+    service "webapp-svc" deleted
+
 
 gRPC
 ====
@@ -1079,6 +1308,19 @@ Ingress Controller で OIDC RPのデプロイ
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/oidc
 
 
+
+サンプルアプリケーションをデプロイ
+リソースを確認
+動作確認
+リソースの削除
+** 実行結果サンプル **
+
+TCP / UDP の分散設定
+====
+
+https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/basic-tcp-udp
+
+
 Ingress Controller で WAF機能(NGINX App Protect WAF) のデプロイ
 ====
 
@@ -1090,10 +1332,3 @@ Ingress Controller で 高度なDoS対策機能(NGINX App Protect DoS) のデプ
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/dos
 
-
-
-サンプルアプリケーションをデプロイ
-リソースを確認
-動作確認
-リソースの削除
-** 実行結果サンプル **
