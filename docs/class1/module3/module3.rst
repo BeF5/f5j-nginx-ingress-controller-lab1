@@ -1107,7 +1107,6 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 .. code-block:: yaml
   :linenos:
-  :caption: jwk-secret.yaml
   :name: jwk-secret.yaml
 
   apiVersion: v1
