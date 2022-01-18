@@ -14,27 +14,9 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 ::
     
     cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
-    
     kubectl create -f cafe.yaml
-    
-    ** 実行結果サンプル **
-    deployment.apps/coffee created
-    service/coffee-svc created
-    deployment.apps/tea created
-    service/tea-svc created
-
-
     kubectl create -f cafe-secret.yaml
-    
-    ** 実行結果サンプル **
-    secret/cafe-secret created
-    
-    
     kubectl create -f cafe-virtual-server.yaml
-    
-    ** 実行結果サンプル **
-    virtualserver.k8s.nginx.org/cafe created
-
 
 作成したリソースを確認
 
@@ -206,49 +188,12 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
 ::
     
     kubectl create -f namespaces.yaml
-    
-    ** 実行結果サンプル **
-    namespace/cafe created
-    namespace/tea created
-    namespace/coffee created
-    
-    
     kubectl create -f tea.yaml
-    
-    ** 実行結果サンプル **
-    deployment.apps/tea created
-    service/tea-svc created
-    
-    
     kubectl create -f coffee.yaml
-    
-    ** 実行結果サンプル **
-    deployment.apps/coffee created
-    service/coffee-svc created
-    
-    
     kubectl create -f tea-virtual-server-route.yaml
-    
-    ** 実行結果サンプル **
-    virtualserverroute.k8s.nginx.org/tea created
-    
-    
     kubectl create -f coffee-virtual-server-route.yaml
-    
-    ** 実行結果サンプル **
-    virtualserverroute.k8s.nginx.org/coffee created
-    
-    
     kubectl create -f cafe-secret.yaml
-    
-    ** 実行結果サンプル **
-    secret/cafe-secret created
-    
-    
     kubectl create -f cafe-virtual-server.yaml
-    
-    ** 実行結果サンプル **
-    virtualserver.k8s.nginx.org/cafe created
 
 リソースを確認
 
@@ -406,21 +351,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
     
     cd ~/kubernetes-ingress/examples/custom-resources/advanced-routing
     kubectl create -f cafe.yaml
-
-    ** 実行結果サンプル **
-    deployment.apps/coffee-v1 created
-    service/coffee-v1-svc created
-    deployment.apps/coffee-v2 created
-    service/coffee-v2-svc created
-    deployment.apps/tea-post created
-    service/tea-post-svc created
-    deployment.apps/tea created
-    service/tea-svc created
-
     kubectl create -f cafe-virtual-server.yaml
-
-    ** 実行結果サンプル **
-    virtualserver.k8s.nginx.org/cafe created
 
 リソースを確認
 
@@ -509,20 +440,9 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 ::
 
-    cd ~/kubernetes-ingress/examples/custom-resources/traffic-splitting
-    
+    cd ~/kubernetes-ingress/examples/custom-resources/traffic-splitting    
     kubectl create -f cafe.yaml
-    
-    ** 実行結果サンプル **
-    deployment.apps/coffee-v1 created
-    service/coffee-v1-svc created
-    deployment.apps/coffee-v2 created
-    service/coffee-v2-svc created
-    
     kubectl create -f cafe-virtual-server.yaml
-    
-    ** 実行結果サンプル **
-    virtualserver.k8s.nginx.org/cafe created
 
 
 Virtual Serverの内容を確認
@@ -645,21 +565,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
     cd ~/kubernetes-ingress/examples/custom-resources/access-control
     kubectl apply -f webapp.yaml
-    
-    ** 実行結果サンプル **
-    deployment.apps/webapp created
-    service/webapp-svc created
-    
     kubectl apply -f access-control-policy-deny.yaml
-    
-    ** 実行結果サンプル **
-    policy.k8s.nginx.org/webapp-policy created
-    
     kubectl apply -f virtual-server.yaml
-    
-    ** 実行結果サンプル **
-    virtualserver.k8s.nginx.org/webapp created
-
 
 リソースを確認
 
@@ -825,21 +732,8 @@ curlコマンドで動作を確認します。以下のように通信が ``許�
     
     ## cd ~/kubernetes-ingress/examples/custom-resources/access-control
     kubectl delete -f access-control-policy-allow.yaml
-    
-    ** 実行結果サンプル **
-    policy.k8s.nginx.org "webapp-policy" deleted
-
     kubectl delete -f virtual-server.yaml
-    
-    ** 実行結果サンプル **
-    virtualserver.k8s.nginx.org "webapp" deleted
-    
     kubectl delete -f webapp.yaml
-    
-    ** 実行結果サンプル **
-    deployment.apps "webapp" deleted
-    service "webapp-svc" deleted
-
 
 URL Path の 変換 (Rewrite)
 ====
@@ -958,18 +852,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
     EOF
 
     kubectl apply -f ../basic-configuration/cafe.yaml
-
-    ** 実行結果サンプル **
-    deployment.apps/coffee created
-    service/coffee-svc created
-    deployment.apps/tea created
-    service/tea-svc created
-
     kubectl apply -f rewrite-virtual-server.yaml
-
-    ** 実行結果サンプル **
-    virtualserver.k8s.nginx.org/cafe created
-
 
 リソースを確認
 
@@ -1052,22 +935,9 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 ::
     
     ## cd ~/kubernetes-ingress/examples/custom-resources/rewrites
-    
+ 
     kubectl delete -f ../basic-configuration/cafe.yaml
-    
-    ** 実行結果サンプル **
-    deployment.apps "coffee" deleted
-    service "coffee-svc" deleted
-    deployment.apps "tea" deleted
-    service "tea-svc" deleted
-    
     kubectl delete -f rewrite-virtual-server.yaml
-    
-    ** 実行結果サンプル **
-    virtualserver.k8s.nginx.org "cafe" deleted
-
-
-
 
 
 Ingress Controller で JWT Validation のデプロイ
@@ -1081,27 +951,10 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
     cd ~/kubernetes-ingress/examples/custom-resources/jwt/
     
-    kubectl apply -f webapp.yaml
-    
-    ** 実行結果サンプル **
-    deployment.apps/webapp created
-    service/webapp-svc created
-    
+    kubectl apply -f webapp.yaml    
     kubectl apply -f jwk-secret.yaml
-    
-    ** 実行結果サンプル **
-    secret/jwk-secret created
-    
     kubectl apply -f jwt.yaml
-    
-    ** 実行結果サンプル **
-    policy.k8s.nginx.org/jwt-policy created
-    
     kubectl apply -f virtual-server.yaml
-    
-    ** 実行結果サンプル **
-    virtualserver.k8s.nginx.org/webapp created
-
 
 利用するファイルの内容を確認します
 
@@ -1228,9 +1081,7 @@ hostに対し ``jwt-policy`` というポリシーが適用されていること
 リソースを確認
 
 ::
-
-    ## cd ~/kubernetes-ingress/examples/custom-resources/jwt/
-    
+   
     kubectl get deployment
     
     ** 実行結果サンプル **
@@ -1292,26 +1143,12 @@ curlコマンドで動作を確認します。以下のように通信が ``許�
 
 ::
 
+    ## cd ~/kubernetes-ingress/examples/custom-resources/jwt/
+
     kubectl delete -f virtual-server.yaml
-    
-    ** 実行結果サンプル **
-    virtualserver.k8s.nginx.org "webapp" deleted
-
     kubectl delete -f jwt.yaml
-
-    ** 実行結果サンプル **
-    policy.k8s.nginx.org "jwt-policy" deleted
-    
     kubectl delete -f jwk-secret.yaml
-
-    ** 実行結果サンプル **
-    secret "jwk-secret" deleted
-    
     kubectl delete -f webapp.yaml
-
-    ** 実行結果サンプル **
-    deployment.apps "webapp" deleted
-    service "webapp-svc" deleted
 
 Ingress Controller で OIDC RPのデプロイ
 ====
