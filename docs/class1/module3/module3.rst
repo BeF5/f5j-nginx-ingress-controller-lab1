@@ -1320,18 +1320,6 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 
 
-サンプルアプリケーションをデプロイ
-リソースを確認
-動作確認
-リソースの削除
-** 実行結果サンプル **
-
-TCP / UDP の分散設定
-====
-
-https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/basic-tcp-udp
-
-
 Ingress MTLS
 ====
 
@@ -1344,16 +1332,10 @@ Egress MTLS
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/egress-mtls
 
 
-Ingress Controller で WAF機能(NGINX App Protect WAF) のデプロイ
-====
 
-https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/waf
-
-
-Ingress Controller で 高度なDoS対策機能(NGINX App Protect DoS) のデプロイ
-====
-
-https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/dos
-
-
+サンプルアプリケーションをデプロイ
+リソースを確認
+動作確認
+リソースの削除
+** 実行結果サンプル **
 
