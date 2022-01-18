@@ -888,13 +888,29 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 書換えのルールを表にまとめます。
 
-=============================== ========= ==================== ===================================
-Path                            一致タイプ Rewrite              結果
-=============================== ========= ==================== ===================================
-/tea/                           完全一致   /                    /tea/abc -> \n/abc
-/coffee                         完全一致   /beans               /coffee/def/ghi -> \n/beans/def/ghi
-~ /(\w+)/(.+\.(?:gif|jpg|png)$) 正規表現   /service/$1/image/$2 /cafe/top.jpg -> \n/service/cafe/image/top.jpg
-=============================== ========= ==================== ===================================
+.. list-table::
+    :widths: 20 80
+    :header-rows: 1
+    :stub-columns: 1
+
+    * - **Path**
+      - **一致タイプ**
+      - **Rewrite**
+      - **結果**
+    * - /tea/
+      - 完全一致
+      - /
+      - /tea/abc -> \n/abc
+    * - /coffee 
+      - 完全一致
+      - /beans
+      - /coffee/def/ghi -> \n/beans/def/ghi
+    * - ~ /(\w+)/(.+\.(?:gif|jpg|png)$)
+      - 正規表現
+      - /service/$1/image/$2
+      - /cafe/top.jpg -> \n/service/cafe/image/top.jpg
+
+
 
 正規表現のルールは、以下サイトを利用し確認いただけます
 `debuggex <https://www.debuggex.com/>`__
@@ -1128,14 +1144,20 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 各パラメータ内容は以下の通り
 
+.. list-table::
+    :widths: 20 80
+    :header-rows: 1
+    :stub-columns: 1
 
-========= ================================================================================ ========
-parameter 意味                                                                              link
-========= ================================================================================ ========
-k         k (key value) パラメータは, kty octで利用する base64url encodeされたKey文字列をもつ  ``__
-kty       kty (key type) パラメータは, RSA や EC といった暗号アルゴリズムファミリーを示す       ``__
-kid       kid (key ID) パラメータは特定の鍵を識別するために用いられる.                         ``__
-========= ================================================================================ ========
+    * - **Parameter**
+      - **意味**
+    * - k
+      - k (key value) パラメータは, kty octで利用する base64url encodeされたKey文字列をもつ
+    * - kty
+      - kty (key type) パラメータは, RSA や EC といった暗号アルゴリズムファミリーを示す
+    * - kid
+      - kid (key ID) パラメータは特定の鍵を識別するために用いられる
+
 
 | `"k" : JSON Web Algorithms (JWA) 6.4.1 "k" <https://www.rfc-editor.org/rfc/rfc7518.txt>`__
 | `"kty" : JSON Web Key (JWK) 4.1 "kty" <https://openid-foundation-japan.github.io/rfc7517.ja.html#ktyDef>`__
@@ -1157,23 +1179,23 @@ VSで利用するPolicyについて確認します。まずVSの内容は以下�
   :linenos:
   :caption: virtual-server.yaml
   :name: virtual-server.yaml
-
-apiVersion: k8s.nginx.org/v1
-kind: VirtualServer
-metadata:
-  name: webapp
-spec:
-  host: webapp.example.com
-  policies:
-  - name: jwt-policy
-  upstreams:
-  - name: webapp
-    service: webapp-svc
-    port: 80
-  routes:
-  - path: /
-    action:
-      pass: webapp
+    
+    apiVersion: k8s.nginx.org/v1
+    kind: VirtualServer
+    metadata:
+      name: webapp
+    spec:
+      host: webapp.example.com
+      policies:
+      - name: jwt-policy
+      upstreams:
+      - name: webapp
+        service: webapp-svc
+        port: 80
+      routes:
+      - path: /
+        action:
+          pass: webapp
 
 hostに対し ``jwt-policy`` というポリシーが適用されていることが確認できます。
 では次に、Policyの内容を確認します
@@ -1182,16 +1204,16 @@ hostに対し ``jwt-policy`` というポリシーが適用されていること
   :linenos:
   :caption: jwt.yaml
   :name: jwt.yaml
-
-apiVersion: k8s.nginx.org/v1
-kind: Policy
-metadata:
-  name: jwt-policy
-spec:
-  jwt:
-    realm: MyProductAPI
-    secret: jwk-secret
-    token: $http_token
+    
+    apiVersion: k8s.nginx.org/v1
+    kind: Policy
+    metadata:
+      name: jwt-policy
+    spec:
+      jwt:
+        realm: MyProductAPI
+        secret: jwk-secret
+        token: $http_token
 
 | 先程VSの内容で確認したように、 ``jwt-policy`` という名前のPolicyとなります。
 | specにPolicyの設定が記述されています。secretに先程作成した ``jwt-secret`` が指定されており、
