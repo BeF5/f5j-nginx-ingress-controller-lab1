@@ -889,7 +889,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 書換えのルールを表にまとめます。
 
 .. list-table::
-    :widths: 20 80
+    :widths: 4 1 1 4
     :header-rows: 1
     :stub-columns: 1
 
@@ -1162,10 +1162,6 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
       - kid (key ID) パラメータは特定の鍵を識別するために用いられる
       - `JSON Web Key (JWK) 4.5 "kid" <https://openid-foundation-japan.github.io/rfc7517.ja.html#kidDef>`__
 
-
-| `"k" : JSON Web Algorithms (JWA) 6.4.1 "k" <https://www.rfc-editor.org/rfc/rfc7518.txt>`__
-| `"kty" : JSON Web Key (JWK) 4.1 "kty" <https://openid-foundation-japan.github.io/rfc7517.ja.html#ktyDef>`__
-| `"kid" : JSON Web Key (JWK) 4.5 "kid" <https://openid-foundation-japan.github.io/rfc7517.ja.html#kidDef>`__
 
 kty "oct" で利用する Keyの内容をBase64 Decodeした結果は以下の通り
 
