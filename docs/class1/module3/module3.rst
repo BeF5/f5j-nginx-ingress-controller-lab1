@@ -1214,38 +1214,41 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   webapp-6c9689bbf4-qws2b     1/1     Running   0          22m
   
 .. code-block:: cmdin
+
   kubectl get deployment
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-
   NAME       READY   UP-TO-DATE   AVAILABLE   AGE
   keycloak   1/1     1            1           22m
   webapp     1/1     1            1           22m
   
 .. code-block:: cmdin
+
   kubectl get svc
 .. code-block:: bash
   :linenos:
-  :caption: 実行結果サンプル
+  :caption: output sample
   NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
   keycloak     ClusterIP   10.97.4.138     <none>        8080/TCP   22m
   kubernetes   ClusterIP   10.96.0.1       <none>        443/TCP    12d
   webapp-svc   ClusterIP   10.104.69.230   <none>        80/TCP     22m
   
 .. code-block:: cmdin
+
   kubectl get policy
 .. code-block:: bash
   :linenos:
-  :caption: 実行結果サンプル
+  :caption: output sample
   NAME          STATE   AGE
   oidc-policy   Valid   9m28s
   
 .. code-block:: cmdin
+
   kubectl get vs
 .. code-block:: bash
   :linenos:
-  :caption: 実行結果サンプル
+  :caption: output sample
   NAME       STATE   HOST                   IP    PORTS   AGE
   keycloak   Valid   keycloak.example.com                 23m
   webapp     Valid   webapp.example.com                   7m40s
@@ -1259,8 +1262,7 @@ Chromeブラウザを開き、 ``Secret Tab`` を開いてください。
 
 リソースの削除
 
-::
-
+.. code-block:: cmdin
   kubectl delete -f webapp.yaml
   kubectl delete -f keycloak.yaml
   kubectl delete -f virtual-server-idp.yaml
