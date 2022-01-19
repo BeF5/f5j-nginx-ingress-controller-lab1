@@ -10,6 +10,7 @@ NICによるWebアプリの通信制御
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/basic-configuration
 
 #. サンプルアプリケーション、NGINX Ingress Controller の設定をデプロイ
+----
 
 .. code-block:: cmdin
  
@@ -18,7 +19,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   kubectl create -f cafe-secret.yaml
   kubectl create -f cafe-virtual-server.yaml
 
-#. 作成したリソースを確認
+リソースを確認
+----
 
 .. code-block:: cmdin
  
@@ -55,7 +57,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   cafe   Valid   cafe.example.com                 94s
 
 
-#. 動作確認
+動作確認
+----
 
 .. code-block:: cmdin
  
@@ -195,7 +198,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   Request ID: af1466d1fc1b7481cb82352885f9cbc2
 
 
-#. リソースの削除
+リソースの削除
+----
 
 .. code-block:: cmdin
  
@@ -213,7 +217,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 この章ではシンプルなWebアプリケーションをデプロイします。
 NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といったリソースを使うことで、権限と設定範囲を適切に管理することが可能です。
 
-#. サンプルアプリケーションをデプロイ
+サンプルアプリケーションをデプロイ
+----
 
 .. code-block:: cmdin
  
@@ -225,7 +230,8 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
   kubectl create -f cafe-secret.yaml
   kubectl create -f cafe-virtual-server.yaml
 
-#. リソースを確認
+リソースを確認
+----
 
 .. code-block:: cmdin
     
@@ -306,6 +312,7 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
 
 
 動作確認
+----
 
 .. code-block:: cmdin
    
@@ -392,6 +399,7 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
 
 
 リソースの削除
+----
 
 .. code-block:: cmdin
  
@@ -410,6 +418,7 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/advanced-routing
 
 サンプルアプリケーションをデプロイ
+----
 
 .. code-block:: cmdin
  
@@ -418,6 +427,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   kubectl create -f cafe-virtual-server.yaml
 
 リソースを確認
+----
 
 .. code-block:: cmdin
  
@@ -461,6 +471,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 
 動作確認
+----
 
 .. code-block:: cmdin
  
@@ -519,6 +530,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   Request ID: befacc5e7ca56a1a09e5982315c74fa0
 
 リソースの削除
+----
 
 .. code-block:: cmdin
  
@@ -532,6 +544,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/traffic-splitting
 
 サンプルアプリケーションをデプロイ
+----
 
 .. code-block:: cmdin
  
@@ -572,6 +585,7 @@ Virtual Serverの内容を確認
 
 
 リソースを確認
+----
 
 .. code-block:: cmdin
  
@@ -612,6 +626,7 @@ Virtual Serverの内容を確認
 
 
 動作確認
+----
 
 .. code-block:: cmdin
  
@@ -660,6 +675,7 @@ Virtual Serverの内容を確認
 
 
 リソースの削除
+----
 
 .. code-block:: cmdin
  
@@ -677,6 +693,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 
 サンプルアプリケーションをデプロイ
+----
 
 .. code-block:: cmdin
  
@@ -686,6 +703,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   kubectl apply -f virtual-server.yaml
 
 リソースを確認
+----
 
 .. code-block:: cmdin
  
@@ -882,6 +900,7 @@ curlコマンドで動作を確認します。以下のように通信が ``許�
     
 
 リソースの削除
+----
 
 .. code-block:: cmdin
  
@@ -970,6 +989,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 
 サンプルアプリケーションをデプロイ
+----
 
 .. code-block:: cmdin
   
@@ -1010,6 +1030,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   kubectl apply -f rewrite-virtual-server.yaml
 
 リソースを確認
+----
 
 .. code-block:: cmdin
  
@@ -1049,6 +1070,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 
 動作確認
+----
 
 .. code-block:: cmdin
  
@@ -1122,6 +1144,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
    
 
 リソースの削除
+----
 
 .. code-block:: cmdin
  
@@ -1136,6 +1159,7 @@ Ingress Controller で JWT Validation のデプロイ
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/jwt
 
 サンプルアプリケーションをデプロイ
+----
 
 .. code-block:: cmdin
  
@@ -1272,6 +1296,7 @@ hostに対し ``jwt-policy`` というポリシーが適用されていること
 
 
 リソースを確認
+----
 
 .. code-block:: cmdin
    
@@ -1314,6 +1339,7 @@ hostに対し ``jwt-policy`` というポリシーが適用されていること
     
 
 動作確認
+----
 
 Policyが適用されたVSにJWTをHeaderに付与していないため、通信に対し ``401 Authorization required`` が応答されていることを確認します
 
@@ -1353,6 +1379,7 @@ curlコマンドで動作を確認します。以下のように通信が ``許�
 
 
 リソースの削除
+----
 
 .. code-block:: cmdin
   
@@ -1369,6 +1396,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 
 サンプルアプリケーションをデプロイ
+----
 
 .. code-block:: cmdin
   
@@ -1435,6 +1463,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 
 リソースを確認
+----
 
 
 .. code-block:: cmdin
@@ -1509,12 +1538,14 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 
 動作確認
+----
 
 Chromeブラウザを開き、 ``Secret Tab`` を開いてください。
 そして、webapp.example.com を開いてください
 
 
 リソースの削除
+----
 
 .. code-block:: cmdin
 
@@ -1532,6 +1563,7 @@ Ingress MTLS
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/ingress-mtls
 
 サンプルアプリケーションをデプロイ
+----
 
 .. code-block:: cmdin
 
@@ -1626,6 +1658,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 
 動作確認
+----
 
 .. code-block:: cmdin
   curl -v -k --resolve webapp.example.com:443:127.0.0.1 https://webapp.example.com:443/
@@ -1749,6 +1782,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   * Connection #0 to host webapp.example.com left intact
 
 リソースの削除
+----
 
 .. code-block:: cmdin
 
@@ -1782,8 +1816,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 ----
 
 | ファイルの内容を確認します。
-| ``secure-app.yaml`` は、Kubernetes環境内で動作するアプリケーションで、クライアント証明書の評価を行います。
-| ポイントとなる箇所を以下に示します。
+| ``secure-app.yaml`` は、Kubernetes環境内で動作するアプリケーションで、クライアント証明書の評価を行います。ポイントとなる箇所を以下に示します。
 
 - volumeMountsでそれぞれのPathにVolumeをマウントしています。/etc/nginx/sslに ``app-tls-secret`` というSecret(22,29)、/etc/nginx/conf.d/に ``secure-config`` というConfigMap(24,32)の内容がそれぞれマウントされます
 - ``secure-config`` というConfigMapではNGINXの設定を指定します。SSLの終端(58,59)及び、クライアント証明書(61,62)の評価を行うよう設定を記述しています
@@ -1899,7 +1932,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: yaml
   :linenos:
   :caption: virtual-server.yaml
-  :emphasize-lines: 1
+  :emphasize-lines: 11,12,14,15
 
   apiVersion: k8s.nginx.org/v1
   kind: VirtualServer
@@ -1996,9 +2029,14 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   * Connection #0 to host localhost left intact
 
 
-
-
-
 リソースの削除
+----
 
+.. code-block:: cmdin
 
+  ## cd ~/kubernetes-ingress/examples/custom-resources/egress-mtls
+  kubectl delete -f secure-app.yaml
+  kubectl delete -f egress-mtls-secret.yaml
+  kubectl delete -f egress-trusted-ca-secret.yaml
+  kubectl delete -f egress-mtls.yaml
+  kubectl delete -f virtual-server.yaml
