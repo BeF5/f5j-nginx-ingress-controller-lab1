@@ -16,3 +16,18 @@ Ingress Controller で 高度なDoS対策機能(NGINX App Protect DoS) のデプ
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/dos
 
 
+サンプルアプリケーションをデプロイ
+----
+リソースを確認
+----
+動作確認
+----
+リソースの削除
+----
+
+.. code-block:: cmdin
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 1
