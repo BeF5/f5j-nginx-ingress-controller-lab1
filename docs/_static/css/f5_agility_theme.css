@@ -17,6 +17,9 @@ table {
 	margin-bottom: 12px;
 }
 
+.code-block-caption pre {
+    text-align: left
+}
 .highlight pre {
     background: #eeeeee;
 }
