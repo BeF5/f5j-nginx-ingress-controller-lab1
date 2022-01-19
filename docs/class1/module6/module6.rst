@@ -26,7 +26,8 @@
 
 - ``kubectl logs <NGINX Ingress Controller pod> -n nginx-ingress`` コマンドの結果を確認し、Access LogとError Logの内容を確認してください
 - NGINX Ingress Controllerで通信を受け付けた場合には以下のようにログが出力されます。ログが出力されること、ログの内容をもとに期待した通信となっているか確認してください
-::
+
+.. code-block:: bash
 
     10.244.0.1 - - [24/Aug/2021:14:30:51 +0000] "GET / HTTP/1.1" 500 178 "-" "curl/7.68.0" "-"
     10.244.0.1 - - [25/Aug/2021:05:47:17 +0000] "POST / HTTP/1.1" 200 246 "-" "curl/7.68.0" "-"
