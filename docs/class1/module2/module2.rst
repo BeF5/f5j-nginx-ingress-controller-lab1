@@ -10,7 +10,7 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 
 ファイルの取得します
 
-::
+.. code-block:: cmdin
 
    cd ~/
    git clone https://github.com/nginxinc/kubernetes-ingress/
@@ -21,8 +21,8 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 ライセンスファイルをコピーしてください
 ファイルが配置されていない場合、トライアルを申請し証明書と鍵を取得してください
 
-::
-
+.. code-block:: cmdin
+   
    cp ~/nginx-repo* .
    ls nginx-repo.*
 
@@ -32,26 +32,32 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 | NGINX Plus ＋ NGINX App Protectのコンテナイメージを作成します
 | 参考： `Building the Ingress Controller Image <https://docs.nginx.com/nginx-ingress-controller/installation/building-ingress-controller-image>`__
 
-::
+.. code-block:: cmdin
    
    make debian-image-nap-plus PREFIX=registry.example.com/root/nic/nginxplus-ingress-nap-dos TARGET=container TAG=2.0.3
    # Image の Build は数分(約5分)必要となります
    docker images | grep nginxplus-ingress-nap-dos
 
-   ** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
    registry.example.com/root/nic/nginxplus-ingress-nap-dos   2.1.0     5b5cdc61cf76   31 seconds ago   611MB
 
 
 Container Image のPushのためにレジストリへログイン
 
-::
-
+.. code-block:: cmdin
+   
    # registry.example.com にログイン
    docker login registry.example.com
    Username: root       << 左の文字列を入力
    Password: password   << 左の文字列を入力
 
-   ** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
    WARNING! Your password will be stored unencrypted in /home/ubuntu/.docker/config.json.
    Configure a credential helper to remove this warning. See
    https://docs.docker.com/engine/reference/commandline/login/#credentials-store
@@ -60,8 +66,8 @@ Container Image のPushのためにレジストリへログイン
 
 Container Image のPush
 
-::
-
+.. code-block:: cmdin
+   
    docker push registry.example.com/root/nic/nginxplus-ingress-nap-dos:2.1.0
 
 
@@ -70,7 +76,7 @@ Container Image のPush
 
 先程の手順で取得したGitHubのフォルダへ移動し、必要となるリソースをデプロイします。
 
-::
+.. code-block:: cmdin
    
    cd ~/kubernetes-ingress/deployments
    kubectl apply -f common/ns-and-sa.yaml
@@ -101,12 +107,15 @@ Container Image のPush
 
 Deploymentの内容を確認
 
-::
-
+.. code-block:: cmdin
+   
    ## cd ~/kubernetes-ingress/deployments
    cat deployment/appprotect-dos-arb.yaml
 
-   ** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: deployment/appprotect-dos-arb.yaml
+
 	apiVersion: apps/v1
 	kind: Deployment
 	metadata:
@@ -139,10 +148,14 @@ Deploymentの内容を確認
 	            drop:
 	              - ALL
 
+.. code-block:: cmdin
 
 	cat service/appprotect-dos-arb-svc.yaml
 
-	** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: service/appprotect-dos-arb-svc.yaml
+
 	apiVersion: v1
 	kind: Service
 	metadata:
@@ -158,30 +171,43 @@ Deploymentの内容を確認
 	      targetPort: 3000
 
 デプロイ
-::
-
+.. code-block:: cmdin
+   
    kubectl apply -f deployment/appprotect-dos-arb.yaml
    kubectl apply -f service/appprotect-dos-arb-svc.yaml
 
 
 デプロイ結果を確認
-::
+.. code-block:: cmdin
 
    kubectl get deployment -n nginx-ingress
 
-   ** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
    NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
    appprotect-dos-arb   1/1     1            1           4m32s
 
+.. code-block:: cmdin
+   
    kubectl get pod -n nginx-ingress
 
-   ** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
    NAME                                  READY   STATUS    RESTARTS   AGE
    appprotect-dos-arb-5d89486bbc-pkbrg   1/1     Running   0          4m43s
 
+.. code-block:: cmdin
+   
    kubectl get svc -n nginx-ingress
 
-   ** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
    NAME                     TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
    svc-appprotect-dos-arb   ClusterIP   None         <none>        3000/TCP   6s
 
@@ -193,14 +219,16 @@ NGINX Ingress Controllerのpodを実行します。DeploymentとDaemonSetによ�
 
 argsで指定するパラメータの詳細は [Command-line Arguments](https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/command-line-arguments)を参照してください
 
-::
-
+.. code-block:: cmdin
+   
    ## cd ~/kubernetes-ingress/deployments
    vi deployment/nginx-plus-ingress.yaml
 
 コメントを付与した行を適切な内容に修正してください
 
-::
+.. code-block:: yaml
+  :linenos:
+  :caption: deployment/nginx-plus-ingress.yaml
 
       ** 省略 **
       spec:
@@ -227,22 +255,35 @@ argsで指定するパラメータの詳細は [Command-line Arguments](https://
 
 修正したマニフェストを指定しPodを作成します。
 
-::
+.. code-block:: cmdin
    
    ## cd ~/kubernetes-ingress/deployments
    kubectl apply -f deployment/nginx-plus-ingress.yaml
    
-   ** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
    deployment.apps/nginx-ingress created
 
+.. code-block:: cmdin
+   
    kubectl get pods --namespace=nginx-ingress | grep nginx-ingress
    
-   ** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
    nginx-ingress-7f67968b56-d8gf5       1/1     Running   0          3s
 
+.. code-block:: cmdin
+   
    kubectl get deployment -n nginx-ingress | grep nginx-ingress
 
-   ** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
    nginx-ingress   1/1     1            1           2m52s
 
 
@@ -252,12 +293,15 @@ argsで指定するパラメータの詳細は [Command-line Arguments](https://
 本ラボの環境ではKubernetesへのアクセスを受けるため、NGINX Ingress Controllerを外部へNodePortで公開します。
 以下コマンドで設定の内容を確認します。type NodePortでHTTP、HTTPSで待ち受ける設定であることを確認します。
 
-::
+.. code-block:: cmdin
    
    ## cd ~/kubernetes-ingress/deployments
    cat service/nodeport.yaml
 
-   ** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
 	apiVersion: v1
 	kind: Service
 	metadata:
@@ -280,17 +324,25 @@ argsで指定するパラメータの詳細は [Command-line Arguments](https://
 
 NodePortをデプロイします。
 
-::
+.. code-block:: cmdin
    
 	## cd ~/kubernetes-ingress/deployments
 	kubectl apply -f service/nodeport.yaml
 
-	** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
 	service/nginx-ingress created
 
+.. code-block:: cmdin
+   
 	kubectl get svc -n nginx-ingress | grep nginx-ingress
 
-	** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
 	nginx-ingress   NodePort   10.108.250.160   <none>        80:32692/TCP,443:31957/TCP   5s
 
 このコマンドを実行した結果、Kubernetes の Worker Nodeでそれぞれのサービスに対しポートが割り当てられています。
@@ -307,8 +359,8 @@ NodePortをデプロイします。
 
 先程確認したNoder Portで割り当てられたポート番号宛に通信を転送するように、NGINXを設定します。
 
-::
-
+.. code-block:: cmdin
+   
    sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf-
    sudo cat << EOF > nginx.conf
    user  nginx;
@@ -327,10 +379,10 @@ NodePortをデプロイします。
    #
    stream {
       upstream tcp80_backend {
-         server localhost:32692；    # HTTP(TCP/80)に割り当てられたポート番号
+         server node1:32692；    # HTTP(TCP/80)に割り当てられたポート番号
       }
       upstream tcp443_backend {
-         server localhost:31957;     # HTTPS(TCP/443)に割り当てられたポート番号
+         server node1:31957;     # HTTPS(TCP/443)に割り当てられたポート番号
       }
 
       server {
