@@ -22,9 +22,10 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 リソースを確認
 ----
 
+以下の通り、各リソースを適切に作成されていることを確認します。
+
 .. code-block:: cmdin
  
-  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
   kubectl get deployment
 
 .. code-block:: bash
@@ -233,6 +234,8 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
 リソースを確認
 ----
 
+以下の通り、各リソースを適切に作成されていることを確認します。
+
 .. code-block:: cmdin
     
   kubectl get ns --sort-by=.metadata.creationTimestamp
@@ -429,6 +432,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 リソースを確認
 ----
 
+以下の通り、各リソースを適切に作成されていることを確認します。
+
 .. code-block:: cmdin
  
   kubectl get deployment
@@ -587,6 +592,8 @@ Virtual Serverの内容を確認
 リソースを確認
 ----
 
+以下の通り、各リソースを適切に作成されていることを確認します。
+
 .. code-block:: cmdin
  
   kubectl get deployment
@@ -705,6 +712,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 リソースを確認
 ----
 
+以下の通り、各リソースを適切に作成されていることを確認します。
+
 .. code-block:: cmdin
  
   kubectl get pod
@@ -820,6 +829,9 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
     ----    ------          ----                 ----                      -------
     Normal  AddedOrUpdated  61s (x3 over 2m31s)  nginx-ingress-controller  Policy default/webapp-policy was added or updated
 
+
+動作確認
+----
 
 curlコマンドで動作を確認します。以下のように通信が ``拒否`` されていることが確認できます
 
@@ -1031,6 +1043,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 リソースを確認
 ----
+
+以下の通り、各リソースを適切に作成されていることを確認します。
 
 .. code-block:: cmdin
  
@@ -1298,6 +1312,8 @@ hostに対し ``jwt-policy`` というポリシーが適用されていること
 リソースを確認
 ----
 
+以下の通り、各リソースを適切に作成されていることを確認します。
+
 .. code-block:: cmdin
    
   kubectl get deployment
@@ -1417,6 +1433,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   virtual-server-idp.yaml:  host: keycloak.example.com
   virtual-server.yaml:  host: webapp.example.com
 
+先程、Keycloakで確認したSecretの内容をbase64 encodeします
+
 .. code-block:: cmdin
 
   echo -n "f0558674-70a1-45a9-8c90-02245628b8f1" | base64
@@ -1427,20 +1445,34 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
   ZjA1NTg2NzQtNzBhMS00NWE5LThjOTAtMDIyNDU2MjhiOGYx
 
+``client-secret.yaml``  に設定します
+
 .. code-block:: cmdin
   
   vi client-secret.yaml
   
-.. code-block:: bash
+.. code-block:: yaml
   :linenos:
-  :caption: 実行結果サンプル
+  :caption: Client Secret の指定
 
-  ああああ
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: oidc-secret
+  type: nginx.org/oidc
+  data:
+    client-secret: ***BASE64 EncodeしたSECRET情報***
+
+OIDC PolicyとClientSecretをデプロイします。
 
 .. code-block:: cmdin
    
   kubectl apply -f client-secret.yaml
   kubectl apply -f oidc.yaml
+
+本書の環境では単一のPodでNGINX Ingress Controllerを動作させているためZone Synchronizationの設定はしません。必要となる方は手順を参考に実施してください。
+
+最後にNGINX Ingress ControllerをWebアプリケーション用のOIDC RP として動作させるため、VirtualServerを作成します。kbue-dnsのIPアドレスを確認し、virtual-server.yamlに設定を追加します。
 
 .. code-block:: cmdin
    
@@ -1456,6 +1488,34 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   
   vi virtual-server.yaml
 
+.. code-block:: yaml
+  :linenos:
+  :caption: server-snippetsにkube-dnsのIPをresolverとして指定
+  :emphasize-lines: 11,12
+
+  apiVersion: k8s.nginx.org/v1
+  kind: VirtualServer
+  metadata:
+    name: webapp
+  spec:
+    host: webapp.example.com
+    tls:
+      secret: tls-secret
+      redirect:
+        enable: true
+    server-snippets: |
+      resolver 10.96.0.10;                     # kube-dnsのIPアドレスを指定します
+    upstreams:
+      - name: webapp
+        service: webapp-svc
+        port: 80
+    routes:
+      - path: /
+        policies:
+        - name: oidc-policy
+        action:
+          pass: webapp
+
 .. code-block:: cmdin
   
   kubectl apply -f virtual-server.yaml
@@ -1464,6 +1524,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 リソースを確認
 ----
+
+以下の通り、各リソースを適切に作成されていることを確認します。
 
 
 .. code-block:: cmdin
@@ -1574,6 +1636,14 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   kubectl create -f tls-secret.yaml
   kubectl apply -f virtual-server.yaml
 
+
+リソースを確認
+----
+
+ポイントとなるファイルの内容を確認します。
+
+``ingress-mtls-secret.yaml`` でクライアント証明書の評価に用いる証明書を作成します。
+
 .. code-block:: bash
   :linenos:
   :caption: ingress-mtls-secret.yaml
@@ -1584,44 +1654,14 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   apiVersion: v1
   type: nginx.org/ca
   data:
-    ca.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQvVENDQXVXZ0F3SUJBZ0lVSzdhbU14OFlLWG1BVG51SkZETDlWS2ZUR2ZNd0RRWUpLb1pJaHZjTkFRRUwKQlFBd2dZMHhDekFKQmdOVkJBWVRBbFZUTVFzd0NRWURWUVFJREFKRFFURVdNQlFHQTFVRUJ3d05VMkZ1SUVaeQpZVzVqYVhOamJ6RU9NQXdHQTFVRUNnd0ZUa2RKVGxneEREQUtCZ05WQkFzTUEwdEpRekVXTUJRR0ExVUVBd3dOCmEybGpMbTVuYVc1NExtTnZiVEVqTUNFR0NTcUdTSWIzRFFFSkFSWVVhM1ZpWlhKdVpYUmxjMEJ1WjJsdWVDNWoKYjIwd0hoY05NakF3T1RFNE1qQXlOVEkyV2hjTk16QXdPVEUyTWpBeU5USTJXakNCalRFTE1Ba0dBMVVFQmhNQwpWVk14Q3pBSkJnTlZCQWdNQWtOQk1SWXdGQVlEVlFRSERBMVRZVzRnUm5KaGJtTnBjMk52TVE0d0RBWURWUVFLCkRBVk9SMGxPV0RFTU1Bb0dBMVVFQ3d3RFMwbERNUll3RkFZRFZRUUREQTFyYVdNdWJtZHBibmd1WTI5dE1TTXcKSVFZSktvWklodmNOQVFrQkZoUnJkV0psY201bGRHVnpRRzVuYVc1NExtTnZiVENDQVNJd0RRWUpLb1pJaHZjTgpBUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTmFINVRzaTZzaUFsU085dEJnYmY3VVRwcWowMUhRTlQ2UjhtQy9pCjhLYXFaSW9XSUdvN2xhTW9xTDYydTc4ay9WOHM2Z0FJaU1DSzBjekFvTFhNSnlJQkxQeTg4Yzdtc2xwZXgxTkEKVmRtMkVTVkN6bVlERE1TT3FpVmszWmpYeC9URmo2QzhNRFhhRkZUWFg1dWdtbWdscnFCWlh0OVI5VVBwVTJMNwo1bEZ0NlJ2R3VGczgvbVZORVR5c1A0SFhCWlh2ZE9mdG1YWUkvK01hOW5CMzIzNjdmcTI0L0RKZ2YvK2xRbUsxCkJLR3poSTZSc1pSSmdWOXdpK1VuZTBYNjlaS2lLOFdXU3lZS252YnRrcHZuTDA2dGNJaXJZNi80UzZ4Sm1HRVQKZEJUNmVxc0NoSUpQUStWSEp5dTROdnV6WmVCUXpGdmMwNytnUGZkVWZra1FXODhDQXdFQUFhTlRNRkV3SFFZRApWUjBPQkJZRUZKUGdhcnFYa00rdEJ0djVhdndTUWhUQmpTU2VNQjhHQTFVZEl3UVlNQmFBRkpQZ2FycVhrTSt0CkJ0djVhdndTUWhUQmpTU2VNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUIKQUl3WXpoY0s4OWtRL0xGWjZFRHgrQWp2bnJTVSs1cmdwQkgrRjVTNUUyY3pXOE5rNXhySnl0Y0ZUbUtlKzZScwpENHlxeTZSVVFEeWNYaDlPelBjbzgzYTBoeFlCZ1M5MWtJa25wYWF4dndLRDJleWc3UGNnK1lkS1FhZFlMcUY0CmI3cWVtc1FVVkpOWHdkZS9VanRBejlEOTh4dngwM2hQY2Qwb2dzUUhWZ21BZVpFd2l3UzFmTy9WNUE4dTl3MEkKcHlJRTVReXlHcHNpS2dpalpiMmhrS05RVHVJcEhiVnFydVA4eEV6TlFnamhkdS9uUW5OYy9lRUltVUlrQkFUVQpiSHdQc2xwYzVhdVV1TXJxR3lEQ0p2QUJpV3J2SmE3Yi9XcmtDT3FUWVhtR2NGM0w1ZU9FeTBhYkp0M2NNcSs5CnJLTUNVQWlkNG0yNEthWnc3OUk2anNBPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    ca.crt: **省略**
 
-.. code-block:: cmdin
-
-  echo -n "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQvVENDQXVXZ0F3SUJBZ0lVSzdhbU14OFlLWG1BVG51SkZETDlWS2ZUR2ZNd0RRWUpLb1pJaHZjTkFRRUwKQlFBd2dZMHhDekFKQmdOVkJBWVRBbFZUTVFzd0NRWURWUVFJREFKRFFURVdNQlFHQTFVRUJ3d05VMkZ1SUVaeQpZVzVqYVhOamJ6RU9NQXdHQTFVRUNnd0ZUa2RKVGxneEREQUtCZ05WQkFzTUEwdEpRekVXTUJRR0ExVUVBd3dOCmEybGpMbTVuYVc1NExtTnZiVEVqTUNFR0NTcUdTSWIzRFFFSkFSWVVhM1ZpWlhKdVpYUmxjMEJ1WjJsdWVDNWoKYjIwd0hoY05NakF3T1RFNE1qQXlOVEkyV2hjTk16QXdPVEUyTWpBeU5USTJXakNCalRFTE1Ba0dBMVVFQmhNQwpWVk14Q3pBSkJnTlZCQWdNQWtOQk1SWXdGQVlEVlFRSERBMVRZVzRnUm5KaGJtTnBjMk52TVE0d0RBWURWUVFLCkRBVk9SMGxPV0RFTU1Bb0dBMVVFQ3d3RFMwbERNUll3RkFZRFZRUUREQTFyYVdNdWJtZHBibmd1WTI5dE1TTXcKSVFZSktvWklodmNOQVFrQkZoUnJkV0psY201bGRHVnpRRzVuYVc1NExtTnZiVENDQVNJd0RRWUpLb1pJaHZjTgpBUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTmFINVRzaTZzaUFsU085dEJnYmY3VVRwcWowMUhRTlQ2UjhtQy9pCjhLYXFaSW9XSUdvN2xhTW9xTDYydTc4ay9WOHM2Z0FJaU1DSzBjekFvTFhNSnlJQkxQeTg4Yzdtc2xwZXgxTkEKVmRtMkVTVkN6bVlERE1TT3FpVmszWmpYeC9URmo2QzhNRFhhRkZUWFg1dWdtbWdscnFCWlh0OVI5VVBwVTJMNwo1bEZ0NlJ2R3VGczgvbVZORVR5c1A0SFhCWlh2ZE9mdG1YWUkvK01hOW5CMzIzNjdmcTI0L0RKZ2YvK2xRbUsxCkJLR3poSTZSc1pSSmdWOXdpK1VuZTBYNjlaS2lLOFdXU3lZS252YnRrcHZuTDA2dGNJaXJZNi80UzZ4Sm1HRVQKZEJUNmVxc0NoSUpQUStWSEp5dTROdnV6WmVCUXpGdmMwNytnUGZkVWZra1FXODhDQXdFQUFhTlRNRkV3SFFZRApWUjBPQkJZRUZKUGdhcnFYa00rdEJ0djVhdndTUWhUQmpTU2VNQjhHQTFVZEl3UVlNQmFBRkpQZ2FycVhrTSt0CkJ0djVhdndTUWhUQmpTU2VNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUIKQUl3WXpoY0s4OWtRL0xGWjZFRHgrQWp2bnJTVSs1cmdwQkgrRjVTNUUyY3pXOE5rNXhySnl0Y0ZUbUtlKzZScwpENHlxeTZSVVFEeWNYaDlPelBjbzgzYTBoeFlCZ1M5MWtJa25wYWF4dndLRDJleWc3UGNnK1lkS1FhZFlMcUY0CmI3cWVtc1FVVkpOWHdkZS9VanRBejlEOTh4dngwM2hQY2Qwb2dzUUhWZ21BZVpFd2l3UzFmTy9WNUE4dTl3MEkKcHlJRTVReXlHcHNpS2dpalpiMmhrS05RVHVJcEhiVnFydVA4eEV6TlFnamhkdS9uUW5OYy9lRUltVUlrQkFUVQpiSHdQc2xwYzVhdVV1TXJxR3lEQ0p2QUJpV3J2SmE3Yi9XcmtDT3FUWVhtR2NGM0w1ZU9FeTBhYkp0M2NNcSs5CnJLTUNVQWlkNG0yNEthWnc3OUk2anNBPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==" | base64 -d > ca-crt.txt
-  openssl x509 -text -noout -in ca-crt.txt
-  Certificate:
-    Data:
-        Version: 3 (0x2)
-        Serial Number:
-            2b:b6:a6:33:1f:18:29:79:80:4e:7b:89:14:32:fd:54:a7:d3:19:f3
-        Signature Algorithm: sha256WithRSAEncryption
-        Issuer: C = US, ST = CA, L = San Francisco, O = NGINX, OU = KIC, CN = kic.nginx.com, emailAddress = kubernetes@nginx.com
-        Validity
-            Not Before: Sep 18 20:25:26 2020 GMT
-            Not After : Sep 16 20:25:26 2030 GMT
-        Subject: C = US, ST = CA, L = San Francisco, O = NGINX, OU = KIC, CN = kic.nginx.com, emailAddress = kubernetes@nginx.com
-        **省略**
-
-.. code-block:: cmdin
-
-  openssl x509 -text -noout -in client-cert.pem
-  Certificate:
-      Data:
-          Version: 1 (0x0)
-          Serial Number: 1 (0x1)
-          Signature Algorithm: sha256WithRSAEncryption
-          Issuer: C = US, ST = CA, L = San Francisco, O = NGINX, OU = KIC, CN = kic.nginx.com, emailAddress = kubernetes@nginx.com
-          Validity
-              Not Before: Sep 18 20:27:15 2020 GMT
-              Not After : Sep 16 20:27:15 2030 GMT
-          Subject: C = US, ST = CA, L = San Francisco, O = NGINX
-          **省略**
-
+``ingress-mtls.yaml`` は別途作成した ``ingress-mtls-secret`` をclientCertSecretに指定し(7)、Virtual Serverで利用するPolicyを作成します。
 
 .. code-block:: bash
   :linenos:
   :caption: ingress-mtls.yaml
+  :emphasize-lines: 7
 
   apiVersion: k8s.nginx.org/v1
   kind: Policy
@@ -1633,9 +1673,12 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
       verifyClient: "on"
       verifyDepth: 1
 
+作成した ``ingress-mtls-policy`` というPolicyをリクエストに対し適用するため、TLSの指定(7,8)と、Policyの指定(9,10)を行っています
+
 .. code-block:: bash
   :linenos:
   :caption: virtual-server.yaml
+  :emphasize-lines: 7,8,9,10
 
   apiVersion: k8s.nginx.org/v1
   kind: VirtualServer
@@ -1655,6 +1698,101 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
     - path: /
       action:
         pass: webapp
+
+通信に利用される証明書の内容は、以下コマンドを参考に確認してください
+
+.. code-block:: cmdin
+
+  # echo -n <ca.crt に指定された文字列> | base64 -d
+  echo -n "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQvVENDQXVXZ0F3SUJBZ0lVSzdhbU14OFlLWG1BVG51SkZETDlWS2ZUR2ZNd0RRWUpLb1pJaHZjTkFRRUwKQlFBd2dZMHhDekFKQmdOVkJBWVRBbFZUTVFzd0NRWURWUVFJREFKRFFURVdNQlFHQTFVRUJ3d05VMkZ1SUVaeQpZVzVqYVhOamJ6RU9NQXdHQTFVRUNnd0ZUa2RKVGxneEREQUtCZ05WQkFzTUEwdEpRekVXTUJRR0ExVUVBd3dOCmEybGpMbTVuYVc1NExtTnZiVEVqTUNFR0NTcUdTSWIzRFFFSkFSWVVhM1ZpWlhKdVpYUmxjMEJ1WjJsdWVDNWoKYjIwd0hoY05NakF3T1RFNE1qQXlOVEkyV2hjTk16QXdPVEUyTWpBeU5USTJXakNCalRFTE1Ba0dBMVVFQmhNQwpWVk14Q3pBSkJnTlZCQWdNQWtOQk1SWXdGQVlEVlFRSERBMVRZVzRnUm5KaGJtTnBjMk52TVE0d0RBWURWUVFLCkRBVk9SMGxPV0RFTU1Bb0dBMVVFQ3d3RFMwbERNUll3RkFZRFZRUUREQTFyYVdNdWJtZHBibmd1WTI5dE1TTXcKSVFZSktvWklodmNOQVFrQkZoUnJkV0psY201bGRHVnpRRzVuYVc1NExtTnZiVENDQVNJd0RRWUpLb1pJaHZjTgpBUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTmFINVRzaTZzaUFsU085dEJnYmY3VVRwcWowMUhRTlQ2UjhtQy9pCjhLYXFaSW9XSUdvN2xhTW9xTDYydTc4ay9WOHM2Z0FJaU1DSzBjekFvTFhNSnlJQkxQeTg4Yzdtc2xwZXgxTkEKVmRtMkVTVkN6bVlERE1TT3FpVmszWmpYeC9URmo2QzhNRFhhRkZUWFg1dWdtbWdscnFCWlh0OVI5VVBwVTJMNwo1bEZ0NlJ2R3VGczgvbVZORVR5c1A0SFhCWlh2ZE9mdG1YWUkvK01hOW5CMzIzNjdmcTI0L0RKZ2YvK2xRbUsxCkJLR3poSTZSc1pSSmdWOXdpK1VuZTBYNjlaS2lLOFdXU3lZS252YnRrcHZuTDA2dGNJaXJZNi80UzZ4Sm1HRVQKZEJUNmVxc0NoSUpQUStWSEp5dTROdnV6WmVCUXpGdmMwNytnUGZkVWZra1FXODhDQXdFQUFhTlRNRkV3SFFZRApWUjBPQkJZRUZKUGdhcnFYa00rdEJ0djVhdndTUWhUQmpTU2VNQjhHQTFVZEl3UVlNQmFBRkpQZ2FycVhrTSt0CkJ0djVhdndTUWhUQmpTU2VNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUIKQUl3WXpoY0s4OWtRL0xGWjZFRHgrQWp2bnJTVSs1cmdwQkgrRjVTNUUyY3pXOE5rNXhySnl0Y0ZUbUtlKzZScwpENHlxeTZSVVFEeWNYaDlPelBjbzgzYTBoeFlCZ1M5MWtJa25wYWF4dndLRDJleWc3UGNnK1lkS1FhZFlMcUY0CmI3cWVtc1FVVkpOWHdkZS9VanRBejlEOTh4dngwM2hQY2Qwb2dzUUhWZ21BZVpFd2l3UzFmTy9WNUE4dTl3MEkKcHlJRTVReXlHcHNpS2dpalpiMmhrS05RVHVJcEhiVnFydVA4eEV6TlFnamhkdS9uUW5OYy9lRUltVUlrQkFUVQpiSHdQc2xwYzVhdVV1TXJxR3lEQ0p2QUJpV3J2SmE3Yi9XcmtDT3FUWVhtR2NGM0w1ZU9FeTBhYkp0M2NNcSs5CnJLTUNVQWlkNG0yNEthWnc3OUk2anNBPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==" | base64 -d > ca-crt.txt
+  openssl x509 -text -noout -in ca-crt.txt
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            2b:b6:a6:33:1f:18:29:79:80:4e:7b:89:14:32:fd:54:a7:d3:19:f3
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C = US, ST = CA, L = San Francisco, O = NGINX, OU = KIC, CN = kic.nginx.com, emailAddress = kubernetes@nginx.com
+        Validity
+            Not Before: Sep 18 20:25:26 2020 GMT
+            Not After : Sep 16 20:25:26 2030 GMT
+        Subject: C = US, ST = CA, L = San Francisco, O = NGINX, OU = KIC, CN = kic.nginx.com, emailAddress = kubernetes@nginx.com
+        **省略**
+
+.. code-block:: cmdin
+
+  openssl x509 -text -noout -in client-cert.pem
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  Certificate:
+      Data:
+          Version: 1 (0x0)
+          Serial Number: 1 (0x1)
+          Signature Algorithm: sha256WithRSAEncryption
+          Issuer: C = US, ST = CA, L = San Francisco, O = NGINX, OU = KIC, CN = kic.nginx.com, emailAddress = kubernetes@nginx.com
+          Validity
+              Not Before: Sep 18 20:27:15 2020 GMT
+              Not After : Sep 16 20:27:15 2030 GMT
+          Subject: C = US, ST = CA, L = San Francisco, O = NGINX
+          **省略**
+
+
+
+
+以下の通り、各リソースを適切に作成されていることを確認します。
+
+.. code-block:: cmdin
+
+  kubectl get deployment
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME     READY   UP-TO-DATE   AVAILABLE   AGE
+  webapp   1/1     1            1           8s
+
+.. code-block:: cmdin
+
+  kubectl get secret  | grep -e tls-secret
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  ingress-mtls-secret   nginx.org/ca                          1      32s
+  tls-secret            kubernetes.io/tls                     2      31s
+
+.. code-block:: cmdin
+
+  kubectl get policy
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME                  STATE   AGE
+  ingress-mtls-policy   Valid   44s
+
+.. code-block:: cmdin
+
+  kubectl get vs
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME     STATE   HOST                 IP    PORTS   AGE
+  webapp   Valid   webapp.example.com                 48s
+
 
 
 動作確認
@@ -1953,8 +2091,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
       action:
         pass: secure-app
 
-各リソースを反映した結果を確認します
-以下の通り、適切に作成されていることを確認します。
+
+以下の通り、各リソースを適切に作成されていることを確認します。
 
 .. code-block:: cmdin
     
