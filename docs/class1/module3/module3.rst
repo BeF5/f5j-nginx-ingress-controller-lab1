@@ -1192,15 +1192,27 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 
 
-.. code-block:: bash
+.. code-block:: shell
 
   kubectl get secret | grep -e oidc -e tls-secret
 
-.. code-block:: bash
+.. code-block:: shell
   :linenos:
 
   oidc-secret           nginx.org/oidc                        1      4m29s
   tls-secret            kubernetes.io/tls                     2      21m
+
+
+.. code-block:: cmdin
+
+  kubectl get secret | grep -e oidc -e tls-secret
+
+.. code-block:: cmdout
+  :linenos:
+
+  oidc-secret           nginx.org/oidc                        1      4m29s
+  tls-secret            kubernetes.io/tls                     2      21m
+
 
 
 ::
