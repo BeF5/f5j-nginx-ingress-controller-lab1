@@ -1,7 +1,9 @@
+/*
 div[class^='highlight'] pre, div[class~='docutils'], code, .code.descname {
     background: lightgrey !important;
 }
 
+*/
 img {
 /*	max-width: 100%;
     height: auto;*/
@@ -10,4 +12,11 @@ img {
 
 table {
 	margin-bottom: 12px;
+}
+
+.highlight-cmdin pre {
+    background: #AFEEEE;
+}
+.highlight-cmdout pre {
+    background: #E9967A;
 }
