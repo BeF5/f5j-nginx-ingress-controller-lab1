@@ -17,8 +17,12 @@ table {
 	margin-bottom: 12px;
 }
 
+.highlight pre {
+    background: #d1d1d1;
+}
+
 .highlight-cmdin pre {
-    background: #bdd8d8;
+    background: #caddeb;
 }
 
 
