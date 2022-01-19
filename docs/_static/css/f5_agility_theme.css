@@ -2,10 +2,11 @@
 div[class^='highlight'] pre, div[class~='docutils'], code, .code.descname {
     background: lightgrey !important;
 }
-*/
+
 div[class^='highlight'] pre, div[class~='docutils'], code, .code.descname {
     background: rgb(214, 214, 214) !important;
 }
+*/
 img {
 /*	max-width: 100%;
     height: auto;*/
