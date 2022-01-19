@@ -1110,11 +1110,14 @@ hostに対し ``jwt-policy`` というポリシーが適用されていること
 
 Policyが適用されたVSにJWTをHeaderに付与していないため、通信に対し ``401 Authorization required`` が応答されていることを確認します
 
-::
-
+.. code-block:: cmdin
+  
     curl -H "Host:webapp.example.com" http://localhost/
     
-    ** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  
     <html>
     <head><title>401 Authorization Required</title></head>
     <body>
@@ -1125,11 +1128,14 @@ Policyが適用されたVSにJWTをHeaderに付与していないため、通信
 
 curlコマンドで動作を確認します。以下のように通信が ``許可`` されていることが確認できます
 
-::
+.. code-block:: cmdin
 
-    curl -H "Host:webapp.example.com" http://localhost/ -H "Token: `cat token.jwt`"
+  curl -H "Host:webapp.example.com" http://localhost/ -H "Token: `cat token.jwt`"
     
-    ** 実行結果サンプル **
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
     Server address: 192.168.127.57:8080
     Server name: webapp-64d444885-r5fnt
     Date: 18/Jan/2022:12:49:59 +0000
@@ -1141,14 +1147,13 @@ curlコマンドで動作を確認します。以下のように通信が ``許�
 
 リソースの削除
 
-::
-
-    ## cd ~/kubernetes-ingress/examples/custom-resources/jwt/
-
-    kubectl delete -f virtual-server.yaml
-    kubectl delete -f jwt.yaml
-    kubectl delete -f jwk-secret.yaml
-    kubectl delete -f webapp.yaml
+.. code-block:: cmdin
+  
+  ## cd ~/kubernetes-ingress/examples/custom-resources/jwt/
+  kubectl delete -f virtual-server.yaml
+  kubectl delete -f jwt.yaml
+  kubectl delete -f jwk-secret.yaml
+  kubectl delete -f webapp.yaml
 
 Ingress Controller で OIDC RPのデプロイ
 ====
@@ -1158,31 +1163,63 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 サンプルアプリケーションをデプロイ
 
-::
-
+.. code-block:: cmdin
+  
   cd ~/kubernetes-ingress/examples/custom-resources/oidc
-
   kubectl apply -f tls-secret.yaml
   kubectl apply -f webapp.yaml
   kubectl apply -f keycloak.yaml
   kubectl apply -f virtual-server-idp.yaml
+
+.. code-block:: cmdin
   
   grep host virtual-server*yaml
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
   virtual-server-idp.yaml:  host: keycloak.example.com
   virtual-server.yaml:  host: webapp.example.com
   
   echo -n "f0558674-70a1-45a9-8c90-02245628b8f1" | base64
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
   ZjA1NTg2NzQtNzBhMS00NWE5LThjOTAtMDIyNDU2MjhiOGYx
+
+.. code-block:: cmdin
   
   vi client-secret.yaml
   
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  ああああ
+
+.. code-block:: cmdin
+   
   kubectl apply -f client-secret.yaml
   kubectl apply -f oidc.yaml
-  
+
+.. code-block:: cmdin
+   
   kubectl get svc -n kube-system | grep kube-dns
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
   kube-dns   ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   12d
+
+.. code-block:: cmdin
   
   vi virtual-server.yaml
+
+.. code-block:: cmdin
   
   kubectl apply -f virtual-server.yaml
 
@@ -1203,7 +1240,6 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   tls-secret            kubernetes.io/tls                     2      21m
 
 .. code-block:: cmdin
-  
   kubectl get pod
 
 .. code-block:: bash
@@ -1232,7 +1268,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 .. code-block:: bash
   :linenos:
-  :caption: output sample
+  :caption: 実行結果サンプル
 
   NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
   keycloak     ClusterIP   10.97.4.138     <none>        8080/TCP   22m
@@ -1245,7 +1281,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 .. code-block:: bash
   :linenos:
-  :caption: output sample
+  :caption: 実行結果サンプル
 
   NAME          STATE   AGE
   oidc-policy   Valid   9m28s
@@ -1256,8 +1292,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 .. code-block:: bash
   :linenos:
-  :caption: output sample
-  
+  :caption: 実行結果サンプル
+
   NAME       STATE   HOST                   IP    PORTS   AGE
   keycloak   Valid   keycloak.example.com                 23m
   webapp     Valid   webapp.example.com                   7m40s
@@ -1272,6 +1308,7 @@ Chromeブラウザを開き、 ``Secret Tab`` を開いてください。
 リソースの削除
 
 .. code-block:: cmdin
+
   kubectl delete -f webapp.yaml
   kubectl delete -f keycloak.yaml
   kubectl delete -f virtual-server-idp.yaml
