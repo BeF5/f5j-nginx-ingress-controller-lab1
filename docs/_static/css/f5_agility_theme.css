@@ -13,9 +13,9 @@ table {
 	margin-bottom: 12px;
 }
 
-.caption-text pre {
+.caption-text {
     float:left;
-    background: lightgrey;
+    background: rgb(212, 212, 212);
     font-weight:bold;
 }
 .highlight pre {
