@@ -17,9 +17,13 @@ table {
 
 .caption-text {
     float:left;
-    background: rgb(218, 222, 223);
     font-weight:bold;
 }
+
+.code-block-caption {
+    background: rgb(218, 222, 223);
+}
+
 .code pre {
     background: #eeeeee;
 }
