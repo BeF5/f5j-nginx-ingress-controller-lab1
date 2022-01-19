@@ -1529,6 +1529,316 @@ Ingress MTLS
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/ingress-mtls
 
+サンプルアプリケーションをデプロイ
+
+.. code-block:: cmdin
+
+  cd ~/kubernetes-ingress/examples/custom-resources/ingress-mtls
+  kubectl apply -f webapp.yaml
+  kubectl apply -f ingress-mtls-secret.yaml
+  kubectl apply -f ingress-mtls.yaml
+  kubectl create -f tls-secret.yaml
+  kubectl apply -f virtual-server.yaml
+
+
+.. code-block:: bash
+  :linenos:
+  :caption: ingress-mtls-secret.yaml
+
+  kind: Secret
+  metadata:
+    name: ingress-mtls-secret
+  apiVersion: v1
+  type: nginx.org/ca
+  data:
+    ca.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQvVENDQXVXZ0F3SUJBZ0lVSzdhbU14OFlLWG1BVG51SkZETDlWS2ZUR2ZNd0RRWUpLb1pJaHZjTkFRRUwKQlFBd2dZMHhDekFKQmdOVkJBWVRBbFZUTVFzd0NRWURWUVFJREFKRFFURVdNQlFHQTFVRUJ3d05VMkZ1SUVaeQpZVzVqYVhOamJ6RU9NQXdHQTFVRUNnd0ZUa2RKVGxneEREQUtCZ05WQkFzTUEwdEpRekVXTUJRR0ExVUVBd3dOCmEybGpMbTVuYVc1NExtTnZiVEVqTUNFR0NTcUdTSWIzRFFFSkFSWVVhM1ZpWlhKdVpYUmxjMEJ1WjJsdWVDNWoKYjIwd0hoY05NakF3T1RFNE1qQXlOVEkyV2hjTk16QXdPVEUyTWpBeU5USTJXakNCalRFTE1Ba0dBMVVFQmhNQwpWVk14Q3pBSkJnTlZCQWdNQWtOQk1SWXdGQVlEVlFRSERBMVRZVzRnUm5KaGJtTnBjMk52TVE0d0RBWURWUVFLCkRBVk9SMGxPV0RFTU1Bb0dBMVVFQ3d3RFMwbERNUll3RkFZRFZRUUREQTFyYVdNdWJtZHBibmd1WTI5dE1TTXcKSVFZSktvWklodmNOQVFrQkZoUnJkV0psY201bGRHVnpRRzVuYVc1NExtTnZiVENDQVNJd0RRWUpLb1pJaHZjTgpBUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTmFINVRzaTZzaUFsU085dEJnYmY3VVRwcWowMUhRTlQ2UjhtQy9pCjhLYXFaSW9XSUdvN2xhTW9xTDYydTc4ay9WOHM2Z0FJaU1DSzBjekFvTFhNSnlJQkxQeTg4Yzdtc2xwZXgxTkEKVmRtMkVTVkN6bVlERE1TT3FpVmszWmpYeC9URmo2QzhNRFhhRkZUWFg1dWdtbWdscnFCWlh0OVI5VVBwVTJMNwo1bEZ0NlJ2R3VGczgvbVZORVR5c1A0SFhCWlh2ZE9mdG1YWUkvK01hOW5CMzIzNjdmcTI0L0RKZ2YvK2xRbUsxCkJLR3poSTZSc1pSSmdWOXdpK1VuZTBYNjlaS2lLOFdXU3lZS252YnRrcHZuTDA2dGNJaXJZNi80UzZ4Sm1HRVQKZEJUNmVxc0NoSUpQUStWSEp5dTROdnV6WmVCUXpGdmMwNytnUGZkVWZra1FXODhDQXdFQUFhTlRNRkV3SFFZRApWUjBPQkJZRUZKUGdhcnFYa00rdEJ0djVhdndTUWhUQmpTU2VNQjhHQTFVZEl3UVlNQmFBRkpQZ2FycVhrTSt0CkJ0djVhdndTUWhUQmpTU2VNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUIKQUl3WXpoY0s4OWtRL0xGWjZFRHgrQWp2bnJTVSs1cmdwQkgrRjVTNUUyY3pXOE5rNXhySnl0Y0ZUbUtlKzZScwpENHlxeTZSVVFEeWNYaDlPelBjbzgzYTBoeFlCZ1M5MWtJa25wYWF4dndLRDJleWc3UGNnK1lkS1FhZFlMcUY0CmI3cWVtc1FVVkpOWHdkZS9VanRBejlEOTh4dngwM2hQY2Qwb2dzUUhWZ21BZVpFd2l3UzFmTy9WNUE4dTl3MEkKcHlJRTVReXlHcHNpS2dpalpiMmhrS05RVHVJcEhiVnFydVA4eEV6TlFnamhkdS9uUW5OYy9lRUltVUlrQkFUVQpiSHdQc2xwYzVhdVV1TXJxR3lEQ0p2QUJpV3J2SmE3Yi9XcmtDT3FUWVhtR2NGM0w1ZU9FeTBhYkp0M2NNcSs5CnJLTUNVQWlkNG0yNEthWnc3OUk2anNBPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+
+.. code-block:: cmdin
+
+  echo -n "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQvVENDQXVXZ0F3SUJBZ0lVSzdhbU14OFlLWG1BVG51SkZETDlWS2ZUR2ZNd0RRWUpLb1pJaHZjTkFRRUwKQlFBd2dZMHhDekFKQmdOVkJBWVRBbFZUTVFzd0NRWURWUVFJREFKRFFURVdNQlFHQTFVRUJ3d05VMkZ1SUVaeQpZVzVqYVhOamJ6RU9NQXdHQTFVRUNnd0ZUa2RKVGxneEREQUtCZ05WQkFzTUEwdEpRekVXTUJRR0ExVUVBd3dOCmEybGpMbTVuYVc1NExtTnZiVEVqTUNFR0NTcUdTSWIzRFFFSkFSWVVhM1ZpWlhKdVpYUmxjMEJ1WjJsdWVDNWoKYjIwd0hoY05NakF3T1RFNE1qQXlOVEkyV2hjTk16QXdPVEUyTWpBeU5USTJXakNCalRFTE1Ba0dBMVVFQmhNQwpWVk14Q3pBSkJnTlZCQWdNQWtOQk1SWXdGQVlEVlFRSERBMVRZVzRnUm5KaGJtTnBjMk52TVE0d0RBWURWUVFLCkRBVk9SMGxPV0RFTU1Bb0dBMVVFQ3d3RFMwbERNUll3RkFZRFZRUUREQTFyYVdNdWJtZHBibmd1WTI5dE1TTXcKSVFZSktvWklodmNOQVFrQkZoUnJkV0psY201bGRHVnpRRzVuYVc1NExtTnZiVENDQVNJd0RRWUpLb1pJaHZjTgpBUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTmFINVRzaTZzaUFsU085dEJnYmY3VVRwcWowMUhRTlQ2UjhtQy9pCjhLYXFaSW9XSUdvN2xhTW9xTDYydTc4ay9WOHM2Z0FJaU1DSzBjekFvTFhNSnlJQkxQeTg4Yzdtc2xwZXgxTkEKVmRtMkVTVkN6bVlERE1TT3FpVmszWmpYeC9URmo2QzhNRFhhRkZUWFg1dWdtbWdscnFCWlh0OVI5VVBwVTJMNwo1bEZ0NlJ2R3VGczgvbVZORVR5c1A0SFhCWlh2ZE9mdG1YWUkvK01hOW5CMzIzNjdmcTI0L0RKZ2YvK2xRbUsxCkJLR3poSTZSc1pSSmdWOXdpK1VuZTBYNjlaS2lLOFdXU3lZS252YnRrcHZuTDA2dGNJaXJZNi80UzZ4Sm1HRVQKZEJUNmVxc0NoSUpQUStWSEp5dTROdnV6WmVCUXpGdmMwNytnUGZkVWZra1FXODhDQXdFQUFhTlRNRkV3SFFZRApWUjBPQkJZRUZKUGdhcnFYa00rdEJ0djVhdndTUWhUQmpTU2VNQjhHQTFVZEl3UVlNQmFBRkpQZ2FycVhrTSt0CkJ0djVhdndTUWhUQmpTU2VNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUIKQUl3WXpoY0s4OWtRL0xGWjZFRHgrQWp2bnJTVSs1cmdwQkgrRjVTNUUyY3pXOE5rNXhySnl0Y0ZUbUtlKzZScwpENHlxeTZSVVFEeWNYaDlPelBjbzgzYTBoeFlCZ1M5MWtJa25wYWF4dndLRDJleWc3UGNnK1lkS1FhZFlMcUY0CmI3cWVtc1FVVkpOWHdkZS9VanRBejlEOTh4dngwM2hQY2Qwb2dzUUhWZ21BZVpFd2l3UzFmTy9WNUE4dTl3MEkKcHlJRTVReXlHcHNpS2dpalpiMmhrS05RVHVJcEhiVnFydVA4eEV6TlFnamhkdS9uUW5OYy9lRUltVUlrQkFUVQpiSHdQc2xwYzVhdVV1TXJxR3lEQ0p2QUJpV3J2SmE3Yi9XcmtDT3FUWVhtR2NGM0w1ZU9FeTBhYkp0M2NNcSs5CnJLTUNVQWlkNG0yNEthWnc3OUk2anNBPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==" | base64 -d > ca-crt.txt
+  openssl x509 -text -noout -in ca-crt.txt
+  Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            2b:b6:a6:33:1f:18:29:79:80:4e:7b:89:14:32:fd:54:a7:d3:19:f3
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C = US, ST = CA, L = San Francisco, O = NGINX, OU = KIC, CN = kic.nginx.com, emailAddress = kubernetes@nginx.com
+        Validity
+            Not Before: Sep 18 20:25:26 2020 GMT
+            Not After : Sep 16 20:25:26 2030 GMT
+        Subject: C = US, ST = CA, L = San Francisco, O = NGINX, OU = KIC, CN = kic.nginx.com, emailAddress = kubernetes@nginx.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                RSA Public-Key: (2048 bit)
+                Modulus:
+                    00:d6:87:e5:3b:22:ea:c8:80:95:23:bd:b4:18:1b:
+                    7f:b5:13:a6:a8:f4:d4:74:0d:4f:a4:7c:98:2f:e2:
+                    f0:a6:aa:64:8a:16:20:6a:3b:95:a3:28:a8:be:b6:
+                    bb:bf:24:fd:5f:2c:ea:00:08:88:c0:8a:d1:cc:c0:
+                    a0:b5:cc:27:22:01:2c:fc:bc:f1:ce:e6:b2:5a:5e:
+                    c7:53:40:55:d9:b6:11:25:42:ce:66:03:0c:c4:8e:
+                    aa:25:64:dd:98:d7:c7:f4:c5:8f:a0:bc:30:35:da:
+                    14:54:d7:5f:9b:a0:9a:68:25:ae:a0:59:5e:df:51:
+                    f5:43:e9:53:62:fb:e6:51:6d:e9:1b:c6:b8:5b:3c:
+                    fe:65:4d:11:3c:ac:3f:81:d7:05:95:ef:74:e7:ed:
+                    99:76:08:ff:e3:1a:f6:70:77:db:7e:bb:7e:ad:b8:
+                    fc:32:60:7f:ff:a5:42:62:b5:04:a1:b3:84:8e:91:
+                    b1:94:49:81:5f:70:8b:e5:27:7b:45:fa:f5:92:a2:
+                    2b:c5:96:4b:26:0a:9e:f6:ed:92:9b:e7:2f:4e:ad:
+                    70:88:ab:63:af:f8:4b:ac:49:98:61:13:74:14:fa:
+                    7a:ab:02:84:82:4f:43:e5:47:27:2b:b8:36:fb:b3:
+                    65:e0:50:cc:5b:dc:d3:bf:a0:3d:f7:54:7e:49:10:
+                    5b:cf
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Key Identifier:
+                93:E0:6A:BA:97:90:CF:AD:06:DB:F9:6A:FC:12:42:14:C1:8D:24:9E
+            X509v3 Authority Key Identifier:
+                keyid:93:E0:6A:BA:97:90:CF:AD:06:DB:F9:6A:FC:12:42:14:C1:8D:24:9E
+
+            X509v3 Basic Constraints: critical
+                CA:TRUE
+    Signature Algorithm: sha256WithRSAEncryption
+         8c:18:ce:17:0a:f3:d9:10:fc:b1:59:e8:40:f1:f8:08:ef:9e:
+         b4:94:fb:9a:e0:a4:11:fe:17:94:b9:13:67:33:5b:c3:64:e7:
+         1a:c9:ca:d7:05:4e:62:9e:fb:a4:6c:0f:8c:aa:cb:a4:54:40:
+         3c:9c:5e:1f:4e:cc:f7:28:f3:76:b4:87:16:01:81:2f:75:90:
+         89:27:a5:a6:b1:bf:02:83:d9:ec:a0:ec:f7:20:f9:87:4a:41:
+         a7:58:2e:a1:78:6f:ba:9e:9a:c4:14:54:93:57:c1:d7:bf:52:
+         3b:40:cf:d0:fd:f3:1b:f1:d3:78:4f:71:dd:28:82:c4:07:56:
+         09:80:79:91:30:8b:04:b5:7c:ef:d5:e4:0f:2e:f7:0d:08:a7:
+         22:04:e5:0c:b2:1a:9b:22:2a:08:a3:65:bd:a1:90:a3:50:4e:
+         e2:29:1d:b5:6a:ae:e3:fc:c4:4c:cd:42:08:e1:76:ef:e7:42:
+         73:5c:fd:e1:08:99:42:24:04:04:d4:6c:7c:0f:b2:5a:5c:e5:
+         ab:94:b8:ca:ea:1b:20:c2:26:f0:01:89:6a:ef:25:ae:db:fd:
+         6a:e4:08:ea:93:61:79:86:70:5d:cb:e5:e3:84:cb:46:9b:26:
+         dd:dc:32:af:bd:ac:a3:02:50:08:9d:e2:6d:b8:29:a6:70:ef:
+         d2:3a:8e:c0
+
+openssl x509 -text -noout -in client-cert.pem
+Certificate:
+    Data:
+        Version: 1 (0x0)
+        Serial Number: 1 (0x1)
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C = US, ST = CA, L = San Francisco, O = NGINX, OU = KIC, CN = kic.nginx.com, emailAddress = kubernetes@nginx.com
+        Validity
+            Not Before: Sep 18 20:27:15 2020 GMT
+            Not After : Sep 16 20:27:15 2030 GMT
+        Subject: C = US, ST = CA, L = San Francisco, O = NGINX
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                RSA Public-Key: (2048 bit)
+                Modulus:
+                    00:b2:46:4a:d2:37:66:5d:97:63:3a:78:2b:b5:7d:
+                    3b:a7:b6:7c:c4:ef:0a:89:2d:a7:1b:2c:4c:31:e3:
+                    d2:ae:3c:02:6e:d3:56:5c:18:f7:13:f7:d6:4d:56:
+                    45:cf:26:4e:cd:b9:ad:09:71:ff:ef:fb:bf:a6:6c:
+                    fc:a4:bc:4d:fe:e6:33:18:53:18:df:f3:de:b3:a0:
+                    d2:eb:9e:67:da:cb:9d:c3:e5:14:64:05:c0:15:8d:
+                    f0:ff:2e:9b:3b:7e:58:63:e2:8c:dd:69:95:ed:ed:
+                    ba:b7:4f:48:44:56:9f:a5:02:7c:70:e2:b6:b7:55:
+                    3a:a8:a9:c0:31:1d:f6:15:c7:75:52:a1:99:6d:45:
+                    94:98:ab:37:89:d3:2f:40:aa:24:08:fb:89:5f:45:
+                    04:f7:57:62:cf:89:ca:3e:68:69:4d:b4:f1:7e:74:
+                    3c:22:c2:b3:85:40:a6:66:d6:39:fd:e4:ea:94:1f:
+                    f6:14:72:8f:1a:98:c6:9d:47:2e:04:2d:bc:12:b7:
+                    b0:df:19:3c:74:be:79:e1:72:3e:fa:80:31:8e:b9:
+                    d0:6c:d4:01:bb:4f:cb:5c:26:ec:bd:d7:f7:20:02:
+                    40:ec:ac:45:6c:fe:4a:cb:ae:81:54:46:53:9d:19:
+                    7a:64:01:4e:7d:0f:f1:e5:38:ac:be:62:a9:28:69:
+                    d6:43
+                Exponent: 65537 (0x10001)
+    Signature Algorithm: sha256WithRSAEncryption
+         0f:22:2c:eb:ca:51:ee:a2:8f:e5:41:2e:b0:26:fc:39:27:61:
+         7e:da:3d:f4:f1:6f:f0:21:c0:9d:68:f5:04:ec:13:30:29:5f:
+         eb:c0:36:cb:79:85:97:76:6a:7f:f5:2b:6b:d8:96:eb:46:98:
+         20:87:df:cf:16:c3:93:19:55:ab:5f:b8:cd:60:af:d5:08:0c:
+         28:3e:67:33:c4:f9:a6:6c:f1:e0:bb:dd:0c:3c:43:1a:88:62:
+         dc:4e:8d:cd:1b:82:14:e9:b3:13:16:80:d1:f6:a9:13:b5:ee:
+         1c:0f:d9:9e:c7:21:61:10:f0:d4:e7:fb:a3:d3:6f:a4:c5:4d:
+         08:a4:62:e1:9e:25:eb:45:76:e1:23:c8:92:01:6e:85:db:1d:
+         7f:a5:07:10:4a:0b:08:92:f7:9f:e6:dd:51:60:e0:1a:a6:3f:
+         f2:f4:f2:ce:13:87:6f:ed:03:21:81:0a:5a:2a:ed:00:48:cf:
+         48:78:7c:fc:b8:d4:b1:94:0b:d9:7a:84:2f:26:b1:4a:19:52:
+         d9:96:63:3b:48:70:b6:a7:9a:e9:26:43:1f:8d:e7:29:af:ac:
+         87:54:69:24:4e:72:d7:c0:e0:76:10:5b:5c:2f:42:be:4a:9f:
+         37:4a:6e:57:22:03:f9:29:e0:bd:17:81:f9:25:62:39:bc:f4:
+         08:60:23:e3
+
+
+.. code-block:: bash
+  :linenos:
+  :caption: ingress-mtls.yaml
+
+  apiVersion: k8s.nginx.org/v1
+  kind: Policy
+  metadata:
+    name: ingress-mtls-policy
+  spec:
+    ingressMTLS:
+      clientCertSecret: ingress-mtls-secret
+      verifyClient: "on"
+      verifyDepth: 1
+
+.. code-block:: bash
+  :linenos:
+  :caption: virtual-server.yaml
+
+  apiVersion: k8s.nginx.org/v1
+  kind: VirtualServer
+  metadata:
+    name: webapp
+  spec:
+    host: webapp.example.com
+    tls:
+      secret: tls-secret
+    policies:
+    - name: ingress-mtls-policy
+    upstreams:
+    - name: webapp
+      service: webapp-svc
+      port: 80
+    routes:
+    - path: /
+      action:
+        pass: webapp
+
+
+動作確認
+
+.. code-block:: cmdin
+  curl -v -k --resolve webapp.example.com:443:127.0.0.1 https://webapp.example.com:443/
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  * Added webapp.example.com:443:127.0.0.1 to DNS cache
+  * Hostname webapp.example.com was found in DNS cache
+  *   Trying 127.0.0.1:443...
+  * TCP_NODELAY set
+  * Connected to webapp.example.com (127.0.0.1) port 443 (#0)
+  * ALPN, offering h2
+  * ALPN, offering http/1.1
+  * successfully set certificate verify locations:
+  *   CAfile: /etc/ssl/certs/ca-certificates.crt
+    CApath: /etc/ssl/certs
+  * TLSv1.3 (OUT), TLS handshake, Client hello (1):
+  * TLSv1.3 (IN), TLS handshake, Server hello (2):
+  * TLSv1.2 (IN), TLS handshake, Certificate (11):
+  * TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+  * TLSv1.2 (IN), TLS handshake, Request CERT (13):
+  * TLSv1.2 (IN), TLS handshake, Server finished (14):
+  * TLSv1.2 (OUT), TLS handshake, Certificate (11):
+  * TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+  * TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+  * TLSv1.2 (OUT), TLS handshake, Finished (20):
+  * TLSv1.2 (IN), TLS handshake, Finished (20):
+  * SSL connection using TLSv1.2 / ECDHE-RSA-AES256-GCM-SHA384
+  * ALPN, server accepted to use http/1.1
+  * Server certificate:
+  *  subject: CN=webapp.example.com
+  *  start date: Sep 29 22:19:59 2020 GMT
+  *  expire date: Sep 27 22:19:59 2030 GMT
+  *  issuer: CN=webapp.example.com
+  *  SSL certificate verify result: self signed certificate (18), continuing anyway.
+  > GET / HTTP/1.1
+  > Host: webapp.example.com
+  > User-Agent: curl/7.68.0
+  > Accept: */*
+  >
+  * Mark bundle as not supporting multiuse
+  < HTTP/1.1 400 Bad Request
+  < Server: nginx/1.21.3
+  < Date: Wed, 19 Jan 2022 12:16:54 GMT
+  < Content-Type: text/html
+  < Content-Length: 237
+  < Connection: close
+  <
+  <html>
+  <head><title>400 No required SSL certificate was sent</title></head>
+  <body>
+  <center><h1>400 Bad Request</h1></center>
+  <center>No required SSL certificate was sent</center>
+  <hr><center>nginx/1.21.3</center>
+  </body>
+  </html>
+  * Closing connection 0
+  * TLSv1.2 (OUT), TLS alert, close notify (256):
+
+.. code-block:: cmdin
+  curl -v -k --resolve webapp.example.com:443:127.0.0.1 https://webapp.example.com:443/ --cert ./client-cert.pem --key ./client-key.pem
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  * Added webapp.example.com:443:127.0.0.1 to DNS cache
+  * Hostname webapp.example.com was found in DNS cache
+  *   Trying 127.0.0.1:443...
+  * TCP_NODELAY set
+  * Connected to webapp.example.com (127.0.0.1) port 443 (#0)
+  * ALPN, offering h2
+  * ALPN, offering http/1.1
+  * successfully set certificate verify locations:
+  *   CAfile: /etc/ssl/certs/ca-certificates.crt
+    CApath: /etc/ssl/certs
+  * TLSv1.3 (OUT), TLS handshake, Client hello (1):
+  * TLSv1.3 (IN), TLS handshake, Server hello (2):
+  * TLSv1.2 (IN), TLS handshake, Certificate (11):
+  * TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+  * TLSv1.2 (IN), TLS handshake, Request CERT (13):
+  * TLSv1.2 (IN), TLS handshake, Server finished (14):
+  * TLSv1.2 (OUT), TLS handshake, Certificate (11):
+  * TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+  * TLSv1.2 (OUT), TLS handshake, CERT verify (15):
+  * TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+  * TLSv1.2 (OUT), TLS handshake, Finished (20):
+  * TLSv1.2 (IN), TLS handshake, Finished (20):
+  * SSL connection using TLSv1.2 / ECDHE-RSA-AES256-GCM-SHA384
+  * ALPN, server accepted to use http/1.1
+  * Server certificate:
+  *  subject: CN=webapp.example.com
+  *  start date: Sep 29 22:19:59 2020 GMT
+  *  expire date: Sep 27 22:19:59 2030 GMT
+  *  issuer: CN=webapp.example.com
+  *  SSL certificate verify result: self signed certificate (18), continuing anyway.
+  > GET / HTTP/1.1
+  > Host: webapp.example.com
+  > User-Agent: curl/7.68.0
+  > Accept: */*
+  >
+  * Mark bundle as not supporting multiuse
+  < HTTP/1.1 200 OK
+  < Server: nginx/1.21.3
+  < Date: Wed, 19 Jan 2022 12:16:56 GMT
+  < Content-Type: text/plain
+  < Content-Length: 157
+  < Connection: keep-alive
+  < Expires: Wed, 19 Jan 2022 12:16:55 GMT
+  < Cache-Control: no-cache
+  <
+  Server address: 192.168.127.22:8080
+  Server name: webapp-64d444885-x5d4p
+  Date: 19/Jan/2022:12:16:56 +0000
+  URI: /
+  Request ID: c1b1c9c9b30331cbc7f034e026b939fc
+  * Connection #0 to host webapp.example.com left intact
+
+リソースの削除
+
+.. code-block:: cmdin
+
+  ## cd ~/kubernetes-ingress/examples/custom-resources/ingress-mtls
+  kubectl delete -f webapp.yaml
+  kubectl delete -f ingress-mtls-secret.yaml
+  kubectl delete -f ingress-mtls.yaml
+  kubectl delete -f tls-secret.yaml
+  kubectl delete -f virtual-server.yaml
+  rm ca-crt.txt
+
 
 Egress MTLS
 ====
@@ -1541,5 +1851,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 リソースを確認
 動作確認
 リソースの削除
-** 実行結果サンプル **
+.. code-block:: cmdin
 
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
