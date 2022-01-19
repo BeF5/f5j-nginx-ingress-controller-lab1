@@ -9,7 +9,7 @@ NICによるWebアプリの通信制御
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/basic-configuration
 
-#. サンプルアプリケーション、NGINX Ingress Controller の設定をデプロイ
+サンプルアプリケーションをデプロイ
 ----
 
 .. code-block:: cmdin
