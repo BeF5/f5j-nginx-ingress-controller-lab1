@@ -1221,6 +1221,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+
   NAME       READY   UP-TO-DATE   AVAILABLE   AGE
   keycloak   1/1     1            1           22m
   webapp     1/1     1            1           22m
@@ -1232,6 +1233,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: bash
   :linenos:
   :caption: output sample
+
   NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
   keycloak     ClusterIP   10.97.4.138     <none>        8080/TCP   22m
   kubernetes   ClusterIP   10.96.0.1       <none>        443/TCP    12d
@@ -1244,6 +1246,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: bash
   :linenos:
   :caption: output sample
+
   NAME          STATE   AGE
   oidc-policy   Valid   9m28s
   
@@ -1254,6 +1257,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: bash
   :linenos:
   :caption: output sample
+  
   NAME       STATE   HOST                   IP    PORTS   AGE
   keycloak   Valid   keycloak.example.com                 23m
   webapp     Valid   webapp.example.com                   7m40s
