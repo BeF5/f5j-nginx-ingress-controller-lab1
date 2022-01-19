@@ -15,8 +15,9 @@ table {
 }
 */
 
+
 .caption-text {
-    float:left;
+/*    float:left; */
     font-weight:bold;
 }
 
