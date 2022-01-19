@@ -1388,7 +1388,9 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
   virtual-server-idp.yaml:  host: keycloak.example.com
   virtual-server.yaml:  host: webapp.example.com
-  
+
+.. code-block:: cmdin
+
   echo -n "f0558674-70a1-45a9-8c90-02245628b8f1" | base64
 
 .. code-block:: bash
@@ -1540,7 +1542,6 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   kubectl create -f tls-secret.yaml
   kubectl apply -f virtual-server.yaml
 
-
 .. code-block:: bash
   :linenos:
   :caption: ingress-mtls-secret.yaml
@@ -1568,104 +1569,22 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
             Not Before: Sep 18 20:25:26 2020 GMT
             Not After : Sep 16 20:25:26 2030 GMT
         Subject: C = US, ST = CA, L = San Francisco, O = NGINX, OU = KIC, CN = kic.nginx.com, emailAddress = kubernetes@nginx.com
-        Subject Public Key Info:
-            Public Key Algorithm: rsaEncryption
-                RSA Public-Key: (2048 bit)
-                Modulus:
-                    00:d6:87:e5:3b:22:ea:c8:80:95:23:bd:b4:18:1b:
-                    7f:b5:13:a6:a8:f4:d4:74:0d:4f:a4:7c:98:2f:e2:
-                    f0:a6:aa:64:8a:16:20:6a:3b:95:a3:28:a8:be:b6:
-                    bb:bf:24:fd:5f:2c:ea:00:08:88:c0:8a:d1:cc:c0:
-                    a0:b5:cc:27:22:01:2c:fc:bc:f1:ce:e6:b2:5a:5e:
-                    c7:53:40:55:d9:b6:11:25:42:ce:66:03:0c:c4:8e:
-                    aa:25:64:dd:98:d7:c7:f4:c5:8f:a0:bc:30:35:da:
-                    14:54:d7:5f:9b:a0:9a:68:25:ae:a0:59:5e:df:51:
-                    f5:43:e9:53:62:fb:e6:51:6d:e9:1b:c6:b8:5b:3c:
-                    fe:65:4d:11:3c:ac:3f:81:d7:05:95:ef:74:e7:ed:
-                    99:76:08:ff:e3:1a:f6:70:77:db:7e:bb:7e:ad:b8:
-                    fc:32:60:7f:ff:a5:42:62:b5:04:a1:b3:84:8e:91:
-                    b1:94:49:81:5f:70:8b:e5:27:7b:45:fa:f5:92:a2:
-                    2b:c5:96:4b:26:0a:9e:f6:ed:92:9b:e7:2f:4e:ad:
-                    70:88:ab:63:af:f8:4b:ac:49:98:61:13:74:14:fa:
-                    7a:ab:02:84:82:4f:43:e5:47:27:2b:b8:36:fb:b3:
-                    65:e0:50:cc:5b:dc:d3:bf:a0:3d:f7:54:7e:49:10:
-                    5b:cf
-                Exponent: 65537 (0x10001)
-        X509v3 extensions:
-            X509v3 Subject Key Identifier:
-                93:E0:6A:BA:97:90:CF:AD:06:DB:F9:6A:FC:12:42:14:C1:8D:24:9E
-            X509v3 Authority Key Identifier:
-                keyid:93:E0:6A:BA:97:90:CF:AD:06:DB:F9:6A:FC:12:42:14:C1:8D:24:9E
+        **省略**
 
-            X509v3 Basic Constraints: critical
-                CA:TRUE
-    Signature Algorithm: sha256WithRSAEncryption
-         8c:18:ce:17:0a:f3:d9:10:fc:b1:59:e8:40:f1:f8:08:ef:9e:
-         b4:94:fb:9a:e0:a4:11:fe:17:94:b9:13:67:33:5b:c3:64:e7:
-         1a:c9:ca:d7:05:4e:62:9e:fb:a4:6c:0f:8c:aa:cb:a4:54:40:
-         3c:9c:5e:1f:4e:cc:f7:28:f3:76:b4:87:16:01:81:2f:75:90:
-         89:27:a5:a6:b1:bf:02:83:d9:ec:a0:ec:f7:20:f9:87:4a:41:
-         a7:58:2e:a1:78:6f:ba:9e:9a:c4:14:54:93:57:c1:d7:bf:52:
-         3b:40:cf:d0:fd:f3:1b:f1:d3:78:4f:71:dd:28:82:c4:07:56:
-         09:80:79:91:30:8b:04:b5:7c:ef:d5:e4:0f:2e:f7:0d:08:a7:
-         22:04:e5:0c:b2:1a:9b:22:2a:08:a3:65:bd:a1:90:a3:50:4e:
-         e2:29:1d:b5:6a:ae:e3:fc:c4:4c:cd:42:08:e1:76:ef:e7:42:
-         73:5c:fd:e1:08:99:42:24:04:04:d4:6c:7c:0f:b2:5a:5c:e5:
-         ab:94:b8:ca:ea:1b:20:c2:26:f0:01:89:6a:ef:25:ae:db:fd:
-         6a:e4:08:ea:93:61:79:86:70:5d:cb:e5:e3:84:cb:46:9b:26:
-         dd:dc:32:af:bd:ac:a3:02:50:08:9d:e2:6d:b8:29:a6:70:ef:
-         d2:3a:8e:c0
+.. code-block:: cmdin
 
-openssl x509 -text -noout -in client-cert.pem
-Certificate:
-    Data:
-        Version: 1 (0x0)
-        Serial Number: 1 (0x1)
-        Signature Algorithm: sha256WithRSAEncryption
-        Issuer: C = US, ST = CA, L = San Francisco, O = NGINX, OU = KIC, CN = kic.nginx.com, emailAddress = kubernetes@nginx.com
-        Validity
-            Not Before: Sep 18 20:27:15 2020 GMT
-            Not After : Sep 16 20:27:15 2030 GMT
-        Subject: C = US, ST = CA, L = San Francisco, O = NGINX
-        Subject Public Key Info:
-            Public Key Algorithm: rsaEncryption
-                RSA Public-Key: (2048 bit)
-                Modulus:
-                    00:b2:46:4a:d2:37:66:5d:97:63:3a:78:2b:b5:7d:
-                    3b:a7:b6:7c:c4:ef:0a:89:2d:a7:1b:2c:4c:31:e3:
-                    d2:ae:3c:02:6e:d3:56:5c:18:f7:13:f7:d6:4d:56:
-                    45:cf:26:4e:cd:b9:ad:09:71:ff:ef:fb:bf:a6:6c:
-                    fc:a4:bc:4d:fe:e6:33:18:53:18:df:f3:de:b3:a0:
-                    d2:eb:9e:67:da:cb:9d:c3:e5:14:64:05:c0:15:8d:
-                    f0:ff:2e:9b:3b:7e:58:63:e2:8c:dd:69:95:ed:ed:
-                    ba:b7:4f:48:44:56:9f:a5:02:7c:70:e2:b6:b7:55:
-                    3a:a8:a9:c0:31:1d:f6:15:c7:75:52:a1:99:6d:45:
-                    94:98:ab:37:89:d3:2f:40:aa:24:08:fb:89:5f:45:
-                    04:f7:57:62:cf:89:ca:3e:68:69:4d:b4:f1:7e:74:
-                    3c:22:c2:b3:85:40:a6:66:d6:39:fd:e4:ea:94:1f:
-                    f6:14:72:8f:1a:98:c6:9d:47:2e:04:2d:bc:12:b7:
-                    b0:df:19:3c:74:be:79:e1:72:3e:fa:80:31:8e:b9:
-                    d0:6c:d4:01:bb:4f:cb:5c:26:ec:bd:d7:f7:20:02:
-                    40:ec:ac:45:6c:fe:4a:cb:ae:81:54:46:53:9d:19:
-                    7a:64:01:4e:7d:0f:f1:e5:38:ac:be:62:a9:28:69:
-                    d6:43
-                Exponent: 65537 (0x10001)
-    Signature Algorithm: sha256WithRSAEncryption
-         0f:22:2c:eb:ca:51:ee:a2:8f:e5:41:2e:b0:26:fc:39:27:61:
-         7e:da:3d:f4:f1:6f:f0:21:c0:9d:68:f5:04:ec:13:30:29:5f:
-         eb:c0:36:cb:79:85:97:76:6a:7f:f5:2b:6b:d8:96:eb:46:98:
-         20:87:df:cf:16:c3:93:19:55:ab:5f:b8:cd:60:af:d5:08:0c:
-         28:3e:67:33:c4:f9:a6:6c:f1:e0:bb:dd:0c:3c:43:1a:88:62:
-         dc:4e:8d:cd:1b:82:14:e9:b3:13:16:80:d1:f6:a9:13:b5:ee:
-         1c:0f:d9:9e:c7:21:61:10:f0:d4:e7:fb:a3:d3:6f:a4:c5:4d:
-         08:a4:62:e1:9e:25:eb:45:76:e1:23:c8:92:01:6e:85:db:1d:
-         7f:a5:07:10:4a:0b:08:92:f7:9f:e6:dd:51:60:e0:1a:a6:3f:
-         f2:f4:f2:ce:13:87:6f:ed:03:21:81:0a:5a:2a:ed:00:48:cf:
-         48:78:7c:fc:b8:d4:b1:94:0b:d9:7a:84:2f:26:b1:4a:19:52:
-         d9:96:63:3b:48:70:b6:a7:9a:e9:26:43:1f:8d:e7:29:af:ac:
-         87:54:69:24:4e:72:d7:c0:e0:76:10:5b:5c:2f:42:be:4a:9f:
-         37:4a:6e:57:22:03:f9:29:e0:bd:17:81:f9:25:62:39:bc:f4:
-         08:60:23:e3
+  openssl x509 -text -noout -in client-cert.pem
+  Certificate:
+      Data:
+          Version: 1 (0x0)
+          Serial Number: 1 (0x1)
+          Signature Algorithm: sha256WithRSAEncryption
+          Issuer: C = US, ST = CA, L = San Francisco, O = NGINX, OU = KIC, CN = kic.nginx.com, emailAddress = kubernetes@nginx.com
+          Validity
+              Not Before: Sep 18 20:27:15 2020 GMT
+              Not After : Sep 16 20:27:15 2030 GMT
+          Subject: C = US, ST = CA, L = San Francisco, O = NGINX
+          **省略**
 
 
 .. code-block:: bash
@@ -1862,14 +1781,17 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 リソースを確認
 ----
 
-ファイルの内容を確認します。
+| ファイルの内容を確認します。
+| ``secure-app.yaml`` は、Kubernetes環境内で動作するアプリケーションで、クライアント証明書の評価を行います。
+| ポイントとなる箇所を以下に示します。
 
+- volumeMountsでそれぞれのPathにVolumeをマウントしています。/etc/nginx/sslに ``app-tls-secret`` というSecret(22,29)、/etc/nginx/conf.d/に ``secure-config`` というConfigMap(24,32)の内容がそれぞれマウントされます
+- ``secure-config`` というConfigMapではNGINXの設定を指定します。SSLの終端(58,59)及び、クライアント証明書(61,62)の評価を行うよう設定を記述しています
 
-  cat secure-app.yaml
-
-.. code-block:: bash
+.. code-block:: yaml
   :linenos:
-  :caption: 実行結果サンプル
+  :caption: secure-app.yaml
+  :emphasize-lines: 22,24,29,32,58,59,61,62
 
   apiVersion: apps/v1
   kind: Deployment
@@ -1947,26 +1869,18 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
     name: app-tls-secret
   type: Opaque
   data:
-    tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURVekNDQWpzQ0NRRE5Tc2YvSXpBaEhqQU5CZ2txaGtpRzl3MEJBUXNGQURCbU1Rc3dDUVlEVlFRR0V3SlYKVXpFTE1Ba0dBMVVFQ0F3Q1EwRXhGakFVQmdOVkJBY01EVk5oYmlCR2NtRnVjMmx6WTI4eERqQU1CZ05WQkFvTQpCVTVIU1U1WU1Rd3dDZ1lEVlFRTERBTkxTVU14RkRBU0JnTlZCQU1NQzJWNFlXMXdiR1V1WTI5dE1CNFhEVEl3Ck1URXhNakl4TXpNd05sb1hEVE13TVRFeE1ESXhNek13Tmxvd2NURUxNQWtHQTFVRUJoTUNWVk14Q3pBSkJnTlYKQkFnTUFrTkJNUll3RkFZRFZRUUhEQTFUWVc0Z1JuSmhibk5wYzJOdk1RNHdEQVlEVlFRS0RBVk9SMGxPV0RFTQpNQW9HQTFVRUN3d0RTMGxETVI4d0hRWURWUVFEREJaelpXTjFjbVV0WVhCd0xtVjRZVzF3YkdVdVkyOXRNSUlCCklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF6ekE0aUhqL0xpWWhlR1JVS0Vha2NTa2MKRHpsWE1kMDUwZStBb3VodXFoOHJEandOaUl0RGU5c05keXNSTW0yWEVZUUxtdkJyNFlTN2dhNmpVQzFUTXhnMgpSeHZmckZFQ1RPNGJkU2gvZ0NKNU8wdjhIYTNEbmNXQW9saFJIdVlSSit1V09iQkwxYkxqUTFLM2hST1h2cjJWCkhvbWRpb09ybnEwQmdQdC9hN09rOVhuSDdZcDU0UjhsYm96bGtvNXlSOFdnZzlqeWZ0aDRoQ2x3U0J3RkJxbmcKeHBBNSs0NllLOUhwU0VNa0FXb1Z5eERrR0E1UXZubTBiSjZQSk0xUi9UQkpFeTA1Uy90ZVlIV3oyeTFNb29INAo4TStoZTR6YjFQLy93NjhWUE9oR1pjTWlGUzBGTWNwVGgzdlFLUTBwQS84S3c2TWErUFdEWWplY3Z2Y0oxd0lECkFRQUJNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUJBUUJzditJRzNNWVVNbUdMNUdYTXFhM3NiU0RZdFJxaEhRcXkKMmxWaWQ1OXFEVmVOdG50MXdkYVJrSjQ4S2x1SzBkZUJDanpGaVN2elBZMVlHc09qeEJ4R2Qrd0tYcElMVXQ3YwpsMXFIbGRTNktyOU9oaS9XSUFDV3AxbDN1K1luUXJROHIzNkZqaGZ1ODMyQ1EwVTQ3Z3I0Yjc5NVNBeDRzdVVFClUwZ2F4MnNLMHlUSU9YYUk4VjRQWThrSlZHdXpyR2N1bVBLT1lrSTRvSEhBY0JMMERrWUkyZ0hmZ2F1amZYTFgKYU9yQ0Z4QndPMGh3ekhNam1GNlRYT2dTNVVIYzFsbzhwREpNK1J3SmUxVjA2RGlZRFpUUlErM1lxcEZpSHpSbwozZkFENzBhM3U5c0NWYnM0QjEzU2ZXOUk5R3hNOXhpdEJjL1VNME1ad1BHUytaSVEwRkZzCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
-    tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb2dJQkFBS0NBUUVBenpBNGlIai9MaVloZUdSVUtFYWtjU2tjRHpsWE1kMDUwZStBb3VodXFoOHJEandOCmlJdERlOXNOZHlzUk1tMlhFWVFMbXZCcjRZUzdnYTZqVUMxVE14ZzJSeHZmckZFQ1RPNGJkU2gvZ0NKNU8wdjgKSGEzRG5jV0FvbGhSSHVZUkordVdPYkJMMWJMalExSzNoUk9YdnIyVkhvbWRpb09ybnEwQmdQdC9hN09rOVhuSAo3WXA1NFI4bGJvemxrbzV5UjhXZ2c5anlmdGg0aENsd1NCd0ZCcW5neHBBNSs0NllLOUhwU0VNa0FXb1Z5eERrCkdBNVF2bm0wYko2UEpNMVIvVEJKRXkwNVMvdGVZSFd6MnkxTW9vSDQ4TStoZTR6YjFQLy93NjhWUE9oR1pjTWkKRlMwRk1jcFRoM3ZRS1EwcEEvOEt3Nk1hK1BXRFlqZWN2dmNKMXdJREFRQUJBb0lCQUFNK1hBUTI4TGZHUFF2bgpkakhUT1V2VU91NDZGWlZnUTBGNElHbHNmaDhIc2VMZEtkRVRiUkVKVXVLa3QvWTBKUU5QTCtkVEVEMU5tS25sCkZBVnpVRFFpa3ViMkZzQlozRkZjQU80S25rUmhSY2laM2U2UkE5ajZlSk1TRXVNSzh3WE8rR0VhMDNVYkFkZlIKK2JHSnB2eURkMHd0RjF4TngyZ0tpVlY5bW5jVEo3RDJtaUZPVTNXR3pUeFlyMVdnVDd6WHVsQnkyQlR6SlEzNQpwcG9hdXQwYlcvVkZDQ1FIc0NRK2tUNlhXbE9vQ2VTWTd5aEhmSzRtMGFCeUNjN1E0dW5CUUZRU24rck1CZUJpCkJxaE9BU0NFQnhYUzhlRUxhOCtCQml3eGo0SmJQa3IzbFlRcTQxbDlMU3FtQTN4dy9ZKzZzK2NCRmdxSGQ5RUgKVmJidTUrRUNnWUVBN2VUeUdXQmxubk9ySzJBMjkrbENYY1RBRHhGdlRoK0hWMlRJTXV3NW9oMlE0MkhCZWkwcgp3L2dTa1FGU1cvK1JaNmpXU2xsWW51ZDNXVkUwRzA3ZkhLaWpZMnBmbFQ3Z3lXYlhoc0NXQmkwRVpOK0JxUUNrCko5UVNaUGZLRXRjamhkTDdtVnBJdEF3ZjM4SHpiNUx0d3pBYTFhTlFjK2h3YVE3eWo2UFhubDhDZ1lFQTN2VUMKcXhURDJ2Y2VkQWZlUGUxQXd1SDRUZ2pVVFJnbU5rMGRPbTBFazlzUnZOelRZemk0bmxNQ1YzMHZiZTVMRWNleQo3VWRJS3pGMUwrQWRpaFFpckcvMHJIQ3N0U21RTHhLWDdhVW5vcVliWHJWNTlYMFVaMndDcFBqZm1DQTNYYmE5CmJ0ZThCRFFCbmp1QjJ6dXVIa21ZY3BSWllNeEdvMjd0aVV2ZlY0a0NnWUJRdFMyVmdtaTNXeEtsUXAwamVsVnoKcm41aUhrNGV1UCtYbks5MjUwR2VTRjJSWnViVzVtQkV1ZkxDa3lvMzMvcWFxbU1aRWpySW5rcVZXTUZPeW5GVApMYnRRelJQa2RGS2F3WE01V2prTG0xWTBTc2VZYUlsSW9lQWp0UlV2VXlIUUV3WWN2czZQbHRWeGVrRjJodWgzCkllall0ZkZqZ1dZeG5rcVloTU53RFFLQmdGTU11UDI1TW10eCthb0c5RVhsQm1hUmZjaXppVUZlYVgxNHBCYUwKWFZVbUdTbGNxSEVoUThQVjc5MWZDRGZPdDYvYnowNkxhdHFNQmJiYnFLVXljdWdBbkFkUHdVV0tRZWNHNmdqZgpxQy94NStnVGVXWjBQUkY1TGxMOVVXeDlNNko0MjM5YVpQSzczSTV3WkNLaHpHNER4QUdLT1BEUnBzNWlGNkU0CjNlemhBb0dBS1lxZ1o4dUtOVGNpZ3A4ekpqSzB4N1RrZmttTVViMTRUYnFZUzJiWVhFTDlwZDM1aU1iclJ1MEYKTGJqOTFlcHVVbE00eG9td2tHM284Qll6OWpOZVhGVnIwQmhvY0E3UjZVL2VRc1FLQ0Fac3VMTThLdGFCN0pRTwpzTFpJRnROZUpMV0lRMUhXZG40KzI3SDIyeGUzMFBVUlpsSnR6b2NrT3hGaVl3UUZ5bzQ9Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
-    ca.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURTRENDQWpBQ0NRREtXdnJwd2lJeUNEQU5CZ2txaGtpRzl3MEJBUXNGQURCbU1Rc3dDUVlEVlFRR0V3SlYKVXpFTE1Ba0dBMVVFQ0F3Q1EwRXhGakFVQmdOVkJBY01EVk5oYmlCR2NtRnVjMmx6WTI4eERqQU1CZ05WQkFvTQpCVTVIU1U1WU1Rd3dDZ1lEVlFRTERBTkxTVU14RkRBU0JnTlZCQU1NQzJWNFlXMXdiR1V1WTI5dE1CNFhEVEl3Ck1URXhNakl4TWpnME1sb1hEVE13TVRFeE1ESXhNamcwTWxvd1pqRUxNQWtHQTFVRUJoTUNWVk14Q3pBSkJnTlYKQkFnTUFrTkJNUll3RkFZRFZRUUhEQTFUWVc0Z1JuSmhibk5wYzJOdk1RNHdEQVlEVlFRS0RBVk9SMGxPV0RFTQpNQW9HQTFVRUN3d0RTMGxETVJRd0VnWURWUVFEREF0bGVHRnRjR3hsTG1OdmJUQ0NBU0l3RFFZSktvWklodmNOCkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFNcmxLTXFySGZNUjRtZ2FMMnpaRzJEWVlmS0NGVm1JTmpsWXVPZUMKRkRUY1JnUUt0dTJZY0N4WllCQUR3SFp4RWY2TklLdFZzTVdMaFNOUy9OYzBCbXRpUU0vSUV4aGxDaURDNlNsOApPTnJJM3c3cUp6TjZJVUVSQjZ0VmxRdDA3cmdNMFYyNlVUWXUwSWt2MVk4dHJmTFlQWmNrekJrb3JRanBjaXVtCnFvUDJCSmY0eXljOUxxcHh0bFdLeGVsa3VuVkw1aWpNRXpwajlnRUUyNlRFSGJzZEViaG9SOGcwT2VIWnFIN2UKbVhDblNJQlIwQS9vL3M2bm9HTlgrRjE5bFk3VGd3NzdqT3VRUTVZc2krN25oTjJsS3ZjQzgxOVJYN29NcGd2dApWNUIzbkkwbUY2QmF6bmplVHM0eVFjcjFTbTNVVFZCd1g5WnV2TDdSYklYa1VtOENBd0VBQVRBTkJna3Foa2lHCjl3MEJBUXNGQUFPQ0FRRUFnbTA0dzZPSVdHajZ0a2E5Y2NjY25ibEYwb1p6ZUVBSXl3anZSNXNEY1BkdkxJZU0KZWVzSnk2ckZINERCbU15Z3BjSXhKR3JTT3pabEYzTE12dzd6SzRzdHFOdG0xSGlwckY4Ynp4ZlRmZlZZbmNnNgpoVktFckh0WjJGWlJqLzJUTUowMWFSRFpTdVZiTDZVSmlva3BVNnh4VDd5eTBkRlprS3JqVVIzNDlnS3hScUp3CkFtMmFzMGJoaTUxRXFLMUdFeDNtNGMwdW4ydk5oNXFQMmh2NmUvUXplNlA5NnZlZk5hU2s5UU1GZnVCMWtTQWsKZkdwa2lMN2JqbWpuaEt3QW1mOGpEV0RabHRCNlM1NlF5MlFqUFI4Sm9PdXNiWXhhcjRjNkVjSXdWSHY2bWRnUAp5WnhXcVFzZ3RTZkZ4K1B3b245SVBLdXEwalFZZ2VaUFN4Uk1MQT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0Kubuntu@ip-10-1-1-8:~/kubernetes-ingress/examples/custom-resources/egress-mtls$
+    tls.crt: **省略**
+    tls.key: **省略**
+    ca.crt: **省略**
 
-  cat egress-mtls-secret.yaml
 
-.. code-block:: bash
+``egress-mtls.yaml`` は、VirtualServerに適用する EgressTlsのPolicyとなります。アプリケーションへ転送する際にの証明書として ``egress-mtls-secret`` 、 ``egress-trusted-ca-secret`` として作成したSecretを参照します(7,8)。
+
+.. code-block:: yaml
   :linenos:
-  :caption: 実行結果サンプル
+  :caption: egress-mtls.yaml
+  :emphasize-lines: 7,8
 
-  apiVersion: v1
-  kind: Secret
-  metadata:
-    name: egress-mtls-secret
-  type: kubernetes.io/tls
-  data:
-    tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURRekNDQWlzQ0NRRE5Tc2YvSXpBaElUQU5CZ2txaGtpRzl3MEJBUXNGQURCbU1Rc3dDUVlEVlFRR0V3SlYKVXpFTE1Ba0dBMVVFQ0F3Q1EwRXhGakFVQmdOVkJBY01EVk5oYmlCR2NtRnVjMmx6WTI4eERqQU1CZ05WQkFvTQpCVTVIU1U1WU1Rd3dDZ1lEVlFRTERBTkxTVU14RkRBU0JnTlZCQU1NQzJWNFlXMXdiR1V1WTI5dE1CNFhEVEl3Ck1URXhNakl5TXpFek9Gb1hEVE13TVRFeE1ESXlNekV6T0Zvd1lURUxNQWtHQTFVRUJoTUNWVk14Q3pBSkJnTlYKQkFnTUFrTkJNUll3RkFZRFZRUUhEQTFUWVc0Z1JuSmhibk5wYzJOdk1RNHdEQVlEVlFRS0RBVk9SMGxPV0RFTQpNQW9HQTFVRUN3d0RTMGxETVE4d0RRWURWUVFEREFaamJHbGxiblF3Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBCkE0SUJEd0F3Z2dFS0FvSUJBUUM1M2djYWFXMGo0ZVdWZmV5OWZIYkZtUzMvRWtjMFFYbFVrdUZsSUc4T016blQKQ2hFUmd3a1hyOWNFeTZEY2hxN0FlNjh3SjBHcmdHdjl6elEyTHdyOHJLd1NNWUVmUXIwQ2NJc1ZXUy9ncDNrSAp2VG1FS3RacXdIL1VhWWJHVFVzRlBpaENFeEV1T3pwRWROMmhDZ1Vsclk2Y1RPMGJjRzNGbk1Dbk9IZE0zZ2tsCkFOajRYd0pBSXhVN216bkNSWFkyWGRJVHhZbG0yc0FyWmVxR1JycGVKNTJDejhhME9iN3poUTgwK2d3QjZBczEKL2dXeHVTR2Y4eGhrL1NhVlpQUE4xU2RTeDcwUU5BZnFFU21tQ0lnVEYralFGQkx3bDhnTkZxajYvR2lSdElvWgozMEpEaXhuZVBrUTQ3S2ZoOS96c0xsRy9WV0hyUXA0d29TY1BqTlBkQWdNQkFBRXdEUVlKS29aSWh2Y05BUUVMCkJRQURnZ0VCQUZtS05PK0dRQVpFcHBZdXBYNnJ6NktZcUFXUEtkcXRPUjJaNlR0K0ZSNlNPRExSem56RDJuRjkKU3ZhZitaZkJ4SFhtR1FwRkZXTEpINUlmbEgzM21KOFZORlh2Z0F6WnVwNG9tSDJobndHYW9NaklCS2FQSnZUZQpPQ3IwTWpjMjB4Qk82WTdzdU1Eem5VTDRRTjJib3QrM3M2SXZSaHhWeEM3ZS9OSWMzaHVQTjUxUEJUWDRCVkJWCkwweVc5Z2ltMXdibHJOVllaRDB1cnFDZ05wTm8rbWpqZXJsRkxpN0p6YWhNSllIV0JNUDc2Vnp0bk82ZnFhMU8KZXRBd3RYUnNnVnpxUkhWK0lFWk0rNUtZY2RYcEY3bjVBeFFkNUdxVDVhNTBaRnBYS2tJaURFRE91TXFUY0NQWQp2K0szQ1EzaW5wUXg4bXUwckRUL0ZQdDgrVnhpVEpBPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
-    tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVBdWQ0SEdtbHRJK0hsbFgzc3ZYeDJ4Wmt0L3hKSE5FRjVWSkxoWlNCdkRqTTUwd29SCkVZTUpGNi9YQk11ZzNJYXV3SHV2TUNkQnE0QnIvYzgwTmk4Sy9LeXNFakdCSDBLOUFuQ0xGVmt2NEtkNUI3MDUKaENyV2FzQi8xR21HeGsxTEJUNG9RaE1STGpzNlJIVGRvUW9GSmEyT25FenRHM0J0eFp6QXB6aDNUTjRKSlFEWQorRjhDUUNNVk81czV3a1YyTmwzU0U4V0padHJBSzJYcWhrYTZYaWVkZ3MvR3REbSs4NFVQTlBvTUFlZ0xOZjRGCnNia2huL01ZWlAwbWxXVHp6ZFVuVXNlOUVEUUg2aEVwcGdpSUV4Zm8wQlFTOEpmSURSYW8rdnhva2JTS0dkOUMKUTRzWjNqNUVPT3luNGZmODdDNVJ2MVZoNjBLZU1LRW5ENHpUM1FJREFRQUJBb0lCQUM1enNmekUyblQ4VVArUwprQ2N2UXhQUlc3Q0M1ZTdHYWtkYnloOFhBd3BlZlJZa1R1MjhmUHBCaFJCNnY4STltdEVhV0VkRm1HRC9ZSDMzCldnb3NxYWRLbEZxYnFyU2dYbEtNeEFYYTIxOWZHNTEyaWpoZzZHT1hwcHIwb0sxUXhlNFNnY2M1c3JLR05PTEUKL2xyd0FTZFFmL0xLT3Z2L2xqK3NGRzMyYThKMjBtWVY0dFpsZmJsaUlxNHd0YzVnc0JWUVJ2T3RielQzQzRscwowM1JwbnJPbitxV3NwVkVleU52WjRjM2NKUGJpVTJ4WmkvcE1MZWhnUUhZcDZ0bEpVMFZQRDJaWDJoaDkrRlNDCndOaGNhQVBMTkZrNy9Vc3grdTVhMUM3b3Y0WEw1MExWVE15RjVkdVpCY2ZsUmd3ZWJVc0JqNlRWUDl4Tkp3aTUKb3VmOXJDRUNnWUVBNFJCVE5Oam5LWC9qQVJVZW1tTEpZVFpYNm12bXUzMTJSU1ZuK1ZUV1VzMHVhZVhaS2pmMwpWa3Q0Z3VkdzB1UWh1aFhJbkxVclJhdmVhZHBNc0o0VkZxRHJSRW5LVWlmZWU5QzQraWJOSnk3NHBYcVJpaVpaCjVCT2RKWjNlNVZCbDlTcDJNNExxMUNFNGF5cyt5djAyak9jSjJPallJSW9MU2IxL21WZnVpTmtDZ1lFQTAycHYKTTQyTEljWjFJQW9jMStlTXZIVVpuQ0ltei8vMVBGTTJoaGdlSUs1VXhZM0FRRVg5dzJDWUFKT202Q05WbHhiNAp6dkVrVnVOMnZ0cE5LaWlUQkRGczZtLzBkSE8wTERQdDdjV2ozNDAzbUtwcjBPY2pEVjllYnhpVWJ0R0lKVE84CkpyYzB2OUNUMnFJaFBpTElZdXBpOXg3SFZHUi9pTCswMnJNZm9LVUNnWUVBdktDaERBYktYd2EzSy80V1l4QnUKZFZKRmhzeWVXZjlCODV2eE00LzkvUEhJZDZyVFFzWWJQekVMdExMaTVXMmNNc2oxRlJubVJZTlJhbWd5cEVncApwb2lDQmY3T1dlTGVYZWxHVHluY0FYNGxtUk5NRFh3dEZMRzNvSUpiQU5oTVM1a2w3ZkJJZmpmRmdGU0RVVCs5Cnk0UUx4Y2NJOU9TZHAxVHlMNFA2QUtrQ2dZRUEwQmZVU3I4SWNuOC83QUJvTVkrRmRENGlyZzdqZXhwcVRTMXUKM29CQXIxUkl0b2IyODR5dzRhMWpFRFpGTS9zTGxRTVVkY1RmU3ZMcmY2R3FFRlFObVRQNUM2eVV4a2JZMGlWdgpEUG5iZWdBcStBYk94cm1yUTg5YVNTbTllSEtmZWxhNDNMYTVvZy93YUdQcktwamIrcGpRUG9NNkdmUXRuL0ZxClYxVzJUTTBDZ1lBNXg3aVRLa0lZQlgwR0JhWERZOUlxMVBWeTkxK3pFeDhIWUdDczRNR2ttME42Y3lncm84UmwKMzA3R09ocnhwam1wMTNEb1JtM21XZWhQMmV1WEdhLy9VS2gxaTUvVkQ0R1ltL2psc1plZUx6MURiR2crQVZqegpWVFdueFJCemYwRmdGZkZkTmNIeFlwNTJ3VTZuK2x3MTVTdkNTWmJKQzYzUTBsZ3N1NlhZN3c9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=cat egress-
-  egress-mtls-secret.yaml        egress-mtls.yaml               egress-trusted-ca-secret.yaml
-  cat egress-mtls.yaml
   apiVersion: k8s.nginx.org/v1
   kind: Policy
   metadata:
@@ -1979,16 +1893,35 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
       verifyDepth: 2
       serverName: on
       sslName: secure-app.example.com
-  cat egress-trusted-ca-secret.yaml
-  kind: Secret
+
+``virtual-server.yaml`` は、upstreamへtlsを有効にし(11,12)、routesで、 ``egress-mtls-policy`` を指定しています(14,15)。
+
+.. code-block:: yaml
+  :linenos:
+  :caption: virtual-server.yaml
+  :emphasize-lines: 1
+
+  apiVersion: k8s.nginx.org/v1
+  kind: VirtualServer
   metadata:
-    name: egress-trusted-ca-secret
-  apiVersion: v1
-  type: nginx.org/ca
-  data:
-    ca.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURTRENDQWpBQ0NRREtXdnJwd2lJeUNEQU5CZ2txaGtpRzl3MEJBUXNGQURCbU1Rc3dDUVlEVlFRR0V3SlYKVXpFTE1Ba0dBMVVFQ0F3Q1EwRXhGakFVQmdOVkJBY01EVk5oYmlCR2NtRnVjMmx6WTI4eERqQU1CZ05WQkFvTQpCVTVIU1U1WU1Rd3dDZ1lEVlFRTERBTkxTVU14RkRBU0JnTlZCQU1NQzJWNFlXMXdiR1V1WTI5dE1CNFhEVEl3Ck1URXhNakl4TWpnME1sb1hEVE13TVRFeE1ESXhNamcwTWxvd1pqRUxNQWtHQTFVRUJoTUNWVk14Q3pBSkJnTlYKQkFnTUFrTkJNUll3RkFZRFZRUUhEQTFUWVc0Z1JuSmhibk5wYzJOdk1RNHdEQVlEVlFRS0RBVk9SMGxPV0RFTQpNQW9HQTFVRUN3d0RTMGxETVJRd0VnWURWUVFEREF0bGVHRnRjR3hsTG1OdmJUQ0NBU0l3RFFZSktvWklodmNOCkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFNcmxLTXFySGZNUjRtZ2FMMnpaRzJEWVlmS0NGVm1JTmpsWXVPZUMKRkRUY1JnUUt0dTJZY0N4WllCQUR3SFp4RWY2TklLdFZzTVdMaFNOUy9OYzBCbXRpUU0vSUV4aGxDaURDNlNsOApPTnJJM3c3cUp6TjZJVUVSQjZ0VmxRdDA3cmdNMFYyNlVUWXUwSWt2MVk4dHJmTFlQWmNrekJrb3JRanBjaXVtCnFvUDJCSmY0eXljOUxxcHh0bFdLeGVsa3VuVkw1aWpNRXpwajlnRUUyNlRFSGJzZEViaG9SOGcwT2VIWnFIN2UKbVhDblNJQlIwQS9vL3M2bm9HTlgrRjE5bFk3VGd3NzdqT3VRUTVZc2krN25oTjJsS3ZjQzgxOVJYN29NcGd2dApWNUIzbkkwbUY2QmF6bmplVHM0eVFjcjFTbTNVVFZCd1g5WnV2TDdSYklYa1VtOENBd0VBQVRBTkJna3Foa2lHCjl3MEJBUXNGQUFPQ0FRRUFnbTA0dzZPSVdHajZ0a2E5Y2NjY25ibEYwb1p6ZUVBSXl3anZSNXNEY1BkdkxJZU0KZWVzSnk2ckZINERCbU15Z3BjSXhKR3JTT3pabEYzTE12dzd6SzRzdHFOdG0xSGlwckY4Ynp4ZlRmZlZZbmNnNgpoVktFckh0WjJGWlJqLzJUTUowMWFSRFpTdVZiTDZVSmlva3BVNnh4VDd5eTBkRlprS3JqVVIzNDlnS3hScUp3CkFtMmFzMGJoaTUxRXFLMUdFeDNtNGMwdW4ydk5oNXFQMmh2NmUvUXplNlA5NnZlZk5hU2s5UU1GZnVCMWtTQWsKZkdwa2lMN2JqbWpuaEt3QW1mOGpEV0RabHRCNlM1NlF5MlFqUFI4Sm9PdXNiWXhhcjRjNkVjSXdWSHY2bWRnUAp5WnhXcVFzZ3RTZkZ4K1B3b245SVBLdXEwalFZZ2VaUFN4Uk1MQT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    name: webapp
+  spec:
+    host: webapp.example.com
+    upstreams:
+    - name: secure-app
+      service: secure-app
+      port: 8443
+      tls:
+        enable: true
+    routes:
+    - path: /
+      policies:
+      - name: egress-mtls-policy
+      action:
+        pass: secure-app
 
 各リソースを反映した結果を確認します
+以下の通り、適切に作成されていることを確認します。
 
 .. code-block:: cmdin
     
@@ -2001,7 +1934,6 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   NAME         READY   UP-TO-DATE   AVAILABLE   AGE
   secure-app   1/1     1            1           73s
 
-
 .. code-block:: cmdin
     
   kubectl get pod
@@ -2012,31 +1944,6 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
   NAME                          READY   STATUS    RESTARTS   AGE
   secure-app-6dc947cc5f-8855b   1/1     Running   0          75s
-
-.. code-block:: cmdin
-    
-  kubectl get svc -o wide
-
-.. code-block:: bash
-  :linenos:
-  :caption: 実行結果サンプル
-
-  NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE   SELECTOR
-  kubernetes   ClusterIP   10.96.0.1       <none>        443/TCP    12d   <none>
-  secure-app   ClusterIP   10.101.84.115   <none>        8443/TCP   84s   app=secure-app
-
-.. code-block:: cmdin
-    
-  kubectl get svc
-
-.. code-block:: bash
-  :linenos:
-  :caption: 実行結果サンプル
-
-  NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-  kubernetes   ClusterIP   10.96.0.1       <none>        443/TCP    12d
-  secure-app   ClusterIP   10.101.84.115   <none>        8443/TCP   89s
-  
 
 .. code-block:: cmdin
     
