@@ -20,7 +20,7 @@ table {
     background: rgb(218, 222, 223);
     font-weight:bold;
 }
-.highlight pre {
+.code pre {
     background: #eeeeee;
 }
 
