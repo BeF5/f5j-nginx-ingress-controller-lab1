@@ -14,7 +14,9 @@ table {
 }
 
 .caption-text pre {
-    text-align: left
+    float:left;
+    background: lightgrey;
+    font-weight:bold;
 }
 .highlight pre {
     background: #eeeeee;
