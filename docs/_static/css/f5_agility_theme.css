@@ -2,10 +2,6 @@
 div[class^='highlight'] pre, div[class~='docutils'], code, .code.descname {
     background: lightgrey !important;
 }
-
-div[class^='highlight'] pre, div[class~='docutils'], code, .code.descname {
-    background: rgb(214, 214, 214) !important;
-}
 */
 img {
 /*	max-width: 100%;
@@ -17,7 +13,7 @@ table {
 	margin-bottom: 12px;
 }
 
-.code-block-caption pre {
+.caption-text pre {
     text-align: left
 }
 .highlight pre {
@@ -27,7 +23,6 @@ table {
 .highlight-cmdin pre {
     background: #e5f4ff;
 }
-
 
 .linenos pre {
     background: #ffffff;
