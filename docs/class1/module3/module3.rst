@@ -1455,7 +1455,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   :linenos:
   :caption: Client Secret の指定
   :emphasize-lines: 7
-  
+
   apiVersion: v1
   kind: Secret
   metadata:
@@ -1539,17 +1539,6 @@ OIDC PolicyとClientSecretをデプロイします。
 
   oidc-secret           nginx.org/oidc                        1      4m29s
   tls-secret            kubernetes.io/tls                     2      21m
-
-.. code-block:: cmdin
-  kubectl get pod
-
-.. code-block:: bash
-  :linenos:
-  :caption: 実行結果サンプル
-
-  NAME                        READY   STATUS    RESTARTS   AGE
-  keycloak-5cc8d76bd4-zpj87   1/1     Running   0          22m
-  webapp-6c9689bbf4-qws2b     1/1     Running   0          22m
   
 .. code-block:: cmdin
 
