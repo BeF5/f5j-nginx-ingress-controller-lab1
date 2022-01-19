@@ -1714,6 +1714,7 @@ Certificate:
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 15,17,24,25,26,27,28,36,44
 
   * Added webapp.example.com:443:127.0.0.1 to DNS cache
   * Hostname webapp.example.com was found in DNS cache
@@ -1774,6 +1775,7 @@ Certificate:
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 15,17,19,25,26,27,28,29,37
 
   * Added webapp.example.com:443:127.0.0.1 to DNS cache
   * Hostname webapp.example.com was found in DNS cache
