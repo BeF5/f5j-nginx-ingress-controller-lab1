@@ -1847,14 +1847,251 @@ Egress MTLS
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/egress-mtls
 
-
-
 サンプルアプリケーションをデプロイ
-リソースを確認
-動作確認
-リソースの削除
+----
+
 .. code-block:: cmdin
+
+  cd ~/kubernetes-ingress/examples/custom-resources/egress-mtls
+  kubectl apply -f secure-app.yaml
+  kubectl apply -f egress-mtls-secret.yaml
+  kubectl apply -f egress-trusted-ca-secret.yaml
+  kubectl apply -f egress-mtls.yaml
+  kubectl apply -f virtual-server.yaml
+
+リソースを確認
+----
+
+ファイルの内容を確認します。
+
+
+  cat secure-app.yaml
 
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: secure-app
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: secure-app
+    template:
+      metadata:
+        labels:
+          app: secure-app
+      spec:
+        containers:
+          - name: secure-app
+            image: nginxdemos/nginx-hello:plain-text
+            ports:
+              - containerPort: 8443
+            volumeMounts:
+              - name: secret
+                mountPath: /etc/nginx/ssl
+                readOnly: true
+              - name: config-volume
+                mountPath: /etc/nginx/conf.d
+        volumes:
+          - name: secret
+            secret:
+              secretName: app-tls-secret
+          - name: config-volume
+            configMap:
+              name: secure-config
+  ---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: secure-app
+  spec:
+    ports:
+      - port: 8443
+        targetPort: 8443
+        protocol: TCP
+        name: https
+    selector:
+      app: secure-app
+  ---
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: secure-config
+  data:
+    app.conf: |-
+      server {
+        listen 8443 ssl;
+  
+        server_name secure-app.example.com;
+  
+        ssl_certificate /etc/nginx/ssl/tls.crt;
+        ssl_certificate_key /etc/nginx/ssl/tls.key;
+  
+        ssl_verify_client on;
+        ssl_client_certificate /etc/nginx/ssl/ca.crt;
+  
+        default_type text/plain;
+  
+        location / {
+          return 200 "hello from pod $hostname\n";
+        }
+      }
+  ---
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: app-tls-secret
+  type: Opaque
+  data:
+    tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURVekNDQWpzQ0NRRE5Tc2YvSXpBaEhqQU5CZ2txaGtpRzl3MEJBUXNGQURCbU1Rc3dDUVlEVlFRR0V3SlYKVXpFTE1Ba0dBMVVFQ0F3Q1EwRXhGakFVQmdOVkJBY01EVk5oYmlCR2NtRnVjMmx6WTI4eERqQU1CZ05WQkFvTQpCVTVIU1U1WU1Rd3dDZ1lEVlFRTERBTkxTVU14RkRBU0JnTlZCQU1NQzJWNFlXMXdiR1V1WTI5dE1CNFhEVEl3Ck1URXhNakl4TXpNd05sb1hEVE13TVRFeE1ESXhNek13Tmxvd2NURUxNQWtHQTFVRUJoTUNWVk14Q3pBSkJnTlYKQkFnTUFrTkJNUll3RkFZRFZRUUhEQTFUWVc0Z1JuSmhibk5wYzJOdk1RNHdEQVlEVlFRS0RBVk9SMGxPV0RFTQpNQW9HQTFVRUN3d0RTMGxETVI4d0hRWURWUVFEREJaelpXTjFjbVV0WVhCd0xtVjRZVzF3YkdVdVkyOXRNSUlCCklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF6ekE0aUhqL0xpWWhlR1JVS0Vha2NTa2MKRHpsWE1kMDUwZStBb3VodXFoOHJEandOaUl0RGU5c05keXNSTW0yWEVZUUxtdkJyNFlTN2dhNmpVQzFUTXhnMgpSeHZmckZFQ1RPNGJkU2gvZ0NKNU8wdjhIYTNEbmNXQW9saFJIdVlSSit1V09iQkwxYkxqUTFLM2hST1h2cjJWCkhvbWRpb09ybnEwQmdQdC9hN09rOVhuSDdZcDU0UjhsYm96bGtvNXlSOFdnZzlqeWZ0aDRoQ2x3U0J3RkJxbmcKeHBBNSs0NllLOUhwU0VNa0FXb1Z5eERrR0E1UXZubTBiSjZQSk0xUi9UQkpFeTA1Uy90ZVlIV3oyeTFNb29INAo4TStoZTR6YjFQLy93NjhWUE9oR1pjTWlGUzBGTWNwVGgzdlFLUTBwQS84S3c2TWErUFdEWWplY3Z2Y0oxd0lECkFRQUJNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUJBUUJzditJRzNNWVVNbUdMNUdYTXFhM3NiU0RZdFJxaEhRcXkKMmxWaWQ1OXFEVmVOdG50MXdkYVJrSjQ4S2x1SzBkZUJDanpGaVN2elBZMVlHc09qeEJ4R2Qrd0tYcElMVXQ3YwpsMXFIbGRTNktyOU9oaS9XSUFDV3AxbDN1K1luUXJROHIzNkZqaGZ1ODMyQ1EwVTQ3Z3I0Yjc5NVNBeDRzdVVFClUwZ2F4MnNLMHlUSU9YYUk4VjRQWThrSlZHdXpyR2N1bVBLT1lrSTRvSEhBY0JMMERrWUkyZ0hmZ2F1amZYTFgKYU9yQ0Z4QndPMGh3ekhNam1GNlRYT2dTNVVIYzFsbzhwREpNK1J3SmUxVjA2RGlZRFpUUlErM1lxcEZpSHpSbwozZkFENzBhM3U5c0NWYnM0QjEzU2ZXOUk5R3hNOXhpdEJjL1VNME1ad1BHUytaSVEwRkZzCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb2dJQkFBS0NBUUVBenpBNGlIai9MaVloZUdSVUtFYWtjU2tjRHpsWE1kMDUwZStBb3VodXFoOHJEandOCmlJdERlOXNOZHlzUk1tMlhFWVFMbXZCcjRZUzdnYTZqVUMxVE14ZzJSeHZmckZFQ1RPNGJkU2gvZ0NKNU8wdjgKSGEzRG5jV0FvbGhSSHVZUkordVdPYkJMMWJMalExSzNoUk9YdnIyVkhvbWRpb09ybnEwQmdQdC9hN09rOVhuSAo3WXA1NFI4bGJvemxrbzV5UjhXZ2c5anlmdGg0aENsd1NCd0ZCcW5neHBBNSs0NllLOUhwU0VNa0FXb1Z5eERrCkdBNVF2bm0wYko2UEpNMVIvVEJKRXkwNVMvdGVZSFd6MnkxTW9vSDQ4TStoZTR6YjFQLy93NjhWUE9oR1pjTWkKRlMwRk1jcFRoM3ZRS1EwcEEvOEt3Nk1hK1BXRFlqZWN2dmNKMXdJREFRQUJBb0lCQUFNK1hBUTI4TGZHUFF2bgpkakhUT1V2VU91NDZGWlZnUTBGNElHbHNmaDhIc2VMZEtkRVRiUkVKVXVLa3QvWTBKUU5QTCtkVEVEMU5tS25sCkZBVnpVRFFpa3ViMkZzQlozRkZjQU80S25rUmhSY2laM2U2UkE5ajZlSk1TRXVNSzh3WE8rR0VhMDNVYkFkZlIKK2JHSnB2eURkMHd0RjF4TngyZ0tpVlY5bW5jVEo3RDJtaUZPVTNXR3pUeFlyMVdnVDd6WHVsQnkyQlR6SlEzNQpwcG9hdXQwYlcvVkZDQ1FIc0NRK2tUNlhXbE9vQ2VTWTd5aEhmSzRtMGFCeUNjN1E0dW5CUUZRU24rck1CZUJpCkJxaE9BU0NFQnhYUzhlRUxhOCtCQml3eGo0SmJQa3IzbFlRcTQxbDlMU3FtQTN4dy9ZKzZzK2NCRmdxSGQ5RUgKVmJidTUrRUNnWUVBN2VUeUdXQmxubk9ySzJBMjkrbENYY1RBRHhGdlRoK0hWMlRJTXV3NW9oMlE0MkhCZWkwcgp3L2dTa1FGU1cvK1JaNmpXU2xsWW51ZDNXVkUwRzA3ZkhLaWpZMnBmbFQ3Z3lXYlhoc0NXQmkwRVpOK0JxUUNrCko5UVNaUGZLRXRjamhkTDdtVnBJdEF3ZjM4SHpiNUx0d3pBYTFhTlFjK2h3YVE3eWo2UFhubDhDZ1lFQTN2VUMKcXhURDJ2Y2VkQWZlUGUxQXd1SDRUZ2pVVFJnbU5rMGRPbTBFazlzUnZOelRZemk0bmxNQ1YzMHZiZTVMRWNleQo3VWRJS3pGMUwrQWRpaFFpckcvMHJIQ3N0U21RTHhLWDdhVW5vcVliWHJWNTlYMFVaMndDcFBqZm1DQTNYYmE5CmJ0ZThCRFFCbmp1QjJ6dXVIa21ZY3BSWllNeEdvMjd0aVV2ZlY0a0NnWUJRdFMyVmdtaTNXeEtsUXAwamVsVnoKcm41aUhrNGV1UCtYbks5MjUwR2VTRjJSWnViVzVtQkV1ZkxDa3lvMzMvcWFxbU1aRWpySW5rcVZXTUZPeW5GVApMYnRRelJQa2RGS2F3WE01V2prTG0xWTBTc2VZYUlsSW9lQWp0UlV2VXlIUUV3WWN2czZQbHRWeGVrRjJodWgzCkllall0ZkZqZ1dZeG5rcVloTU53RFFLQmdGTU11UDI1TW10eCthb0c5RVhsQm1hUmZjaXppVUZlYVgxNHBCYUwKWFZVbUdTbGNxSEVoUThQVjc5MWZDRGZPdDYvYnowNkxhdHFNQmJiYnFLVXljdWdBbkFkUHdVV0tRZWNHNmdqZgpxQy94NStnVGVXWjBQUkY1TGxMOVVXeDlNNko0MjM5YVpQSzczSTV3WkNLaHpHNER4QUdLT1BEUnBzNWlGNkU0CjNlemhBb0dBS1lxZ1o4dUtOVGNpZ3A4ekpqSzB4N1RrZmttTVViMTRUYnFZUzJiWVhFTDlwZDM1aU1iclJ1MEYKTGJqOTFlcHVVbE00eG9td2tHM284Qll6OWpOZVhGVnIwQmhvY0E3UjZVL2VRc1FLQ0Fac3VMTThLdGFCN0pRTwpzTFpJRnROZUpMV0lRMUhXZG40KzI3SDIyeGUzMFBVUlpsSnR6b2NrT3hGaVl3UUZ5bzQ9Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+    ca.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURTRENDQWpBQ0NRREtXdnJwd2lJeUNEQU5CZ2txaGtpRzl3MEJBUXNGQURCbU1Rc3dDUVlEVlFRR0V3SlYKVXpFTE1Ba0dBMVVFQ0F3Q1EwRXhGakFVQmdOVkJBY01EVk5oYmlCR2NtRnVjMmx6WTI4eERqQU1CZ05WQkFvTQpCVTVIU1U1WU1Rd3dDZ1lEVlFRTERBTkxTVU14RkRBU0JnTlZCQU1NQzJWNFlXMXdiR1V1WTI5dE1CNFhEVEl3Ck1URXhNakl4TWpnME1sb1hEVE13TVRFeE1ESXhNamcwTWxvd1pqRUxNQWtHQTFVRUJoTUNWVk14Q3pBSkJnTlYKQkFnTUFrTkJNUll3RkFZRFZRUUhEQTFUWVc0Z1JuSmhibk5wYzJOdk1RNHdEQVlEVlFRS0RBVk9SMGxPV0RFTQpNQW9HQTFVRUN3d0RTMGxETVJRd0VnWURWUVFEREF0bGVHRnRjR3hsTG1OdmJUQ0NBU0l3RFFZSktvWklodmNOCkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFNcmxLTXFySGZNUjRtZ2FMMnpaRzJEWVlmS0NGVm1JTmpsWXVPZUMKRkRUY1JnUUt0dTJZY0N4WllCQUR3SFp4RWY2TklLdFZzTVdMaFNOUy9OYzBCbXRpUU0vSUV4aGxDaURDNlNsOApPTnJJM3c3cUp6TjZJVUVSQjZ0VmxRdDA3cmdNMFYyNlVUWXUwSWt2MVk4dHJmTFlQWmNrekJrb3JRanBjaXVtCnFvUDJCSmY0eXljOUxxcHh0bFdLeGVsa3VuVkw1aWpNRXpwajlnRUUyNlRFSGJzZEViaG9SOGcwT2VIWnFIN2UKbVhDblNJQlIwQS9vL3M2bm9HTlgrRjE5bFk3VGd3NzdqT3VRUTVZc2krN25oTjJsS3ZjQzgxOVJYN29NcGd2dApWNUIzbkkwbUY2QmF6bmplVHM0eVFjcjFTbTNVVFZCd1g5WnV2TDdSYklYa1VtOENBd0VBQVRBTkJna3Foa2lHCjl3MEJBUXNGQUFPQ0FRRUFnbTA0dzZPSVdHajZ0a2E5Y2NjY25ibEYwb1p6ZUVBSXl3anZSNXNEY1BkdkxJZU0KZWVzSnk2ckZINERCbU15Z3BjSXhKR3JTT3pabEYzTE12dzd6SzRzdHFOdG0xSGlwckY4Ynp4ZlRmZlZZbmNnNgpoVktFckh0WjJGWlJqLzJUTUowMWFSRFpTdVZiTDZVSmlva3BVNnh4VDd5eTBkRlprS3JqVVIzNDlnS3hScUp3CkFtMmFzMGJoaTUxRXFLMUdFeDNtNGMwdW4ydk5oNXFQMmh2NmUvUXplNlA5NnZlZk5hU2s5UU1GZnVCMWtTQWsKZkdwa2lMN2JqbWpuaEt3QW1mOGpEV0RabHRCNlM1NlF5MlFqUFI4Sm9PdXNiWXhhcjRjNkVjSXdWSHY2bWRnUAp5WnhXcVFzZ3RTZkZ4K1B3b245SVBLdXEwalFZZ2VaUFN4Uk1MQT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0Kubuntu@ip-10-1-1-8:~/kubernetes-ingress/examples/custom-resources/egress-mtls$
+
+  cat egress-mtls-secret.yaml
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: egress-mtls-secret
+  type: kubernetes.io/tls
+  data:
+    tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURRekNDQWlzQ0NRRE5Tc2YvSXpBaElUQU5CZ2txaGtpRzl3MEJBUXNGQURCbU1Rc3dDUVlEVlFRR0V3SlYKVXpFTE1Ba0dBMVVFQ0F3Q1EwRXhGakFVQmdOVkJBY01EVk5oYmlCR2NtRnVjMmx6WTI4eERqQU1CZ05WQkFvTQpCVTVIU1U1WU1Rd3dDZ1lEVlFRTERBTkxTVU14RkRBU0JnTlZCQU1NQzJWNFlXMXdiR1V1WTI5dE1CNFhEVEl3Ck1URXhNakl5TXpFek9Gb1hEVE13TVRFeE1ESXlNekV6T0Zvd1lURUxNQWtHQTFVRUJoTUNWVk14Q3pBSkJnTlYKQkFnTUFrTkJNUll3RkFZRFZRUUhEQTFUWVc0Z1JuSmhibk5wYzJOdk1RNHdEQVlEVlFRS0RBVk9SMGxPV0RFTQpNQW9HQTFVRUN3d0RTMGxETVE4d0RRWURWUVFEREFaamJHbGxiblF3Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBCkE0SUJEd0F3Z2dFS0FvSUJBUUM1M2djYWFXMGo0ZVdWZmV5OWZIYkZtUzMvRWtjMFFYbFVrdUZsSUc4T016blQKQ2hFUmd3a1hyOWNFeTZEY2hxN0FlNjh3SjBHcmdHdjl6elEyTHdyOHJLd1NNWUVmUXIwQ2NJc1ZXUy9ncDNrSAp2VG1FS3RacXdIL1VhWWJHVFVzRlBpaENFeEV1T3pwRWROMmhDZ1Vsclk2Y1RPMGJjRzNGbk1Dbk9IZE0zZ2tsCkFOajRYd0pBSXhVN216bkNSWFkyWGRJVHhZbG0yc0FyWmVxR1JycGVKNTJDejhhME9iN3poUTgwK2d3QjZBczEKL2dXeHVTR2Y4eGhrL1NhVlpQUE4xU2RTeDcwUU5BZnFFU21tQ0lnVEYralFGQkx3bDhnTkZxajYvR2lSdElvWgozMEpEaXhuZVBrUTQ3S2ZoOS96c0xsRy9WV0hyUXA0d29TY1BqTlBkQWdNQkFBRXdEUVlKS29aSWh2Y05BUUVMCkJRQURnZ0VCQUZtS05PK0dRQVpFcHBZdXBYNnJ6NktZcUFXUEtkcXRPUjJaNlR0K0ZSNlNPRExSem56RDJuRjkKU3ZhZitaZkJ4SFhtR1FwRkZXTEpINUlmbEgzM21KOFZORlh2Z0F6WnVwNG9tSDJobndHYW9NaklCS2FQSnZUZQpPQ3IwTWpjMjB4Qk82WTdzdU1Eem5VTDRRTjJib3QrM3M2SXZSaHhWeEM3ZS9OSWMzaHVQTjUxUEJUWDRCVkJWCkwweVc5Z2ltMXdibHJOVllaRDB1cnFDZ05wTm8rbWpqZXJsRkxpN0p6YWhNSllIV0JNUDc2Vnp0bk82ZnFhMU8KZXRBd3RYUnNnVnpxUkhWK0lFWk0rNUtZY2RYcEY3bjVBeFFkNUdxVDVhNTBaRnBYS2tJaURFRE91TXFUY0NQWQp2K0szQ1EzaW5wUXg4bXUwckRUL0ZQdDgrVnhpVEpBPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVBdWQ0SEdtbHRJK0hsbFgzc3ZYeDJ4Wmt0L3hKSE5FRjVWSkxoWlNCdkRqTTUwd29SCkVZTUpGNi9YQk11ZzNJYXV3SHV2TUNkQnE0QnIvYzgwTmk4Sy9LeXNFakdCSDBLOUFuQ0xGVmt2NEtkNUI3MDUKaENyV2FzQi8xR21HeGsxTEJUNG9RaE1STGpzNlJIVGRvUW9GSmEyT25FenRHM0J0eFp6QXB6aDNUTjRKSlFEWQorRjhDUUNNVk81czV3a1YyTmwzU0U4V0padHJBSzJYcWhrYTZYaWVkZ3MvR3REbSs4NFVQTlBvTUFlZ0xOZjRGCnNia2huL01ZWlAwbWxXVHp6ZFVuVXNlOUVEUUg2aEVwcGdpSUV4Zm8wQlFTOEpmSURSYW8rdnhva2JTS0dkOUMKUTRzWjNqNUVPT3luNGZmODdDNVJ2MVZoNjBLZU1LRW5ENHpUM1FJREFRQUJBb0lCQUM1enNmekUyblQ4VVArUwprQ2N2UXhQUlc3Q0M1ZTdHYWtkYnloOFhBd3BlZlJZa1R1MjhmUHBCaFJCNnY4STltdEVhV0VkRm1HRC9ZSDMzCldnb3NxYWRLbEZxYnFyU2dYbEtNeEFYYTIxOWZHNTEyaWpoZzZHT1hwcHIwb0sxUXhlNFNnY2M1c3JLR05PTEUKL2xyd0FTZFFmL0xLT3Z2L2xqK3NGRzMyYThKMjBtWVY0dFpsZmJsaUlxNHd0YzVnc0JWUVJ2T3RielQzQzRscwowM1JwbnJPbitxV3NwVkVleU52WjRjM2NKUGJpVTJ4WmkvcE1MZWhnUUhZcDZ0bEpVMFZQRDJaWDJoaDkrRlNDCndOaGNhQVBMTkZrNy9Vc3grdTVhMUM3b3Y0WEw1MExWVE15RjVkdVpCY2ZsUmd3ZWJVc0JqNlRWUDl4Tkp3aTUKb3VmOXJDRUNnWUVBNFJCVE5Oam5LWC9qQVJVZW1tTEpZVFpYNm12bXUzMTJSU1ZuK1ZUV1VzMHVhZVhaS2pmMwpWa3Q0Z3VkdzB1UWh1aFhJbkxVclJhdmVhZHBNc0o0VkZxRHJSRW5LVWlmZWU5QzQraWJOSnk3NHBYcVJpaVpaCjVCT2RKWjNlNVZCbDlTcDJNNExxMUNFNGF5cyt5djAyak9jSjJPallJSW9MU2IxL21WZnVpTmtDZ1lFQTAycHYKTTQyTEljWjFJQW9jMStlTXZIVVpuQ0ltei8vMVBGTTJoaGdlSUs1VXhZM0FRRVg5dzJDWUFKT202Q05WbHhiNAp6dkVrVnVOMnZ0cE5LaWlUQkRGczZtLzBkSE8wTERQdDdjV2ozNDAzbUtwcjBPY2pEVjllYnhpVWJ0R0lKVE84CkpyYzB2OUNUMnFJaFBpTElZdXBpOXg3SFZHUi9pTCswMnJNZm9LVUNnWUVBdktDaERBYktYd2EzSy80V1l4QnUKZFZKRmhzeWVXZjlCODV2eE00LzkvUEhJZDZyVFFzWWJQekVMdExMaTVXMmNNc2oxRlJubVJZTlJhbWd5cEVncApwb2lDQmY3T1dlTGVYZWxHVHluY0FYNGxtUk5NRFh3dEZMRzNvSUpiQU5oTVM1a2w3ZkJJZmpmRmdGU0RVVCs5Cnk0UUx4Y2NJOU9TZHAxVHlMNFA2QUtrQ2dZRUEwQmZVU3I4SWNuOC83QUJvTVkrRmRENGlyZzdqZXhwcVRTMXUKM29CQXIxUkl0b2IyODR5dzRhMWpFRFpGTS9zTGxRTVVkY1RmU3ZMcmY2R3FFRlFObVRQNUM2eVV4a2JZMGlWdgpEUG5iZWdBcStBYk94cm1yUTg5YVNTbTllSEtmZWxhNDNMYTVvZy93YUdQcktwamIrcGpRUG9NNkdmUXRuL0ZxClYxVzJUTTBDZ1lBNXg3aVRLa0lZQlgwR0JhWERZOUlxMVBWeTkxK3pFeDhIWUdDczRNR2ttME42Y3lncm84UmwKMzA3R09ocnhwam1wMTNEb1JtM21XZWhQMmV1WEdhLy9VS2gxaTUvVkQ0R1ltL2psc1plZUx6MURiR2crQVZqegpWVFdueFJCemYwRmdGZkZkTmNIeFlwNTJ3VTZuK2x3MTVTdkNTWmJKQzYzUTBsZ3N1NlhZN3c9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=cat egress-
+  egress-mtls-secret.yaml        egress-mtls.yaml               egress-trusted-ca-secret.yaml
+  cat egress-mtls.yaml
+  apiVersion: k8s.nginx.org/v1
+  kind: Policy
+  metadata:
+    name: egress-mtls-policy
+  spec:
+    egressMTLS:
+      tlsSecret: egress-mtls-secret
+      trustedCertSecret: egress-trusted-ca-secret
+      verifyServer: on
+      verifyDepth: 2
+      serverName: on
+      sslName: secure-app.example.com
+  cat egress-trusted-ca-secret.yaml
+  kind: Secret
+  metadata:
+    name: egress-trusted-ca-secret
+  apiVersion: v1
+  type: nginx.org/ca
+  data:
+    ca.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURTRENDQWpBQ0NRREtXdnJwd2lJeUNEQU5CZ2txaGtpRzl3MEJBUXNGQURCbU1Rc3dDUVlEVlFRR0V3SlYKVXpFTE1Ba0dBMVVFQ0F3Q1EwRXhGakFVQmdOVkJBY01EVk5oYmlCR2NtRnVjMmx6WTI4eERqQU1CZ05WQkFvTQpCVTVIU1U1WU1Rd3dDZ1lEVlFRTERBTkxTVU14RkRBU0JnTlZCQU1NQzJWNFlXMXdiR1V1WTI5dE1CNFhEVEl3Ck1URXhNakl4TWpnME1sb1hEVE13TVRFeE1ESXhNamcwTWxvd1pqRUxNQWtHQTFVRUJoTUNWVk14Q3pBSkJnTlYKQkFnTUFrTkJNUll3RkFZRFZRUUhEQTFUWVc0Z1JuSmhibk5wYzJOdk1RNHdEQVlEVlFRS0RBVk9SMGxPV0RFTQpNQW9HQTFVRUN3d0RTMGxETVJRd0VnWURWUVFEREF0bGVHRnRjR3hsTG1OdmJUQ0NBU0l3RFFZSktvWklodmNOCkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFNcmxLTXFySGZNUjRtZ2FMMnpaRzJEWVlmS0NGVm1JTmpsWXVPZUMKRkRUY1JnUUt0dTJZY0N4WllCQUR3SFp4RWY2TklLdFZzTVdMaFNOUy9OYzBCbXRpUU0vSUV4aGxDaURDNlNsOApPTnJJM3c3cUp6TjZJVUVSQjZ0VmxRdDA3cmdNMFYyNlVUWXUwSWt2MVk4dHJmTFlQWmNrekJrb3JRanBjaXVtCnFvUDJCSmY0eXljOUxxcHh0bFdLeGVsa3VuVkw1aWpNRXpwajlnRUUyNlRFSGJzZEViaG9SOGcwT2VIWnFIN2UKbVhDblNJQlIwQS9vL3M2bm9HTlgrRjE5bFk3VGd3NzdqT3VRUTVZc2krN25oTjJsS3ZjQzgxOVJYN29NcGd2dApWNUIzbkkwbUY2QmF6bmplVHM0eVFjcjFTbTNVVFZCd1g5WnV2TDdSYklYa1VtOENBd0VBQVRBTkJna3Foa2lHCjl3MEJBUXNGQUFPQ0FRRUFnbTA0dzZPSVdHajZ0a2E5Y2NjY25ibEYwb1p6ZUVBSXl3anZSNXNEY1BkdkxJZU0KZWVzSnk2ckZINERCbU15Z3BjSXhKR3JTT3pabEYzTE12dzd6SzRzdHFOdG0xSGlwckY4Ynp4ZlRmZlZZbmNnNgpoVktFckh0WjJGWlJqLzJUTUowMWFSRFpTdVZiTDZVSmlva3BVNnh4VDd5eTBkRlprS3JqVVIzNDlnS3hScUp3CkFtMmFzMGJoaTUxRXFLMUdFeDNtNGMwdW4ydk5oNXFQMmh2NmUvUXplNlA5NnZlZk5hU2s5UU1GZnVCMWtTQWsKZkdwa2lMN2JqbWpuaEt3QW1mOGpEV0RabHRCNlM1NlF5MlFqUFI4Sm9PdXNiWXhhcjRjNkVjSXdWSHY2bWRnUAp5WnhXcVFzZ3RTZkZ4K1B3b245SVBLdXEwalFZZ2VaUFN4Uk1MQT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+
+各リソースを反映した結果を確認します
+
+.. code-block:: cmdin
+    
+  kubectl get deployment
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+  secure-app   1/1     1            1           73s
+
+
+.. code-block:: cmdin
+    
+  kubectl get pod
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME                          READY   STATUS    RESTARTS   AGE
+  secure-app-6dc947cc5f-8855b   1/1     Running   0          75s
+
+.. code-block:: cmdin
+    
+  kubectl get svc -o wide
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE   SELECTOR
+  kubernetes   ClusterIP   10.96.0.1       <none>        443/TCP    12d   <none>
+  secure-app   ClusterIP   10.101.84.115   <none>        8443/TCP   84s   app=secure-app
+
+.. code-block:: cmdin
+    
+  kubectl get svc
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+  kubernetes   ClusterIP   10.96.0.1       <none>        443/TCP    12d
+  secure-app   ClusterIP   10.101.84.115   <none>        8443/TCP   89s
+  
+
+.. code-block:: cmdin
+    
+  kubectl get svc | grep secure-app
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  secure-app   ClusterIP   10.101.84.115   <none>        8443/TCP   5m17s
+  
+
+.. code-block:: cmdin
+    
+  kubectl get secret | grep -e app-tls -e egress
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  app-tls-secret             Opaque                                3      6m53s
+  egress-mtls-secret         kubernetes.io/tls                     2      6m48s
+  egress-trusted-ca-secret   nginx.org/ca                          1      6m42s
+
+
+
+動作確認
+----
+
+.. code-block:: cmdin
+
+  curl -v -H "Host:webapp.example.com" http://localhost/
+  *   Trying 127.0.0.1:80...
+  * TCP_NODELAY set
+  * Connected to localhost (127.0.0.1) port 80 (#0)
+  > GET / HTTP/1.1
+  > Host:webapp.example.com
+  > User-Agent: curl/7.68.0
+  > Accept: */*
+  >
+  * Mark bundle as not supporting multiuse
+  < HTTP/1.1 200 OK
+  < Server: nginx/1.21.3
+  < Date: Wed, 19 Jan 2022 15:14:03 GMT
+  < Content-Type: text/plain
+  < Content-Length: 43
+  < Connection: keep-alive
+  <
+  hello from pod secure-app-6dc947cc5f-8855b
+  * Connection #0 to host localhost left intact
+
+
+
+
+
+リソースの削除
+
+
