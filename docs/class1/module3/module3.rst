@@ -1156,6 +1156,89 @@ Ingress Controller で OIDC RPのデプロイ
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/oidc
 
 
+サンプルアプリケーションをデプロイ
+
+::
+
+  cd ~/kubernetes-ingress/examples/custom-resources/oidc
+
+  kubectl apply -f tls-secret.yaml
+  kubectl apply -f webapp.yaml
+  kubectl apply -f keycloak.yaml
+  kubectl apply -f virtual-server-idp.yaml
+  
+  grep host virtual-server*yaml
+  virtual-server-idp.yaml:  host: keycloak.example.com
+  virtual-server.yaml:  host: webapp.example.com
+  
+  echo -n "f0558674-70a1-45a9-8c90-02245628b8f1" | base64
+  ZjA1NTg2NzQtNzBhMS00NWE5LThjOTAtMDIyNDU2MjhiOGYx
+  
+  vi client-secret.yaml
+  
+  kubectl apply -f client-secret.yaml
+  kubectl apply -f oidc.yaml
+  
+  kubectl get svc -n kube-system | grep kube-dns
+  kube-dns   ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   12d
+  
+  vi virtual-server.yaml
+  
+  kubectl apply -f virtual-server.yaml
+
+
+
+リソースを確認
+
+::
+
+  kubectl get secret | grep -e oidc -e tls-secret
+  oidc-secret           nginx.org/oidc                        1      4m29s
+  tls-secret            kubernetes.io/tls                     2      21m
+  
+  kubectl get pod
+  NAME                        READY   STATUS    RESTARTS   AGE
+  keycloak-5cc8d76bd4-zpj87   1/1     Running   0          22m
+  webapp-6c9689bbf4-qws2b     1/1     Running   0          22m
+  
+  kubectl get deployment
+  NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+  keycloak   1/1     1            1           22m
+  webapp     1/1     1            1           22m
+  
+  kubectl get svc
+  NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+  keycloak     ClusterIP   10.97.4.138     <none>        8080/TCP   22m
+  kubernetes   ClusterIP   10.96.0.1       <none>        443/TCP    12d
+  webapp-svc   ClusterIP   10.104.69.230   <none>        80/TCP     22m
+  
+  kubectl get policy
+  NAME          STATE   AGE
+  oidc-policy   Valid   9m28s
+  
+  kubectl get vs
+  NAME       STATE   HOST                   IP    PORTS   AGE
+  keycloak   Valid   keycloak.example.com                 23m
+  webapp     Valid   webapp.example.com                   7m40s
+
+
+動作確認
+
+Chromeブラウザを開き、 ``Secret Tab`` を開いてください。
+そして、webapp.example.com を開いてください
+
+
+リソースの削除
+
+::
+
+  kubectl delete -f webapp.yaml
+  kubectl delete -f keycloak.yaml
+  kubectl delete -f virtual-server-idp.yaml
+  kubectl delete -f client-secret.yaml
+  kubectl delete -f oidc.yaml
+  kubectl delete -f virtual-server.yaml
+
 
 Ingress MTLS
 ====
