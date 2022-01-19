@@ -1205,6 +1205,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: cmdin
   
   kubectl get pod
+
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
@@ -1216,6 +1217,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: cmdin
 
   kubectl get deployment
+
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
@@ -1226,6 +1228,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: cmdin
 
   kubectl get svc
+
 .. code-block:: bash
   :linenos:
   :caption: output sample
@@ -1237,6 +1240,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: cmdin
 
   kubectl get policy
+
 .. code-block:: bash
   :linenos:
   :caption: output sample
@@ -1246,6 +1250,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: cmdin
 
   kubectl get vs
+
 .. code-block:: bash
   :linenos:
   :caption: output sample
