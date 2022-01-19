@@ -1454,7 +1454,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: yaml
   :linenos:
   :caption: Client Secret の指定
-
+  :emphasize-lines: 7
+  
   apiVersion: v1
   kind: Secret
   metadata:
