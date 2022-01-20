@@ -319,6 +319,46 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
   Jan 20 03:07:28 nginx-ingress-5ddc7f4f-zjlt2 ASM:attack_type="Non-browser Client",blocking_exception_reason="N/A",date_time="2022-01-20 03:07:28",dest_port="80",ip_client="10.1.1.9",is_truncated="false",method="GET",policy_name="dataguard-alarm",protocol="HTTP",request_status="alerted",response_code="200",severity="Critical",sig_cves="N/A",sig_ids="N/A",sig_names="N/A",sig_set_names="N/A",src_port="49443",sub_violations="N/A",support_id="16242938385820378173",threat_campaign_names="N/A",unit_hostname="nginx-ingress-5ddc7f4f-zjlt2",uri="/",violation_rating="0",vs_name="32-webapp.example.com:8-/",x_forwarded_for_header_value="N/A",outcome="PASSED",outcome_reason="SECURITY_WAF_VIOLATION_TRANSPARENT_MODE",violations="Bot Client Detected",violation_details="N/A",bot_signature_name="curl",bot_category="HTTP Library",bot_anomalies="N/A",enforced_bot_anomalies="N/A",client_class="Untrusted Bot",client_application="N/A",client_application_version="N/A",request="GET / HTTP/1.1\r\nHost: webapp.example.com\r\nUser-Agent: curl/7.68.0\r\nAccept: */*\r\n\r\n",transport_protocol="HTTP/1.1"
 
+  Jan 20 03:07:28 nginx-ingress-5ddc7f4f-zjlt2 ASM:
+  attack_type="Non-browser Client",
+  blocking_exception_reason="N/A",
+  date_time="2022-01-20 03:07:28",
+  dest_port="80",
+  ip_client="10.1.1.9",
+  is_truncated="false",
+  method="GET",
+  policy_name="dataguard-alarm",
+  protocol="HTTP",
+  request_status="alerted",
+  response_code="200",
+  severity="Critical",
+  sig_cves="N/A",
+  sig_ids="N/A",
+  sig_names="N/A",
+  sig_set_names="N/A",
+  src_port="49443",
+  sub_violations="N/A",
+  support_id="16242938385820378173",
+  threat_campaign_names="N/A",
+  unit_hostname="nginx-ingress-5ddc7f4f-zjlt2",
+  uri="/",
+  violation_rating="0",
+  vs_name="32-webapp.example.com:8-/",
+  x_forwarded_for_header_value="N/A",
+  outcome="PASSED",
+  outcome_reason="SECURITY_WAF_VIOLATION_TRANSPARENT_MODE",
+  violations="Bot Client Detected",
+  violation_details="N/A",
+  bot_signature_name="curl",
+  bot_category="HTTP Library",
+  bot_anomalies="N/A",
+  enforced_bot_anomalies="N/A",
+  client_class="Untrusted Bot",
+  client_application="N/A",
+  client_application_version="N/A",
+  request="GET / HTTP/1.1\r\nHost: webapp.example.com\r\nUser-Agent: curl/7.68.0\r\nAccept: */*\r\n\r\n",
+  transport_protocol="HTTP/1.1"
+
 
 .. code-block:: cmdin
 
@@ -354,6 +394,46 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   :caption: 該当するSyslogのサンプル
 
   Jan 20 03:07:39 nginx-ingress-5ddc7f4f-zjlt2 ASM:attack_type="Non-browser Client,Abuse of Functionality,Cross Site Scripting (XSS)",blocking_exception_reason="N/A",date_time="2022-01-20 03:07:39",dest_port="80",ip_client="10.1.1.9",is_truncated="false",method="GET",policy_name="dataguard-alarm",protocol="HTTP",request_status="blocked",response_code="0",severity="Critical",sig_cves="N/A",sig_ids="200000099,200000093",sig_names="XSS script tag (URI),XSS script tag end (URI)",sig_set_names="{Cross Site Scripting Signatures;High Accuracy Signatures},{Cross Site Scripting Signatures;High Accuracy Signatures}",src_port="61276",sub_violations="N/A",support_id="16242938385820378683",threat_campaign_names="N/A",unit_hostname="nginx-ingress-5ddc7f4f-zjlt2",uri="/<script>",violation_rating="5",vs_name="32-webapp.example.com:8-/",x_forwarded_for_header_value="N/A",outcome="REJECTED",outcome_reason="SECURITY_WAF_VIOLATION",violations="Illegal meta character in URL,Attack signature detected,Violation Rating Threat detected,Bot Client Detected",violation_details="<?xml version='1.0' encoding='UTF-8'?><BAD_MSG><violation_masks><block>410000000200c00-3a03030c30000072-8000000000000000-0</block><alarm>2477f0ffcbbd0fea-befbf35cb000007e-8000000000000000-0</alarm><learn>0-20-0-0</learn><staging>0-0-0-0</staging></violation_masks><request-violations><violation><viol_index>42</viol_index><viol_name>VIOL_ATTACK_SIGNATURE</viol_name><context>url</context><sig_data><sig_id>200000099</sig_id><blocking_mask>3</blocking_mask><kw_data><buffer>LzxzY3JpcHQ+</buffer><offset>1</offset><length>7</length></kw_data></sig_data><sig_data><sig_id>200000093</sig_id><blocking_mask>3</blocking_mask><kw_data><buffer>LzxzY3JpcHQ+</buffer><offset>2</offset><length>7</length></kw_data></sig_data></violation><violation><viol_index>26</viol_index><viol_name>VIOL_URL_METACHAR</viol_name><uri>LzxzY3JpcHQ+</uri><metachar_index>60</metachar_index><wildcard_entity>*</wildcard_entity><staging>0</staging></violation><violation><viol_index>26</viol_index><viol_name>VIOL_URL_METACHAR</viol_name><uri>LzxzY3JpcHQ+</uri><metachar_index>62</metachar_index><wildcard_entity>*</wildcard_entity><staging>0</staging></violation></request-violations></BAD_MSG>",bot_signature_name="curl",bot_category="HTTP Library",bot_anomalies="N/A",enforced_bot_anomalies="N/A",client_class="Untrusted Bot",client_application="N/A",client_application_version="N/A",request="GET /<script> HTTP/1.1\r\nHost: webapp.example.com\r\nUser-Agent: curl/7.68.0\r\nAccept: */*\r\n\r\n",transport_protocol="HTTP/1.1"
+
+  Jan 20 03:07:39 nginx-ingress-5ddc7f4f-zjlt2 ASM:
+  attack_type="Non-browser Client,Abuse of Functionality,Cross Site Scripting (XSS)",
+  blocking_exception_reason="N/A",
+  date_time="2022-01-20 03:07:39",
+  dest_port="80",
+  ip_client="10.1.1.9",
+  is_truncated="false",
+  method="GET",
+  policy_name="dataguard-alarm",
+  protocol="HTTP",
+  request_status="blocked",
+  response_code="0",
+  severity="Critical",
+  sig_cves="N/A",
+  sig_ids="200000099,200000093",
+  sig_names="XSS script tag (URI),XSS script tag end (URI)",
+  sig_set_names="{Cross Site Scripting Signatures;High Accuracy Signatures},{Cross Site Scripting Signatures;High Accuracy Signatures}",
+  src_port="61276",
+  sub_violations="N/A",
+  support_id="16242938385820378683",
+  threat_campaign_names="N/A",
+  unit_hostname="nginx-ingress-5ddc7f4f-zjlt2",
+  uri="/<script>",
+  violation_rating="5",
+  vs_name="32-webapp.example.com:8-/",
+  x_forwarded_for_header_value="N/A",
+  outcome="REJECTED",
+  outcome_reason="SECURITY_WAF_VIOLATION",
+  violations="Illegal meta character in URL,Attack signature detected,Violation Rating Threat detected,Bot Client Detected",
+  violation_details="<?xml version='1.0' encoding='UTF-8'?><BAD_MSG><violation_masks><block>410000000200c00-3a03030c30000072-8000000000000000-0</block><alarm>2477f0ffcbbd0fea-befbf35cb000007e-8000000000000000-0</alarm><learn>0-20-0-0</learn><staging>0-0-0-0</staging></violation_masks><request-violations><violation><viol_index>42</viol_index><viol_name>VIOL_ATTACK_SIGNATURE</viol_name><context>url</context><sig_data><sig_id>200000099</sig_id><blocking_mask>3</blocking_mask><kw_data><buffer>LzxzY3JpcHQ+</buffer><offset>1</offset><length>7</length></kw_data></sig_data><sig_data><sig_id>200000093</sig_id><blocking_mask>3</blocking_mask><kw_data><buffer>LzxzY3JpcHQ+</buffer><offset>2</offset><length>7</length></kw_data></sig_data></violation><violation><viol_index>26</viol_index><viol_name>VIOL_URL_METACHAR</viol_name><uri>LzxzY3JpcHQ+</uri><metachar_index>60</metachar_index><wildcard_entity>*</wildcard_entity><staging>0</staging></violation><violation><viol_index>26</viol_index><viol_name>VIOL_URL_METACHAR</viol_name><uri>LzxzY3JpcHQ+</uri><metachar_index>62</metachar_index><wildcard_entity>*</wildcard_entity><staging>0</staging></violation></request-violations></BAD_MSG>",
+  bot_signature_name="curl",
+  bot_category="HTTP Library",
+  bot_anomalies="N/A",
+  enforced_bot_anomalies="N/A",
+  client_class="Untrusted Bot",
+  client_application="N/A",
+  client_application_version="N/A",
+  request="GET /<script> HTTP/1.1\r\nHost: webapp.example.com\r\nUser-Agent: curl/7.68.0\r\nAccept: */*\r\n\r\n",
+  transport_protocol="HTTP/1.1"
 
 
 
@@ -395,6 +475,46 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   :caption: 該当するSyslogのサンプル
 
   Jan 20 03:07:51 nginx-ingress-5ddc7f4f-zjlt2 ASM:attack_type="Non-browser Client,Brute Force Attack",blocking_exception_reason="N/A",date_time="2022-01-20 03:07:51",dest_port="80",ip_client="10.1.1.9",is_truncated="false",method="POST",policy_name="dataguard-alarm",protocol="HTTP",request_status="blocked",response_code="0",severity="Critical",sig_cves="N/A",sig_ids="300000000",sig_names="Apple_medium_acc [Fruits]",sig_set_names="{apple_sigs}",src_port="63409",sub_violations="N/A",support_id="16242938385820379193",threat_campaign_names="N/A",unit_hostname="nginx-ingress-5ddc7f4f-zjlt2",uri="/",violation_rating="2",vs_name="32-webapp.example.com:8-/",x_forwarded_for_header_value="N/A",outcome="REJECTED",outcome_reason="SECURITY_WAF_VIOLATION",violations="Attack signature detected,Bot Client Detected",violation_details="<?xml version='1.0' encoding='UTF-8'?><BAD_MSG><violation_masks><block>410000000200c00-3a03030c30000072-8000000000000000-0</block><alarm>2477f0ffcbbd0fea-befbf35cb000007e-8000000000000000-0</alarm><learn>0-20-0-0</learn><staging>0-0-0-0</staging></violation_masks><request-violations><violation><viol_index>42</viol_index><viol_name>VIOL_ATTACK_SIGNATURE</viol_name><context>request</context><sig_data><sig_id>300000000</sig_id><blocking_mask>3</blocking_mask><kw_data><buffer>YXBwbGU=</buffer><offset>0</offset><length>5</length></kw_data></sig_data></violation></request-violations></BAD_MSG>",bot_signature_name="curl",bot_category="HTTP Library",bot_anomalies="N/A",enforced_bot_anomalies="N/A",client_class="Untrusted Bot",client_application="N/A",client_application_version="N/A",request="POST / HTTP/1.1\r\nHost: webapp.example.com\r\nUser-Agent: curl/7.68.0\r\nAccept: */*\r\nContent-Length: 5\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\napple",transport_protocol="HTTP/1.1"
+
+  Jan 20 03:07:51 nginx-ingress-5ddc7f4f-zjlt2 ASM:
+  attack_type="Non-browser Client,Brute Force Attack",
+  blocking_exception_reason="N/A",
+  date_time="2022-01-20 03:07:51",
+  dest_port="80",
+  ip_client="10.1.1.9",
+  is_truncated="false",
+  method="POST",
+  policy_name="dataguard-alarm",
+  protocol="HTTP",
+  request_status="blocked",
+  response_code="0",
+  severity="Critical",
+  sig_cves="N/A",
+  sig_ids="300000000",
+  sig_names="Apple_medium_acc [Fruits]",
+  sig_set_names="{apple_sigs}",
+  src_port="63409",
+  sub_violations="N/A",
+  support_id="16242938385820379193",
+  threat_campaign_names="N/A",
+  unit_hostname="nginx-ingress-5ddc7f4f-zjlt2",
+  uri="/",
+  violation_rating="2",
+  vs_name="32-webapp.example.com:8-/",
+  x_forwarded_for_header_value="N/A",
+  outcome="REJECTED",
+  outcome_reason="SECURITY_WAF_VIOLATION",
+  violations="Attack signature detected,Bot Client Detected",
+  violation_details="<?xml version='1.0' encoding='UTF-8'?><BAD_MSG><violation_masks><block>410000000200c00-3a03030c30000072-8000000000000000-0</block><alarm>2477f0ffcbbd0fea-befbf35cb000007e-8000000000000000-0</alarm><learn>0-20-0-0</learn><staging>0-0-0-0</staging></violation_masks><request-violations><violation><viol_index>42</viol_index><viol_name>VIOL_ATTACK_SIGNATURE</viol_name><context>request</context><sig_data><sig_id>300000000</sig_id><blocking_mask>3</blocking_mask><kw_data><buffer>YXBwbGU=</buffer><offset>0</offset><length>5</length></kw_data></sig_data></violation></request-violations></BAD_MSG>",
+  bot_signature_name="curl",
+  bot_category="HTTP Library",
+  bot_anomalies="N/A",
+  enforced_bot_anomalies="N/A",
+  client_class="Untrusted Bot",
+  client_application="N/A",
+  client_application_version="N/A",
+  request="POST / HTTP/1.1\r\nHost: webapp.example.com\r\nUser-Agent: curl/7.68.0\r\nAccept: */*\r\nContent-Length: 5\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\napple",
+  transport_protocol="HTTP/1.1"
 
 
 リソースの削除
