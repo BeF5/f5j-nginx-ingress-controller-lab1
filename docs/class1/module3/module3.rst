@@ -466,10 +466,14 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 ``cafe-virtual-server.yaml`` で通信制御の条件を指定しています。条件は ``matches`` というパラメータで指定します。このサンプルの条件は以下の内容です。
 
-- path: /tea
-  - リクエストのHTTPメソッド($request_method)が、POSTの場合、 ``tea-post`` へ転送する。 それ以外は ``tea`` へ転送する。
-- path: /coffee
-  - cookie の version の値が v2 の場合、 ``coffee-v2`` へ転送する。それ以外は ``coffee-v1`` へ転送する。
+* path: /tea
+
+  * リクエストのHTTPメソッド($request_method)が、POSTの場合、 ``tea-post`` へ転送する。 それ以外は ``tea`` へ転送する。
+
+* path: /coffee
+
+  * cookie の version の値が v2 の場合、 ``coffee-v2`` へ転送する。それ以外は ``coffee-v1`` へ転送する。
+
 
 それぞれの記述内容を以下で確認してください。
 
