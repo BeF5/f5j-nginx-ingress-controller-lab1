@@ -279,7 +279,6 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 ----
 
 
-
 .. code-block:: cmdin
 
   curl -v --resolve webapp.example.com:80:127.0.0.1 "http://webapp.example.com/"
@@ -287,6 +286,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 1
 
   * Added webapp.example.com:80:127.0.0.1 to DNS cache
   * Hostname webapp.example.com was found in DNS cache
@@ -316,9 +316,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: xml
   :linenos:
   :caption: 該当するSyslogのサンプル
-
-  Jan 20 03:07:28 nginx-ingress-5ddc7f4f-zjlt2 ASM:attack_type="Non-browser Client",blocking_exception_reason="N/A",date_time="2022-01-20 03:07:28",dest_port="80",ip_client="10.1.1.9",is_truncated="false",method="GET",policy_name="dataguard-alarm",protocol="HTTP",request_status="alerted",response_code="200",severity="Critical",sig_cves="N/A",sig_ids="N/A",sig_names="N/A",sig_set_names="N/A",src_port="49443",sub_violations="N/A",support_id="16242938385820378173",threat_campaign_names="N/A",unit_hostname="nginx-ingress-5ddc7f4f-zjlt2",uri="/",violation_rating="0",vs_name="32-webapp.example.com:8-/",x_forwarded_for_header_value="N/A",outcome="PASSED",outcome_reason="SECURITY_WAF_VIOLATION_TRANSPARENT_MODE",violations="Bot Client Detected",violation_details="N/A",bot_signature_name="curl",bot_category="HTTP Library",bot_anomalies="N/A",enforced_bot_anomalies="N/A",client_class="Untrusted Bot",client_application="N/A",client_application_version="N/A",request="GET / HTTP/1.1\r\nHost: webapp.example.com\r\nUser-Agent: curl/7.68.0\r\nAccept: */*\r\n\r\n",transport_protocol="HTTP/1.1"
-
+  :emphasize-lines: 1
+  
   Jan 20 03:07:28 nginx-ingress-5ddc7f4f-zjlt2 ASM:
   attack_type="Non-browser Client",
   blocking_exception_reason="N/A",
@@ -366,7 +365,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 .. code-block:: bash
   :linenos:
-  :caption: 実行結果サンプル
+  :caption: 実行結果サンプル (区切り位置で改行して表示)
+  :emphasize-lines: 1
 
   * Added webapp.example.com:80:127.0.0.1 to DNS cache
   * Hostname webapp.example.com was found in DNS cache
@@ -392,8 +392,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: xml
   :linenos:
   :caption: 該当するSyslogのサンプル
-
-  Jan 20 03:07:39 nginx-ingress-5ddc7f4f-zjlt2 ASM:attack_type="Non-browser Client,Abuse of Functionality,Cross Site Scripting (XSS)",blocking_exception_reason="N/A",date_time="2022-01-20 03:07:39",dest_port="80",ip_client="10.1.1.9",is_truncated="false",method="GET",policy_name="dataguard-alarm",protocol="HTTP",request_status="blocked",response_code="0",severity="Critical",sig_cves="N/A",sig_ids="200000099,200000093",sig_names="XSS script tag (URI),XSS script tag end (URI)",sig_set_names="{Cross Site Scripting Signatures;High Accuracy Signatures},{Cross Site Scripting Signatures;High Accuracy Signatures}",src_port="61276",sub_violations="N/A",support_id="16242938385820378683",threat_campaign_names="N/A",unit_hostname="nginx-ingress-5ddc7f4f-zjlt2",uri="/<script>",violation_rating="5",vs_name="32-webapp.example.com:8-/",x_forwarded_for_header_value="N/A",outcome="REJECTED",outcome_reason="SECURITY_WAF_VIOLATION",violations="Illegal meta character in URL,Attack signature detected,Violation Rating Threat detected,Bot Client Detected",violation_details="<?xml version='1.0' encoding='UTF-8'?><BAD_MSG><violation_masks><block>410000000200c00-3a03030c30000072-8000000000000000-0</block><alarm>2477f0ffcbbd0fea-befbf35cb000007e-8000000000000000-0</alarm><learn>0-20-0-0</learn><staging>0-0-0-0</staging></violation_masks><request-violations><violation><viol_index>42</viol_index><viol_name>VIOL_ATTACK_SIGNATURE</viol_name><context>url</context><sig_data><sig_id>200000099</sig_id><blocking_mask>3</blocking_mask><kw_data><buffer>LzxzY3JpcHQ+</buffer><offset>1</offset><length>7</length></kw_data></sig_data><sig_data><sig_id>200000093</sig_id><blocking_mask>3</blocking_mask><kw_data><buffer>LzxzY3JpcHQ+</buffer><offset>2</offset><length>7</length></kw_data></sig_data></violation><violation><viol_index>26</viol_index><viol_name>VIOL_URL_METACHAR</viol_name><uri>LzxzY3JpcHQ+</uri><metachar_index>60</metachar_index><wildcard_entity>*</wildcard_entity><staging>0</staging></violation><violation><viol_index>26</viol_index><viol_name>VIOL_URL_METACHAR</viol_name><uri>LzxzY3JpcHQ+</uri><metachar_index>62</metachar_index><wildcard_entity>*</wildcard_entity><staging>0</staging></violation></request-violations></BAD_MSG>",bot_signature_name="curl",bot_category="HTTP Library",bot_anomalies="N/A",enforced_bot_anomalies="N/A",client_class="Untrusted Bot",client_application="N/A",client_application_version="N/A",request="GET /<script> HTTP/1.1\r\nHost: webapp.example.com\r\nUser-Agent: curl/7.68.0\r\nAccept: */*\r\n\r\n",transport_protocol="HTTP/1.1"
+  :emphasize-lines: 1
 
   Jan 20 03:07:39 nginx-ingress-5ddc7f4f-zjlt2 ASM:
   attack_type="Non-browser Client,Abuse of Functionality,Cross Site Scripting (XSS)",
@@ -435,15 +434,14 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   request="GET /<script> HTTP/1.1\r\nHost: webapp.example.com\r\nUser-Agent: curl/7.68.0\r\nAccept: */*\r\n\r\n",
   transport_protocol="HTTP/1.1"
 
-
-
 .. code-block:: cmdin
 
   curl -v --resolve webapp.example.com:80:127.0.0.1 "http://webapp.example.com/" -X POST -d "apple"
 
 .. code-block:: bash
   :linenos:
-  :caption: 実行結果サンプル
+  :caption: 実行結果サンプル (区切り位置で改行して表示)
+  :emphasize-lines: 1
 
   Note: Unnecessary use of -X or --request, POST is already inferred.
   * Added webapp.example.com:80:127.0.0.1 to DNS cache
@@ -472,9 +470,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 .. code-block:: xml
   :linenos:
-  :caption: 該当するSyslogのサンプル
-
-  Jan 20 03:07:51 nginx-ingress-5ddc7f4f-zjlt2 ASM:attack_type="Non-browser Client,Brute Force Attack",blocking_exception_reason="N/A",date_time="2022-01-20 03:07:51",dest_port="80",ip_client="10.1.1.9",is_truncated="false",method="POST",policy_name="dataguard-alarm",protocol="HTTP",request_status="blocked",response_code="0",severity="Critical",sig_cves="N/A",sig_ids="300000000",sig_names="Apple_medium_acc [Fruits]",sig_set_names="{apple_sigs}",src_port="63409",sub_violations="N/A",support_id="16242938385820379193",threat_campaign_names="N/A",unit_hostname="nginx-ingress-5ddc7f4f-zjlt2",uri="/",violation_rating="2",vs_name="32-webapp.example.com:8-/",x_forwarded_for_header_value="N/A",outcome="REJECTED",outcome_reason="SECURITY_WAF_VIOLATION",violations="Attack signature detected,Bot Client Detected",violation_details="<?xml version='1.0' encoding='UTF-8'?><BAD_MSG><violation_masks><block>410000000200c00-3a03030c30000072-8000000000000000-0</block><alarm>2477f0ffcbbd0fea-befbf35cb000007e-8000000000000000-0</alarm><learn>0-20-0-0</learn><staging>0-0-0-0</staging></violation_masks><request-violations><violation><viol_index>42</viol_index><viol_name>VIOL_ATTACK_SIGNATURE</viol_name><context>request</context><sig_data><sig_id>300000000</sig_id><blocking_mask>3</blocking_mask><kw_data><buffer>YXBwbGU=</buffer><offset>0</offset><length>5</length></kw_data></sig_data></violation></request-violations></BAD_MSG>",bot_signature_name="curl",bot_category="HTTP Library",bot_anomalies="N/A",enforced_bot_anomalies="N/A",client_class="Untrusted Bot",client_application="N/A",client_application_version="N/A",request="POST / HTTP/1.1\r\nHost: webapp.example.com\r\nUser-Agent: curl/7.68.0\r\nAccept: */*\r\nContent-Length: 5\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\napple",transport_protocol="HTTP/1.1"
+  :caption: 該当するSyslogのサンプル (区切り位置で改行して表示)
+  :emphasize-lines: 1
 
   Jan 20 03:07:51 nginx-ingress-5ddc7f4f-zjlt2 ASM:
   attack_type="Non-browser Client,Brute Force Attack",
@@ -538,16 +535,215 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 サンプルアプリケーションをデプロイ
 ----
-リソースを確認
-----
-動作確認
-----
-リソースの削除
-----
 
 .. code-block:: cmdin
+
+  cd ~/kubernetes-ingress/examples/custom-resources/dos
+  kubectl apply -f webapp.yaml
+  kubectl apply -f apdos-protected.yaml
+  kubectl apply -f apdos-policy.yaml
+  kubectl apply -f apdos-logconf.yaml
+  kubectl apply -f virtual-server.yaml
+
+
+Syslogサーバのログの出力状況を確認します。新たに同ホストへ接続するターミナルを2つ用意し、それぞれのターミナルでログを表示してください
+
+SyslogサーバのPod名を確認します
+
+.. code-block:: cmdin
+  kubectl get pod
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME                       READY   STATUS    RESTARTS       AGE
+  syslog-2-96dfdf5c6-7t8d4   1/1     Running   0              1h
+  syslog-cccc648c6-2n9v4     1/1     Running   0              1h
+  webapp-64d444885-bgrj7     1/1     Running   0              6m
+
+
+syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナルでログを表示してください。
+
+.. code-block:: cmdin
+
+  # 追加するターミナル1 で 'syslog' の情報を表示する
+  kubectl exec -it <syslog POD名> --  tail -f /var/log/messages
+  # 追加するターミナル2 で 'syslog-2' の情報を表示する
+  kubectl exec -it <syslog-2 POD名> -- tail -f /var/log/messages
+
+
+リソースを確認
+----
+
+
+.. code-block:: cmdin
+  
+  kubectl get apdoslogconf
 
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
   :emphasize-lines: 1
+
+  NAME         AGE
+  doslogconf   10m
+
+.. code-block:: cmdin
+  
+  kubectl get apdospolicy
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 1
+
+  NAME        AGE
+  dospolicy   10m
+
+.. code-block:: cmdin
+  
+  kubectl get DosProtectedResource
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 1
+
+  NAME            AGE
+  dos-protected   11m
+
+.. code-block:: cmdin
+  
+  kubectl get vs
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 1
+
+  NAME     STATE   HOST                 IP    PORTS   AGE
+  webapp   Valid   webapp.example.com                 12m
+
+.. code-block:: cmdin
+  
+  kubectl get deployment
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 1
+
+  NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+  syslog     1/1     1            1           1h
+  syslog-2   1/1     1            1           1h
+  webapp     1/1     1            1           13m
+
+
+動作確認
+----
+
+
+.. code-block:: cmdin
+
+  curl -H "Host:webapp.example.com" http://localhost/
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 1
+
+  Server address: 192.168.127.38:8080
+  Server name: webapp-64d444885-bgrj7
+  Date: 20/Jan/2022:09:30:55 +0000
+  URI: /
+  Request ID: 8b6810ab8c5a8eabacb9d7da9d775094
+
+.. code-block:: bash
+  :linenos:
+  :caption: Terminal1 Log (区切り位置で改行して表示)
+  :emphasize-lines: 1
+  
+  # Terminal1 log : 上記アクセスをした際に、以下のログが出力されます
+  Jan 20 09:30:55 nginx-ingress-5ddc7f4f-zjlt2 nginx: ,
+  vs_name_al=default/dos-protected/webapp.example.com,
+  ip=10.1.1.9,
+  tls_fp=-,
+  outcome=Allow,
+  reason=Allow,
+  ip_tls=10.1.1.9:-,
+
+
+.. code-block:: bash
+  :linenos:
+  :caption: Terminal2 Log (区切り位置で改行して表示)
+  :emphasize-lines: 1
+
+  # Terminal2 log : 定期的にログが出力されます
+  Jan 20 09:30:57 syslog-cccc648c6-2n9v4 syslog-ng[1]: Syslog connection accepted; fd='20', client='AF_INET(192.168.127.46:34588)', local='AF_INET(0.0.0.0:514)'
+  Jan 20 09:30:57 192-168-127-46 date_time="Jan 20 2022 09:30:57",
+  product="app-protect-dos",
+  product_version="25+2.1.8-1~buster",
+  unit_hostname="nginx-ingress-5ddc7f4f-zjlt2",
+  instance_id=".scope",
+  vs_name="default/dos-protected/webapp.example.com",
+  dos_attack_id="0",
+  attack_event="No Attack",
+  stress_level="0.50",
+  learning_confidence="Not ready",
+  baseline_dps="0",
+  incoming_dps="0",
+  incoming_rps="0",
+  successful_tps="0",
+  unsuccessful_rps="0",
+  incoming_datagrams="11",
+  incoming_requests="11",
+  successful_responses="5",
+  unsuccessful_requests="6",
+  active_connections="0",
+  threshold_dps="2121.60",
+  threshold_conns="2121.60",
+  mitigated_bad_actors="0",
+  mitigated_by_signatures="0",
+  mitigated_by_global_rate="0",
+  mitigated_slow="0",
+  redirect_global="0",
+  redirect_bad_actor="0",
+  redirect_signature="0",
+  redirect_slow="0",
+  challenge_global="0",
+  challenge_bad_actor="0",
+  challenge_signature="0",
+  challenge_slow="0",
+  block_global="0",
+  block_bad_actor="0",
+  block_signature="0",
+  block_slow="0",
+  mitigated_connections="0",
+  mitigated_bad_actors_rps="0",
+  mitigated_by_signatures_rps="0",
+  mitigated_by_global_rate_rps="0",
+  mitigated_slow_rps="0",
+  redirect_global_rps="0",
+  redirect_bad_actor_rps="0",
+  redirect_signature_rps="0",
+  redirect_slow_rps="0",
+  challenge_global_rps="0",
+  challenge_bad_actor_rps="0",
+  challenge_signature_rps="0",
+  challenge_slow_rps="0",
+  block_global_rps="0",
+  block_bad_actor_rps="0",
+  block_signature_rps="0",
+  block_slow_rps="0",
+  mitigated_connections_rps="0",
+  Jan 20 09:30:57 syslog-cccc648c6-2n9v4 syslog-ng[1]: Syslog connection closed; fd='20', client='AF_INET(192.168.127.46:34588)', local='AF_INET(0.0.0.0:514)'
+
+
+
+
+リソースの削除
+----
+
+
+
