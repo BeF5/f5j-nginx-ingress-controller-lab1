@@ -589,6 +589,7 @@ Curlコマンドで動作を確認します。
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   Server address: 192.168.127.33:8080
   Server name: tea-5c457db9-dcswc
@@ -605,6 +606,7 @@ Curlコマンドで動作を確認します。
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   Server address: 192.168.127.32:8080
   Server name: tea-post-7db8cd8bf-m5gbz
@@ -621,6 +623,7 @@ Curlコマンドで動作を確認します。
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   Server address: 192.168.127.23:8080
   Server name: coffee-v1-6b78998db9-8cv49
@@ -628,7 +631,7 @@ Curlコマンドで動作を確認します。
   URI: /coffee
   Request ID: 8d182c9c060d5a4d4dec226292ac2820
 
-``/coffee`` 宛でCookieに"version=v2"と指定しない場合の動作は以下の通りです。
+``/coffee`` 宛でCookieに"version=v2"と指定した場合の動作は以下の通りです。
 
 .. code-block:: cmdin
  
@@ -637,6 +640,7 @@ Curlコマンドで動作を確認します。
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   Server address: 192.168.127.27:8080
   Server name: coffee-v2-748cbbb49f-mbxpr
@@ -677,8 +681,7 @@ Virtual Serverの内容を確認します。 ``cafe-virtual-server.yaml`` の ``
 .. code-block:: yaml
    :linenos:
    :caption: cafe-virtual-server.yaml
-   :name: cafe-virtual-server.yaml
-  :emphasize-lines: 16,17,20
+   :emphasize-lines: 16,17,20
 
   apiVersion: k8s.nginx.org/v1
   kind: VirtualServer
