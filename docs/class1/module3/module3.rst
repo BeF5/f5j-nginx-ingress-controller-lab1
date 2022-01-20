@@ -892,7 +892,7 @@ VirtualServerに ``webapp-policy`` が割り当てられていることが確認
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 11,12
+  :emphasize-lines: 13,12
 
   Name:         webapp
   Namespace:    default
@@ -933,7 +933,7 @@ VirtualServerに ``webapp-policy`` が割り当てられていることが確認
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 9,10,11,12
+  :emphasize-lines: 10,11,12,13
 
   Name:         webapp-policy
   Namespace:    default
@@ -1103,6 +1103,7 @@ Virtual Serverの定義内容を確認します。route に 3つのPathを定義
    :linenos:
    :caption: 作成する rewrite-virtual-server.yaml の内容
    :name: 作成する rewrite-virtual-server.yaml の内容
+  :emphasize-lines: 15,19,20,24,25,29
 
   apiVersion: k8s.nginx.org/v1
   kind: VirtualServer
@@ -1161,9 +1162,9 @@ Virtual Serverの定義内容を確認します。route に 3つのPathを定義
 
 
 
-正規表現のルールは、以下サイトを利用し確認いただけます
-`debuggex <https://www.debuggex.com/>`__
-``PCRE`` をプルダウンより選択し、上部に ``正規表現のルール`` 、下部に ``評価する文字列`` を入力し、結果を確認できます
+| 正規表現のルールは、以下サイトを利用し確認いただけます
+| `debuggex <https://www.debuggex.com/>`__
+| ``PCRE`` をプルダウンより選択し、上部に ``正規表現のルール`` 、下部に ``評価する文字列`` を入力し、結果を確認できます
 
 
 以下の通り、各リソースを適切に作成されていることを確認します。
@@ -1217,6 +1218,7 @@ Virtual Serverの定義内容を確認します。route に 3つのPathを定義
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 4
 
   Server address: 192.168.127.40:8080
   Server name: tea-5c457db9-ksljs
@@ -1231,6 +1233,7 @@ Virtual Serverの定義内容を確認します。route に 3つのPathを定義
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 4
 
   Server address: 192.168.127.40:8080
   Server name: tea-5c457db9-ksljs
@@ -1245,6 +1248,7 @@ Virtual Serverの定義内容を確認します。route に 3つのPathを定義
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 4
 
   Server address: 192.168.127.39:8080
   Server name: coffee-7c86d7d67c-zt5tr
@@ -1259,6 +1263,7 @@ Virtual Serverの定義内容を確認します。route に 3つのPathを定義
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 4
 
   Server address: 192.168.127.39:8080
   Server name: coffee-7c86d7d67c-zt5tr
@@ -1273,7 +1278,8 @@ Virtual Serverの定義内容を確認します。route に 3つのPathを定義
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  
+   :emphasize-lines: 4
+ 
   Server address: 192.168.127.40:8080
   Server name: tea-5c457db9-ksljs
   Date: 17/Jan/2022:14:23:02 +0000
