@@ -33,6 +33,7 @@ NGINX App Protect WAF、NGINX App Protect DoS 双方のセキュリティモジ�
   diff -u syslog2.yaml-bak syslog2.yaml
 
 Syslogイメージのデプロイ
+
 .. code-block:: cmdin
 
   cd ~/kubernetes-ingress/examples/custom-resources/dos
