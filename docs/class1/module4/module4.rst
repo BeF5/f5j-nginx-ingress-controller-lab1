@@ -18,7 +18,7 @@ NGINX App Protect WAF、NGINX App Protect DoS 双方のセキュリティモジ�
   GitHub上で公開されている、syslog.yaml , syslog2.yaml のイメージTagが現在は存在しないTagとなっています。
   ``取得するSyslogイメージのタグを変更`` は暫定処置となります。
 
-取得するSyslogイメージのタグを変更
+(暫定処置) 取得するSyslogイメージのタグを変更
 
 .. code-block:: cmdin
 
@@ -75,6 +75,23 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 サンプルアプリケーションをデプロイ
 ----
+
+アプリケーションをデプロイします。
+
+.. code-block:: cmdin
+
+  kubectl apply -f webapp.yaml
+  kubectl apply -f ap-apple-uds.yaml
+  kubectl apply -f ap-dataguard-alarm-policy.yaml
+  kubectl apply -f ap-logconf.yaml
+  kubectl apply -f waf.yaml
+  kubectl apply -f virtual-server.yaml
+
+
+リソースを確認
+----
+
+ポイントとなるファイルの内容を確認します。
 
 .. code-block:: yaml
   :linenos:
@@ -192,20 +209,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
       action:
         pass: webapp
 
-アプリケーションをデプロイします。
-
-.. code-block:: cmdin
-
-  kubectl apply -f webapp.yaml
-  kubectl apply -f ap-apple-uds.yaml
-  kubectl apply -f ap-dataguard-alarm-policy.yaml
-  kubectl apply -f ap-logconf.yaml
-  kubectl apply -f waf.yaml
-  kubectl apply -f virtual-server.yaml
-
-
-リソースを確認
-----
+以下の通り、各リソースを適切に作成されていることを確認します。
 
 .. code-block:: cmdin
 
@@ -537,6 +541,50 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 サンプルアプリケーションをデプロイ
 ----
 
+アプリケーションをデプロイします。
+
+.. code-block:: cmdin
+
+  cd ~/kubernetes-ingress/examples/custom-resources/dos
+  kubectl apply -f webapp.yaml
+  kubectl apply -f apdos-protected.yaml
+  kubectl apply -f apdos-policy.yaml
+  kubectl apply -f apdos-logconf.yaml
+  kubectl apply -f virtual-server.yaml
+
+
+Syslogサーバのログの出力状況を確認します。新たに同ホストへ接続するターミナルを2つ用意し、それぞれのターミナルでログを表示してください
+
+SyslogサーバのPod名を確認します
+
+.. code-block:: cmdin
+  kubectl get pod
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME                       READY   STATUS    RESTARTS       AGE
+  syslog-2-96dfdf5c6-7t8d4   1/1     Running   0              1h
+  syslog-cccc648c6-2n9v4     1/1     Running   0              1h
+  webapp-64d444885-bgrj7     1/1     Running   0              6m
+
+
+syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナルでログを表示してください。
+
+.. code-block:: cmdin
+
+  # 追加するターミナル1 で 'syslog' の情報を表示する
+  kubectl exec -it <syslog POD名> --  tail -f /var/log/messages
+  # 追加するターミナル2 で 'syslog-2' の情報を表示する
+  kubectl exec -it <syslog-2 POD名> -- tail -f /var/log/messages
+
+
+リソースを確認
+----
+
+ポイントとなるファイルの内容を確認します。
+
 .. code-block:: yaml
   :linenos:
   :caption: apdos-protected.yaml
@@ -611,49 +659,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
         action:
           pass: webapp
 
-
-アプリケーションをデプロイします。
-
-.. code-block:: cmdin
-
-  cd ~/kubernetes-ingress/examples/custom-resources/dos
-  kubectl apply -f webapp.yaml
-  kubectl apply -f apdos-protected.yaml
-  kubectl apply -f apdos-policy.yaml
-  kubectl apply -f apdos-logconf.yaml
-  kubectl apply -f virtual-server.yaml
-
-
-Syslogサーバのログの出力状況を確認します。新たに同ホストへ接続するターミナルを2つ用意し、それぞれのターミナルでログを表示してください
-
-SyslogサーバのPod名を確認します
-
-.. code-block:: cmdin
-  kubectl get pod
-
-.. code-block:: bash
-  :linenos:
-  :caption: 実行結果サンプル
-
-  NAME                       READY   STATUS    RESTARTS       AGE
-  syslog-2-96dfdf5c6-7t8d4   1/1     Running   0              1h
-  syslog-cccc648c6-2n9v4     1/1     Running   0              1h
-  webapp-64d444885-bgrj7     1/1     Running   0              6m
-
-
-syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナルでログを表示してください。
-
-.. code-block:: cmdin
-
-  # 追加するターミナル1 で 'syslog' の情報を表示する
-  kubectl exec -it <syslog POD名> --  tail -f /var/log/messages
-  # 追加するターミナル2 で 'syslog-2' の情報を表示する
-  kubectl exec -it <syslog-2 POD名> -- tail -f /var/log/messages
-
-
-リソースを確認
-----
-
+以下の通り、各リソースを適切に作成されていることを確認します。
 
 .. code-block:: cmdin
   
@@ -823,5 +829,12 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
 リソースの削除
 ----
 
+.. code-block:: cmdin
 
+  ## cd ~/kubernetes-ingress/examples/custom-resources/dos
+  kubectl delete -f webapp.yaml
+  kubectl delete -f apdos-protected.yaml
+  kubectl delete -f apdos-policy.yaml
+  kubectl delete -f apdos-logconf.yaml
+  kubectl delete -f virtual-server.yaml
 

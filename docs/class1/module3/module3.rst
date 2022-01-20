@@ -7,6 +7,9 @@ NICによるWebアプリの通信制御
 シンプルなWebアプリケーションのデプロイ
 ====
 
+シンプルなWebアプリケーションをデプロイします。
+Kubernetes環境で、Webアプリケーションをデプロイします。そのアプリケーションに対し通信制御を行うVirtualServer、及びHTTPSに必要な証明書をデプロイします。
+
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/basic-configuration
 
 サンプルアプリケーションをデプロイ
@@ -23,6 +26,20 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 ----
 
 以下の通り、各リソースを適切に作成されていることを確認します。
+
+.. code-block:: cmdin
+ 
+  kubectl get pod
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME                       READY   STATUS    RESTARTS  AGE
+  coffee-7c86d7d67c-wjxss    1/1     Running   0         1m
+  coffee-7c86d7d67c-8jm9z    1/1     Running   0         1m
+  tea-5c457db9-dc4cs         1/1     Running   0         1m
+
 
 .. code-block:: cmdin
  
@@ -61,6 +78,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 動作確認
 ----
 
+Curlコマンドで作成したWebアプリケーションへ到達でき、応答があることを確認します。 ``/coffee`` 、 ``/tea`` というURLに応じて異なるアプリケーションに転送されていることが確認できます
+
 .. code-block:: cmdin
  
   curl -H "Host:cafe.example.com" http://localhost/coffee
@@ -68,7 +87,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-   
+  :emphasize-lines: 2,4
+
   Server address: 192.168.127.25:8080
   Server name: coffee-7c86d7d67c-wjxss
   Date: 17/Jan/2022:00:14:03 +0000
@@ -82,12 +102,15 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2,4
 
   Server address: 192.168.127.20:8080
   Server name: tea-5c457db9-dc4cs
   Date: 17/Jan/2022:00:14:08 +0000
   URI: /tea
   Request ID: 6fd58877d9e85903300df7ceb0f81eb2
+
+同様に、HTTPSの接続を確認します。
 
 .. code-block:: cmdin
  
@@ -96,6 +119,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 26,42,44
 
   *   Trying 127.0.0.1:443...
   * TCP_NODELAY set
@@ -151,6 +175,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 26,42,44
 
   *   Trying 127.0.0.1:443...
   * TCP_NODELAY set
@@ -215,8 +240,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/cross-namespace-configuration
 
-この章ではシンプルなWebアプリケーションをデプロイします。
-NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といったリソースを使うことで、権限と設定範囲を適切に管理することが可能です。
+NGINX Ingress Controller はCRDを用い、Virtual Server / Virtual Server Router / Policy といったリソースを使うことで、権限と設定範囲を適切に管理することが可能です。
+ここでは、通信を待ち受けるため、 ``cafe`` namespace に、VirtualServer をデプロイします。そして ``tea`` / ``coffee`` namespace に アプリケーションと、アプリケーション宛に通信を転送するための VirtualServerRoute をデプロイします。 
 
 サンプルアプリケーションをデプロイ
 ----
@@ -246,14 +271,7 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
   :caption: 実行結果サンプル
 
   NAME               STATUS   AGE
-  kube-public        Active   10d
-  kube-system        Active   10d
-  kube-node-lease    Active   10d
-  default            Active   10d
-  tigera-operator    Active   10d
-  calico-system      Active   10d
-  calico-apiserver   Active   10d
-  nginx-ingress      Active   2d18h
+  **省略**
   coffee             Active   75s
   cafe               Active   75s
   tea                Active   75s
@@ -318,6 +336,8 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
 動作確認
 ----
 
+Curlコマンドで作成したWebアプリケーションへ到達でき、応答があることを確認します。 ``/coffee`` 、 ``/tea`` というURLに応じて異なるアプリケーションに転送されていることが確認できます
+
 .. code-block:: cmdin
    
   curl -H "Host: cafe.example.com" http://localhost/coffee
@@ -325,6 +345,7 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2,4
 
   Server address: 192.168.127.22:8080
   Server name: coffee-7c86d7d67c-pq5w2
@@ -339,13 +360,16 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2,4
 
   Server address: 192.168.127.24:8080
   Server name: tea-5c457db9-h5sm9
   Date: 17/Jan/2022:05:44:29 +0000
   URI: /tea
   Request ID: 698ab29da633f24a9bf5384c1499b056
-  
+
+同様にHTTPSの接続を確認します。HTTPSの結果は ``/tea`` にアクセスした結果のみ掲載します。 ``/coffee`` の結果も合わせて確認ください。
+
 .. code-block:: cmdin
  
   curl -vk -H "Host: cafe.example.com" https://localhost/tea
@@ -353,6 +377,7 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 26,42,44
 
   *   Trying 127.0.0.1:443...
   * TCP_NODELAY set
@@ -422,6 +447,9 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/advanced-routing
 
+| 通信の内容に応じて転送するサービスを制御するサンプルです。
+| ユーザの属性毎に転送するサービスを変更したり、開発中アプリケーションに対するリクエストを識別し通信を制御したりする場合などに利用します
+
 サンプルアプリケーションをデプロイ
 ----
 
@@ -433,6 +461,61 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 リソースを確認
 ----
+
+ポイントとなるファイルの内容を確認します。
+
+``cafe-virtual-server.yaml`` で通信制御の条件を指定しています。条件は ``matches`` というパラメータで指定します。このサンプルの条件は以下の内容です。
+
+- path: /tea
+  - リクエストのHTTPメソッド($request_method)が、POSTの場合、 ``tea-post`` へ転送する。 それ以外は ``tea`` へ転送する。
+- path: /coffee
+  - cookie の version の値が v2 の場合、 ``coffee-v2`` へ転送する。それ以外は ``coffee-v1`` へ転送する。
+
+それぞれの記述内容を以下で確認してください。
+
+.. code-block:: yaml
+  :linenos:
+  :caption: cafe-virtual-server.yaml
+  :emphasize-lines: 21,29
+
+  apiVersion: k8s.nginx.org/v1
+  kind: VirtualServer
+  metadata:
+    name: cafe
+  spec:
+    host: cafe.example.com
+    upstreams:
+    - name: tea-post
+      service: tea-post-svc
+      port: 80
+    - name: tea
+      service: tea-svc
+      port: 80
+    - name: coffee-v1
+      service: coffee-v1-svc
+      port: 80
+    - name: coffee-v2
+      service: coffee-v2-svc
+      port: 80
+    routes:
+    - path: /tea
+      matches:
+      - conditions:
+        - variable: $request_method
+          value: POST
+        action:
+          pass: tea-post
+      action:
+        pass: tea
+    - path: /coffee
+      matches:
+      - conditions:
+        - cookie: version
+          value: v2
+        action:
+          pass: coffee-v2
+      action:
+        pass: coffee-v1
 
 以下の通り、各リソースを適切に作成されていることを確認します。
 
@@ -480,6 +563,18 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 動作確認
 ----
 
+先程、設定ファイルから確認した条件を再度記載します。
+
+- path: /tea
+  - リクエストのHTTPメソッド($request_method)が、POSTの場合、 ``tea-post`` へ転送する。 それ以外は ``tea`` へ転送する
+- path: /coffee
+  - cookie が v2 の場合、 ``coffee-v2`` へ転送する。それ以外は ``coffee-v1`` へ転送する
+
+
+Curlコマンドで動作を確認します。 
+
+``/tea`` 宛でHTTPメソッドを指定しない(GET)の場合の動作は以下の通りです
+
 .. code-block:: cmdin
  
   curl -H "Host: cafe.example.com" http://localhost/tea
@@ -493,6 +588,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   Date: 17/Jan/2022:09:00:56 +0000
   URI: /tea
   Request ID: 00e9eb4d61f7afdb8c5656da94d15b98
+
+``/tea`` 宛でHTTP POSTメソッドを指定した場合の動作は以下の通りです。
 
 .. code-block:: cmdin
  
@@ -508,6 +605,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   URI: /tea
   Request ID: 4deeb82434a6f799ffc894a229ac361a
 
+``/coffee`` 宛でCookieの値を指定しない場合の動作は以下の通りです。
+
 .. code-block:: cmdin
  
   curl -H "Host: cafe.example.com" http://localhost/coffee
@@ -521,6 +620,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   Date: 17/Jan/2022:09:01:25 +0000
   URI: /coffee
   Request ID: 8d182c9c060d5a4d4dec226292ac2820
+
+``/coffee`` 宛でCookieに"version=v2"と指定しない場合の動作は以下の通りです。
 
 .. code-block:: cmdin
  
@@ -551,6 +652,9 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/traffic-splitting
 
+割合を指定し、トラフィックを分散することができます。
+
+
 サンプルアプリケーションをデプロイ
 ----
 
@@ -567,7 +671,8 @@ Virtual Serverの内容を確認
    :linenos:
    :caption: cafe-virtual-server.yaml
    :name: cafe-virtual-server.yaml
-    
+  :emphasize-lines: 17,20
+
   apiVersion: k8s.nginx.org/v1
   kind: VirtualServer
   metadata:
@@ -1393,7 +1498,15 @@ curlコマンドで動作を確認します。以下のように通信が ``許�
   Date: 18/Jan/2022:12:49:59 +0000
   URI: /
   Request ID: 86182122eec0392769b4d86d64653419
+
+.. code-block:: cmdin
+
   cat token.jwt
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
   eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6IjAwMDEifQ.eyJuYW1lIjoiUXVvdGF0aW9uIFN5c3RlbSIsInN1YiI6InF1b3RlcyIsImlzcyI6Ik15IEFQSSBHYXRld2F5In0.ggVOHYnVFB8GVPE-VOIo3jD71gTkLffAY0hQOGXPL2I
 
 
