@@ -223,6 +223,7 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
 
 .. code-block:: cmdin
  
+  cd ~/kubernetes-ingress/examples/custom-resources/cross-namespace-configuration]
   kubectl create -f namespaces.yaml
   kubectl create -f tea.yaml
   kubectl create -f coffee.yaml
@@ -406,6 +407,7 @@ NGINXはCRDを用い、Virtual Server / Virtual Server Router / Policy といっ
 
 .. code-block:: cmdin
  
+  ## cd ~/kubernetes-ingress/examples/custom-resources/cross-namespace-configuration]
   kubectl delete -f tea-virtual-server-route.yaml
   kubectl delete -f cafe-virtual-server.yaml
   kubectl delete -f coffee-virtual-server-route.yaml
@@ -539,6 +541,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 .. code-block:: cmdin
  
+  ## cd ~/kubernetes-ingress/examples/custom-resources/advanced-routing
   kubectl delete  -f cafe-virtual-server.yaml
   kubectl delete  -f cafe.yaml
 
@@ -1424,6 +1427,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 .. code-block:: cmdin
   
+  ## cd ~/kubernetes-ingress/examples/custom-resources/oidc
   grep host virtual-server*yaml
 
 .. code-block:: bash
@@ -1449,6 +1453,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 .. code-block:: cmdin
   
+  ## cd ~/kubernetes-ingress/examples/custom-resources/oidc
   vi client-secret.yaml
   
 .. code-block:: yaml
@@ -1467,7 +1472,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 OIDC PolicyとClientSecretをデプロイします。
 
 .. code-block:: cmdin
-   
+  
+  ## cd ~/kubernetes-ingress/examples/custom-resources/oidc
   kubectl apply -f client-secret.yaml
   kubectl apply -f oidc.yaml
 
@@ -1476,7 +1482,7 @@ OIDC PolicyとClientSecretをデプロイします。
 最後にNGINX Ingress ControllerをWebアプリケーション用のOIDC RP として動作させるため、VirtualServerを作成します。kbue-dnsのIPアドレスを確認し、virtual-server.yamlに設定を追加します。
 
 .. code-block:: cmdin
-   
+  
   kubectl get svc -n kube-system | grep kube-dns
 
 .. code-block:: bash
@@ -1487,6 +1493,7 @@ OIDC PolicyとClientSecretをデプロイします。
 
 .. code-block:: cmdin
   
+  ## cd ~/kubernetes-ingress/examples/custom-resources/oidc
   vi virtual-server.yaml
 
 .. code-block:: yaml
@@ -1519,6 +1526,7 @@ OIDC PolicyとClientSecretをデプロイします。
 
 .. code-block:: cmdin
   
+  ## cd ~/kubernetes-ingress/examples/custom-resources/oidc
   kubectl apply -f virtual-server.yaml
 
 
@@ -1601,6 +1609,7 @@ Chromeブラウザを開き、 ``Secret Tab`` を開いてください。
 
 .. code-block:: cmdin
 
+  ## cd ~/kubernetes-ingress/examples/custom-resources/oidc
   kubectl delete -f webapp.yaml
   kubectl delete -f keycloak.yaml
   kubectl delete -f virtual-server-idp.yaml
