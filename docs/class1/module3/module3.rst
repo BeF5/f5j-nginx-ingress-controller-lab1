@@ -665,13 +665,13 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   kubectl create -f cafe-virtual-server.yaml
 
 
-Virtual Serverの内容を確認
+Virtual Serverの内容を確認します。 ``cafe-virtual-server.yaml`` の ``/coffee`` に ``splits`` を指定し、更に ``weight`` でサービスへ転送する割合を指定しています。
 
 .. code-block:: yaml
    :linenos:
    :caption: cafe-virtual-server.yaml
    :name: cafe-virtual-server.yaml
-  :emphasize-lines: 17,20
+  :emphasize-lines: 16,17,20
 
   apiVersion: k8s.nginx.org/v1
   kind: VirtualServer
