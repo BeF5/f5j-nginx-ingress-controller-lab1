@@ -11,3 +11,18 @@ TCP / UDP の分散設定
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/basic-tcp-udp
 
+サンプルアプリケーションをデプロイ
+----
+リソースを確認
+----
+動作確認
+----
+リソースの削除
+----
+
+.. code-block:: cmdin
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 1
