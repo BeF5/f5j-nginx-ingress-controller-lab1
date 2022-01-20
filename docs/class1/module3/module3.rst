@@ -1278,7 +1278,7 @@ Virtual Serverの定義内容を確認します。route に 3つのPathを定義
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-   :emphasize-lines: 4
+  :emphasize-lines: 4
  
   Server address: 192.168.127.40:8080
   Server name: tea-5c457db9-ksljs
@@ -1325,6 +1325,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   :linenos:
   :caption: jwk-secret.yaml
   :name: jwk-secret.yaml
+  :emphasize-lines: 7
 
   apiVersion: v1
   kind: Secret
@@ -1349,6 +1350,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   :lineos:
   :caption: jwk
   :name: jwk
+  :emphasize-lines: 3
 
   {"keys":
       [{
@@ -1402,6 +1404,7 @@ VirtualServerで利用するPolicyについて確認します。まずVirtualSer
   :linenos:
   :caption: virtual-server.yaml
   :name: virtual-server.yaml
+  :emphasize-lines: 7,8
 
   apiVersion: k8s.nginx.org/v1
   kind: VirtualServer
@@ -1427,7 +1430,8 @@ hostに対し ``jwt-policy`` というポリシーが適用されていること
   :linenos:
   :caption: jwt.yaml
   :name: jwt.yaml
-    
+  :emphasize-lines: 4,8,9
+
   apiVersion: k8s.nginx.org/v1
   kind: Policy
   metadata:
@@ -1441,9 +1445,6 @@ hostに対し ``jwt-policy`` というポリシーが適用されていること
 | 先程VirtualServerの内容で確認したように、 ``jwt-policy`` という名前のPolicyとなります。
 | specにPolicyの設定が記述されています。secretに先程作成した ``jwt-secret`` が指定されており、
 | tokenとして参照する内容は、 ``token`` というhttp headerの値とするため、 ``$http_token`` を指定しています。
-
-
-クライアントがリクエストする際に利用するJWTのサンプルの内容を確認します。
 
 
 以下の通り、各リソースを適切に作成されていることを確認します。
