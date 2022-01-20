@@ -107,10 +107,7 @@ Container Image のPush
 
 Deploymentの内容を確認
 
-.. code-block:: cmdin
-  
-  ## cd ~/kubernetes-ingress/deployments
-  cat deployment/appprotect-dos-arb.yaml
+``deployment/appprotect-dos-arb.yaml`` の内容を確認します
 
 .. code-block:: bash
   :linenos:
@@ -148,9 +145,7 @@ Deploymentの内容を確認
               drop:
                 - ALL
 
-.. code-block:: cmdin
-
-  cat service/appprotect-dos-arb-svc.yaml
+``service/appprotect-dos-arb-svc.yaml`` の内容を確認します
 
 .. code-block:: bash
   :linenos:
@@ -292,11 +287,6 @@ argsで指定するパラメータの詳細は [Command-line Arguments](https://
 
 本ラボの環境ではKubernetesへのアクセスを受けるため、NGINX Ingress Controllerを外部へNodePortで公開します。
 以下コマンドで設定の内容を確認します。type NodePortでHTTP、HTTPSで待ち受ける設定であることを確認します。
-
-.. code-block:: cmdin
-   
-  ## cd ~/kubernetes-ingress/deployments
-  cat service/nodeport.yaml
 
 .. code-block:: bash
   :linenos:
