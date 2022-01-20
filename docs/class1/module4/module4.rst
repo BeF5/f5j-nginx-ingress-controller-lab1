@@ -93,10 +93,26 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 ポイントとなるファイルの内容を確認します。
 
+NAP WAFのPolicyでは様々なセキュリティ機能を用いて外部からの攻撃をブロックします。
+外部からの様々な攻撃を通信の特徴や、リクエストに含まれる文字列などから検知・ブロックするためのルールとしてSignatureがあります。
+NAP WAFではお客様アプリケーションに合わせた制御や、特定の通信を制御するため、ユーザ定義シグネチャ(User-Defined Signature)の定義が可能です
+
+| こちらで設定する ``ユーザ定義シグネチャ`` の詳細は、以下の内容を参照してください。
+| `NGINX App Protect WAF Configuration Guide/User-Defined Signatures <https://docs.nginx.com/nginx-app-protect/configuration-guide/configuration/#user-defined-signatures>`__
+
+| NGINX Ingress Controller での NAP WAF の詳細は、以下のページを参照してください。
+| `NGINX Ingress Controller Configuration/App Protect User Defined Signatures <https://docs.nginx.com/nginx-ingress-controller/app-protect/configuration/#app-protect-user-defined-signatures>`__
+
+
+
+
+| ``ap-apple-uds.yaml`` は、ユーザ独自のシグネチャの定義となります。
+| 条件は ``rule`` に指定された内容となります。また、tagとして ``Fruits`` を指定します。
+
 .. code-block:: yaml
   :linenos:
   :caption: ap-apple-uds.yaml
-  :emphasize-lines: 1
+  :emphasize-lines: 13,18
 
   apiVersion: appprotect.f5.com/v1beta1
   kind: APUserSig
@@ -116,41 +132,13 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
       - name: Microsoft Windows
       - name: Unix/Linux
     tag: Fruits
-  
-.. code-block:: yaml
-  :linenos:
-  :caption: ap-logconf.yaml
-  :emphasize-lines: 1
 
-  apiVersion: appprotect.f5.com/v1beta1
-  kind: APLogConf
-  metadata:
-    name: logconf
-  spec:
-    content:
-      format: default
-      max_message_size: 64k
-      max_request_size: any
-    filter:
-      request_type: all
-    cat waf.yaml
-  apiVersion: k8s.nginx.org/v1
-  kind: Policy
-  metadata:
-    name: waf-policy
-  spec:
-    waf:
-      enable: true
-      apPolicy: "default/dataguard-alarm"
-      securityLog:
-        enable: true
-        apLogConf: "default/logconf"
-        logDest: "syslog:server=syslog-svc.default:514"
+``ap-dataguard-alarm-policy.yaml`` は、App ProtectのPolicy設定となります。tagとして ``Fruits`` を持つシグネチャを参照・有効にしています
 
 .. code-block:: yaml
   :linenos:
   :caption: ap-dataguard-alarm-policy.yaml
-  :emphasize-lines: 1
+  :emphasize-lines: 4,8,14
 
   apiVersion: appprotect.f5.com/v1beta1
   kind: APPolicy
@@ -187,10 +175,51 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
       template:
         name: POLICY_TEMPLATE_NGINX_BASE
 
+``ap-logconf.yaml`` は、Logの定義に関する設定となります。
+
+.. code-block:: yaml
+  :linenos:
+  :caption: ap-logconf.yaml
+  :emphasize-lines: 1
+
+  apiVersion: appprotect.f5.com/v1beta1
+  kind: APLogConf
+  metadata:
+    name: logconf
+  spec:
+    content:
+      format: default
+      max_message_size: 64k
+      max_request_size: any
+    filter:
+      request_type: all
+
+``waf.yaml`` は、VirtualServerが参照するPolicy設定となります。利用するApp ProtectのPolicyとして ``dataguard-alarm`` を指定し、Log 設定として ``logconf`` を指定します。
+
+.. code-block:: yaml
+  :linenos:
+  :caption: waf.yaml
+  :emphasize-lines: 4,8,11
+
+  apiVersion: k8s.nginx.org/v1
+  kind: Policy
+  metadata:
+    name: waf-policy
+  spec:
+    waf:
+      enable: true
+      apPolicy: "default/dataguard-alarm"
+      securityLog:
+        enable: true
+        apLogConf: "default/logconf"
+        logDest: "syslog:server=syslog-svc.default:514"
+
+``virtual-server.yaml`` で、作成した ``waf-poicy`` を割り当てます 
+
 .. code-block:: yaml
   :linenos:
   :caption: virtual-server.yaml
-  :emphasize-lines: 1
+  :emphasize-lines: 7,8
 
   apiVersion: k8s.nginx.org/v1
   kind: VirtualServer
