@@ -1335,7 +1335,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
     jwk: eyJrZXlzIjoKICAgIFt7CiAgICAgICAgImsiOiJabUZ1ZEdGemRHbGphbmQwIiwKICAgICAgICAia3R5Ijoib2N0IiwKICAgICAgICAia2lkIjoiMDAwMSIKICAgIH1dCn0K
 
 ``jwk`` というKeyに対し、 ``値`` として文字列が指定されていることが確認できます。
-文字列の内容をbase64 decodeします
+文字列の内容をbase64デコードします
 
 .. code-block:: cmdin
  
@@ -1380,7 +1380,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
       - `JSON Web Key (JWK) 4.5 "kid" <https://openid-foundation-japan.github.io/rfc7517.ja.html#kidDef>`__
 
 
-kty "oct" で利用する Keyの内容をBase64 Decodeした結果は以下の通り
+kty "oct" で利用する Keyの内容をBase64デコードした結果は以下の通り
 
 .. code-block:: cmdin
 
@@ -1392,8 +1392,11 @@ kty "oct" で利用する Keyの内容をBase64 Decodeした結果は以下の�
 
   fantasticjwt
 
+この結果により、このサンプルでは ``fantasticjwt`` という文字列がKeyとして使用されていることが確認できます。
 
-VSで利用するPolicyについて確認します。まずVSの内容は以下です
+
+
+VirtualServerで利用するPolicyについて確認します。まずVirtualServerの内容は以下です
 
 .. code-block:: yaml
   :linenos:
@@ -1435,7 +1438,7 @@ hostに対し ``jwt-policy`` というポリシーが適用されていること
       secret: jwk-secret
       token: $http_token
 
-| 先程VSの内容で確認したように、 ``jwt-policy`` という名前のPolicyとなります。
+| 先程VirtualServerの内容で確認したように、 ``jwt-policy`` という名前のPolicyとなります。
 | specにPolicyの設定が記述されています。secretに先程作成した ``jwt-secret`` が指定されており、
 | tokenとして参照する内容は、 ``token`` というhttp headerの値とするため、 ``$http_token`` を指定しています。
 
@@ -1488,7 +1491,7 @@ hostに対し ``jwt-policy`` というポリシーが適用されていること
 動作確認
 ----
 
-Policyが適用されたVSにJWTをHeaderに付与していないため、通信に対し ``401 Authorization required`` が応答されていることを確認します
+Policyが適用されたVirtualServerにJWTをHeaderに付与していないため、通信に対し ``401 Authorization required`` が応答されていることを確認します
 
 .. code-block:: cmdin
   
