@@ -1346,13 +1346,26 @@ NGINX Ingress Controller で JWT の Validation を行い、通信制御を行�
   # echo -n <jwk に指定された文字列> | base64 -d
   echo -n "eyJrZXlzIjoKICAgIFt7CiAgICAgICAgImsiOiJabUZ1ZEdGemRHbGphbmQwIiwKICAgICAgICAia3R5Ijoib2N0IiwKICAgICAgICAia2lkIjoiMDAwMSIKICAgIH1dCn0K" | base64 -d
 
+出力結果が以下となります。
 
-出力結果が以下となります
 
 .. code-block:: json
   :lineos:
   :caption: jwk
-  :name: jwk
+  :emphasize-lines: 3
+
+  {"keys":
+      [{
+          "k":"ZmFudGFzdGljand0",
+          "kty":"oct",
+          "kid":"0001"
+      }]
+  }
+
+
+.. code-block:: bash
+  :lineos:
+  :caption: jwk
   :emphasize-lines: 3
 
   {"keys":
@@ -1363,6 +1376,7 @@ NGINX Ingress Controller で JWT の Validation を行い、通信制御を行�
       }]
   }
  
+
 
 各パラメータ内容は以下の通り
 
@@ -1827,9 +1841,32 @@ OIDC PolicyとClientSecretをデプロイします。
 動作確認
 ----
 
-Chromeブラウザを開き、 ``Secret Tab`` を開いてください。
-そして、webapp.example.com を開いてください
+Chromeブラウザを開き、 ``Secret Tab (New Incognito Window)`` を開いてください。
 
+  .. image:: ./media/chrome_secret_tab.jpg
+     :width: 500
+
+``https://webapp.example.com`` へアクセスしてください。
+
+  .. image:: ./media/chrome_webapp.jpg
+     :width: 500
+
+Keycloakのログイン画面が表示されます。先程設定を行った ``nginx-user`` でログインしてください。
+
+* ログイン情報
+=========== ============
+**usename** **password**  
+=========== ============
+nginx-user  test
+=========== ============
+
+  .. image:: ./media/chrome_webapp_keycloak_login.jpg
+     :width: 500
+
+ログインが正常に行われた場合、Webアプリケーションの結果をブラウザで確認いただけます。
+
+  .. image:: ./media/chrome_webapp_logined.jpg
+     :width: 500
 
 リソースの削除
 ----
