@@ -480,7 +480,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: yaml
   :linenos:
   :caption: cafe-virtual-server.yaml
-  :emphasize-lines: 21,29
+  :emphasize-lines: 21,24,25,27,29,32,33,34,36,38
 
   apiVersion: k8s.nginx.org/v1
   kind: VirtualServer
@@ -569,10 +569,13 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 先程、設定ファイルから確認した条件を再度記載します。
 
-- path: /tea
-  - リクエストのHTTPメソッド($request_method)が、POSTの場合、 ``tea-post`` へ転送する。 それ以外は ``tea`` へ転送する
-- path: /coffee
-  - cookie が v2 の場合、 ``coffee-v2`` へ転送する。それ以外は ``coffee-v1`` へ転送する
+* path: /tea
+
+  * リクエストのHTTPメソッド($request_method)が、POSTの場合、 ``tea-post`` へ転送する。 それ以外は ``tea`` へ転送する。
+
+* path: /coffee
+
+  * cookie の version の値が v2 の場合、 ``coffee-v2`` へ転送する。それ以外は ``coffee-v1`` へ転送する。
 
 
 Curlコマンドで動作を確認します。 
