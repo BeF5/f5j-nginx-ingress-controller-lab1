@@ -1396,6 +1396,26 @@ kty "oct" で利用する Keyの内容をBase64デコードした結果は以下
 
 この結果により、このサンプルでは ``fantasticjwt`` という文字列がKeyとして使用されていることが確認できます。
 
+今回サンプルリクエストに利用するJWTがこの文字列で署名されたものであるか確認します。 ``token.jwt`` の内容を表示します。
+
+.. code-block:: bash
+  :linenos:
+  :caption: token.jwt
+
+  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6IjAwMDEifQ.eyJuYW1lIjoiUXVvdGF0aW9uIFN5c3RlbSIsInN1YiI6InF1b3RlcyIsImlzcyI6Ik15IEFQSSBHYXRld2F5In0.ggVOHYnVFB8GVPE-VOIo3jD71gTkLffAY0hQOGXPL2I
+
+| `JWT.io <https://jwt.io/>`__ を開き、 **Algorithm** が ``HS256`` で有ることを確認します。
+| **VERIFY SIGNATURE** 欄の ``your-256-bit-secret`` に先程 ``jwk`` の内容をデコードして確認した文字列 ``fantasticjwt`` を入力してください。
+| 画面左側 **Eocoded** 欄に、``token.jwt`` の内容を貼り付け、左下の表示が ``Signature Verified`` となることを確認してください。
+| この結果より、クライアントリクエストで利用するJWTは、検証可能なものであることが確認できます。またこのJWTに含まれる情報が右側に表示されますので合わせて確認ください。
+
+   .. image:: ./media/JWTio-verify.jpg
+      :width: 200
+
+
+その他、NGINX Plus / JWT に関する詳細は 
+`Blog:Authenticating API Clients with JWT and NGINX Plus <https://www.nginx.com/blog/authenticating-api-clients-jwt-nginx-plus/>`__ 
+を参照してください
 
 
 VirtualServerで利用するPolicyについて確認します。まずVirtualServerの内容は以下です
