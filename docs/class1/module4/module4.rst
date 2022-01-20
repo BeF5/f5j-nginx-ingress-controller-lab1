@@ -192,6 +192,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
       action:
         pass: webapp
 
+アプリケーションをデプロイします。
 
 .. code-block:: cmdin
 
@@ -535,6 +536,83 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 サンプルアプリケーションをデプロイ
 ----
+
+.. code-block:: yaml
+  :linenos:
+  :caption: apdos-protected.yaml
+
+  apiVersion: appprotectdos.f5.com/v1beta1
+  kind: DosProtectedResource
+  metadata:
+    name: dos-protected
+  spec:
+    enable: true
+    name: "webapp.example.com"
+    apDosPolicy: "dospolicy"
+    apDosMonitor:
+      uri: "webapp.example.com"
+      protocol: "http1"
+      timeout: 5
+    dosAccessLogDest: "syslog-svc-2.default.svc.cluster.local:514"
+    dosSecurityLog:
+      enable: true
+      apDosLogConf: "doslogconf"
+      dosLogDest: "syslog-svc.default.svc.cluster.local:514"
+
+.. code-block:: yaml
+  :linenos:
+  :caption: apdos-policy.yaml
+
+  apiVersion: appprotectdos.f5.com/v1beta1
+  kind: APDosPolicy
+  metadata:
+    name: dospolicy
+  spec:
+    mitigation_mode: "standard"
+    signatures: "on"
+    bad_actors: "on"
+    automation_tools_detection: "on"
+    tls_fingerprint: "on"
+
+.. code-block:: yaml
+  :linenos:
+  :caption: apdos-logconf.yaml
+
+  apiVersion: appprotectdos.f5.com/v1beta1
+  kind: APDosLogConf
+  metadata:
+    name: doslogconf
+  spec:
+    content:
+      format: splunk
+      max_message_size: 64k
+    filter:
+      traffic-mitigation-stats: all
+      bad-actors: top 10
+      attack-signatures: top 10
+
+.. code-block:: yaml
+  :linenos:
+  :caption: virtual-server.yaml
+
+  apiVersion: k8s.nginx.org/v1
+  kind: VirtualServer
+  metadata:
+    name: webapp
+  spec:
+    host: webapp.example.com
+    upstreams:
+      - name: webapp
+        service: webapp-svc
+        port: 80
+    routes:
+      - path: /
+        dos: dos-protected
+        action:
+          pass: webapp
+
+
+アプリケーションをデプロイします。
 
 .. code-block:: cmdin
 
