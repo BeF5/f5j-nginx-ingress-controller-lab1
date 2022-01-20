@@ -2156,6 +2156,11 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: cmdin
 
   curl -v -H "Host:webapp.example.com" http://localhost/
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
   *   Trying 127.0.0.1:80...
   * TCP_NODELAY set
   * Connected to localhost (127.0.0.1) port 80 (#0)
