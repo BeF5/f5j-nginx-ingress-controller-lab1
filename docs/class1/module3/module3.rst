@@ -1051,7 +1051,7 @@ URL Path の 変換 (Rewrite)
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/rewrites
 
 
-Rewrite を用いて、URL Path を書換え、後段のサービスに転送することが可能です。
+Rewrite を用いて、URL Path を書換えることが可能です。
 
 サンプルアプリケーションをデプロイ
 ----
@@ -1302,6 +1302,9 @@ Ingress Controller で JWT Validation のデプロイ
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/jwt
 
+
+NGINX Ingress Controller で JWT の Validation を行い、通信制御を行うことが可能です。
+
 サンプルアプリケーションをデプロイ
 ----
 
@@ -1409,9 +1412,8 @@ kty "oct" で利用する Keyの内容をBase64デコードした結果は以下
 | 画面左側 **Eocoded** 欄に、``token.jwt`` の内容を貼り付け、左下の表示が ``Signature Verified`` となることを確認してください。
 | この結果より、クライアントリクエストで利用するJWTは、検証可能なものであることが確認できます。またこのJWTに含まれる情報が右側に表示されますので合わせて確認ください。
 
-   .. image:: ./media/JWTio-verify.jpg
+   .. image:: ./media/jwtio_verify.jpg
       :width: 200
-
 
 その他、NGINX Plus / JWT に関する詳細は 
 `Blog:Authenticating API Clients with JWT and NGINX Plus <https://www.nginx.com/blog/authenticating-api-clients-jwt-nginx-plus/>`__ 
@@ -1562,9 +1564,13 @@ Ingress Controller で OIDC RPのデプロイ
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/oidc
 
+| NGINX Ingress Controller による JWT の制御に加え、NGINXより提供するJavaScript Moduleを利用することにより、OIDCのRPとして動作することが可能です。
+| このサンプルでは、KeycloakをIDPとして動作させ、クライアントのリクエストを適切に認証することを確認いただけます。
 
 サンプルアプリケーションをデプロイ
 ----
+
+リソースをデプロイします。ここでIDPとして動作させる ``KeyCloak`` をデプロイします
 
 .. code-block:: cmdin
   
@@ -1573,6 +1579,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   kubectl apply -f webapp.yaml
   kubectl apply -f keycloak.yaml
   kubectl apply -f virtual-server-idp.yaml
+
+このサンプルで利用するFQDNを確認します。ラボ環境のJumpHostでは予め双方のFQDNを登録しています。
 
 .. code-block:: cmdin
   
@@ -1586,7 +1594,76 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   virtual-server-idp.yaml:  host: keycloak.example.com
   virtual-server.yaml:  host: webapp.example.com
 
-先程、Keycloakで確認したSecretの内容をbase64 encodeします
+ブラウザからKeyCloakにアクセスし、設定を行います。
+Chromeを開き、 ``https://keycloak.exmaple.com`` へアクセスしてください。
+
+   .. image:: ./media/keycloak_top.jpg
+      :width: 200
+
+**Administration Console** を開きます。Login画面が表示されますので以下の情報でログインしてください。
+
+=========== ============
+**usename** **password**  
+=========== ============
+admin       admin
+=========== ============
+
+   .. image:: ./media/keycloak_login.jpg
+      :width: 200
+
+左メニューより **Clients** を開き、 **Create** から新規作成を行います。
+
+   .. image:: ./media/keycloak_clients.jpg
+      :width: 200
+
+Client ID: ``nginx-plus`` を指定し、 **Save** します。
+
+   .. image:: ./media/keycloak_clients_new.jpg
+      :width: 200
+
+SettingsタブのAccess Type: ``confidential`` を選択し、Valid Redirect URIs: ``https://webapp.example.com:443/_codexch`` を入力し、 **Save** します。
+
+   .. image:: ./media/keycloak_clients_setting.jpg
+      :width: 200
+
+Credentialsタブを開きます。後ほどSecretの値を利用しますので表示されている文字列を記録しておきます。
+
+   .. image:: ./media/keycloak_clients_secret.jpg
+      :width: 200
+
+Rolesタブを開き、 **Add Role** から追加を行います。
+
+   .. image:: ./media/keycloak_clients_role.jpg
+      :width: 200
+
+Role Name: ``nginx-keycloak-role`` を指定し、 **Save** します。
+
+   .. image:: ./media/keycloak_clients_role2.jpg
+      :width: 200
+
+左メニュー **Users** を開き、 **Add user** からユーザの新規作成を行います。
+
+   .. image:: ./media/keycloak_clients_users.jpg
+      :width: 200
+
+Username: ``nginx-user`` を指定し、 **Save** します。
+
+   .. image:: ./media/keycloak_clients_users_new.jpg
+      :width: 200
+
+Credentialsタブを開き、Password: ``test`` を入力、Temporary: ``Off`` を選択し、nginx-userのパスワードを設定します。
+
+   .. image:: ./media/keycloak_clients_users_pass.jpg
+      :width: 200
+
+Role Mappingsタブを開き、Client Roles: ``nginx-plus`` を選択し、Available Rolesに表示される ``nginx-keycloak-role`` を選択し、 **Add selected** でRoleをAssignします。
+
+   .. image:: ./media/keycloak_clients_users_role_mapping.jpg
+      :width: 200
+
+これでKeycloakの準備は完了しました。
+
+先程、Keycloakで確認したSecretの内容をbase64エンコードします
 
 .. code-block:: cmdin
 
