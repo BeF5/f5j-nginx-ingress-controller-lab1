@@ -753,6 +753,8 @@ Virtual Serverの内容を確認します。 ``cafe-virtual-server.yaml`` の ``
 動作確認
 ----
 
+ Curlコマンドで複数回リクエストを送ると、 ``coffee-v1`` 、 ``coffee-v2`` のそれぞれに転送されていることが確認できます。
+
 .. code-block:: cmdin
  
   curl -s -H "Host: cafe.example.com" http://localhost/coffee
@@ -760,6 +762,7 @@ Virtual Serverの内容を確認します。 ``cafe-virtual-server.yaml`` の ``
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   Server address: 192.168.127.44:8080
   Server name: coffee-v1-6b78998db9-nn42z
@@ -774,6 +777,7 @@ Virtual Serverの内容を確認します。 ``cafe-virtual-server.yaml`` の ``
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   Server address: 192.168.127.45:8080
   Server name: coffee-v2-748cbbb49f-llpb6
@@ -781,6 +785,8 @@ Virtual Serverの内容を確認します。 ``cafe-virtual-server.yaml`` の ``
   URI: /coffee
   Request ID: 357237a3fea498b6efd90c929d526e64
 
+以下コマンドを参考に複数回Curlを実行し、その結果をファイルに記録します。記録の内容より ``coffee-v1`` に ``coffee-v2`` 転送した数を確認できます。
+分散する割合は少しばらつきが発生しますが、参考として分散した数の結果を確認してください。
 
 .. code-block:: cmdin
  
@@ -816,6 +822,7 @@ IPアドレスによる通信の制御 (Access Control)
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/access-control
 
+Policyにより通信制御を行う方法を確認します。リクエストの送信元IPアドレスに応じて通信の許可・拒否を行う方法を確認します。
 
 サンプルアプリケーションをデプロイ
 ----
@@ -876,6 +883,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   NAME            STATE   AGE
   webapp-policy   Valid   2m18s
 
+VirtualServerに ``webapp-policy`` が割り当てられていることが確認できます。
+
 .. code-block:: cmdin
  
   kubectl describe vs
@@ -883,6 +892,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 11,12
 
   Name:         webapp
   Namespace:    default
@@ -914,7 +924,6 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
     State:    Valid
 
 
-| VSに ``webapp-policy`` が割り当てられていることが確認できます。
 | コマンドを実行しPolicyの内容を確認します。Policyの内容が ``Spec`` に記載されています。
 
 .. code-block:: cmdin
@@ -924,6 +933,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 9,10,11,12
 
   Name:         webapp-policy
   Namespace:    default
@@ -960,6 +970,7 @@ curlコマンドで動作を確認します。以下のように通信が ``拒�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   <html>
   <head><title>403 Forbidden</title></head>
@@ -976,12 +987,6 @@ curlコマンドで動作を確認します。以下のように通信が ``拒�
   ## cd ~/kubernetes-ingress/examples/custom-resources/access-control
   kubectl apply -f access-control-policy-allow.yaml
 
-.. code-block:: bash
-  :linenos:
-  :caption: 実行結果サンプル
-
-  policy.k8s.nginx.org/webapp-policy configured
-
 
 コマンドを実行しPolicyの内容を確認します。Policyの内容が ``Spec`` に記載されています。
 
@@ -992,6 +997,7 @@ curlコマンドで動作を確認します。以下のように通信が ``拒�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 10,11,12,13
 
   Name:         webapp-policy
   Namespace:    default
@@ -1045,11 +1051,53 @@ URL Path の 変換 (Rewrite)
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/rewrites
 
 
-| Rewrite を用いて、URL Path を書換え、後段のサービスに転送することが可能です。
-| まずVirtual Serverの定義内容を確認します。
-| route に 3つのPathを定義し、rewritePath でURLの書換えを行います。
-| 該当のPathでそれぞれのサービスに適したPathの書換えルールを定義します。
+Rewrite を用いて、URL Path を書換え、後段のサービスに転送することが可能です。
 
+サンプルアプリケーションをデプロイ
+----
+
+.. code-block:: cmdin
+  
+  cd ~/kubernetes-ingress/examples/custom-resources/rewrites
+  cat << EOF > rewrite-virtual-server.yaml
+  apiVersion: k8s.nginx.org/v1
+  kind: VirtualServer
+  metadata:
+    name: cafe
+  spec:
+    host: cafe.example.com
+    upstreams:
+    - name: tea
+      service: tea-svc
+      port: 80
+    - name: coffee
+      service: coffee-svc
+      port: 80
+    routes:
+    - path: /tea/
+      action:
+        proxy:
+          upstream: tea
+          rewritePath: /
+    - path: /coffee
+      action:
+        proxy:
+          upstream: coffee
+          rewritePath: /beans
+    - path: ~ /(\w+)/(.+\.(?:gif|jpg|png)$)
+      action:
+        proxy:
+          upstream: tea
+          rewritePath: /service/$1/image/$2
+  EOF
+
+  kubectl apply -f ../basic-configuration/cafe.yaml
+  kubectl apply -f rewrite-virtual-server.yaml
+
+リソースを確認
+----
+
+Virtual Serverの定義内容を確認します。route に 3つのPathを定義し、rewritePath でURLの書換えを行います。該当のPathでそれぞれのサービスに適したPathの書換えルールを定義します。
 
 .. code-block:: yaml
    :linenos:
@@ -1118,50 +1166,6 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 ``PCRE`` をプルダウンより選択し、上部に ``正規表現のルール`` 、下部に ``評価する文字列`` を入力し、結果を確認できます
 
 
-サンプルアプリケーションをデプロイ
-----
-
-.. code-block:: cmdin
-  
-  cd ~/kubernetes-ingress/examples/custom-resources/rewrites
-  cat << EOF > rewrite-virtual-server.yaml
-  apiVersion: k8s.nginx.org/v1
-  kind: VirtualServer
-  metadata:
-    name: cafe
-  spec:
-    host: cafe.example.com
-    upstreams:
-    - name: tea
-      service: tea-svc
-      port: 80
-    - name: coffee
-      service: coffee-svc
-      port: 80
-    routes:
-    - path: /tea/
-      action:
-        proxy:
-          upstream: tea
-          rewritePath: /
-    - path: /coffee
-      action:
-        proxy:
-          upstream: coffee
-          rewritePath: /beans
-    - path: ~ /(\w+)/(.+\.(?:gif|jpg|png)$)
-      action:
-        proxy:
-          upstream: tea
-          rewritePath: /service/$1/image/$2
-  EOF
-
-  kubectl apply -f ../basic-configuration/cafe.yaml
-  kubectl apply -f rewrite-virtual-server.yaml
-
-リソースを確認
-----
-
 以下の通り、各リソースを適切に作成されていることを確認します。
 
 .. code-block:: cmdin
@@ -1203,6 +1207,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 動作確認
 ----
+
+先程定義を確認したとおり、URLが書換えられていることが確認できます。
 
 .. code-block:: cmdin
  
@@ -1300,6 +1306,10 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   kubectl apply -f jwk-secret.yaml
   kubectl apply -f jwt.yaml
   kubectl apply -f virtual-server.yaml
+
+
+リソースを確認
+----
 
 利用するファイルの内容を確認します
 
@@ -1427,9 +1437,6 @@ hostに対し ``jwt-policy`` というポリシーが適用されていること
 クライアントがリクエストする際に利用するJWTのサンプルの内容を確認します。
 
 
-リソースを確認
-----
-
 以下の通り、各リソースを適切に作成されていることを確認します。
 
 .. code-block:: cmdin
@@ -1508,17 +1515,6 @@ curlコマンドで動作を確認します。以下のように通信が ``許�
   Date: 18/Jan/2022:12:49:59 +0000
   URI: /
   Request ID: 86182122eec0392769b4d86d64653419
-
-.. code-block:: cmdin
-
-  cat token.jwt
-
-.. code-block:: bash
-  :linenos:
-  :caption: 実行結果サンプル
-
-  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6IjAwMDEifQ.eyJuYW1lIjoiUXVvdGF0aW9uIFN5c3RlbSIsInN1YiI6InF1b3RlcyIsImlzcyI6Ik15IEFQSSBHYXRld2F5In0.ggVOHYnVFB8GVPE-VOIo3jD71gTkLffAY0hQOGXPL2I
-
 
 リソースの削除
 ----
