@@ -107,7 +107,7 @@ Container Image のPush
 
 Deploymentの内容を確認
 
-``deployment/appprotect-dos-arb.yaml`` の内容を確認します
+``deployment/appprotect-dos-arb.yaml`` の内容を確認します。
 
 .. code-block:: bash
   :linenos:
@@ -145,7 +145,7 @@ Deploymentの内容を確認
               drop:
                 - ALL
 
-``service/appprotect-dos-arb-svc.yaml`` の内容を確認します
+``service/appprotect-dos-arb-svc.yaml`` の内容を確認します。
 
 .. code-block:: bash
   :linenos:
@@ -165,14 +165,16 @@ Deploymentの内容を確認
         protocol: TCP
         targetPort: 3000
 
-デプロイ
+デプロイします。
+
 .. code-block:: cmdin
   
   kubectl apply -f deployment/appprotect-dos-arb.yaml
   kubectl apply -f service/appprotect-dos-arb-svc.yaml
 
 
-デプロイ結果を確認
+デプロイ結果を確認します。
+
 .. code-block:: cmdin
 
   kubectl get deployment -n nginx-ingress
