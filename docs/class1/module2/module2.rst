@@ -12,10 +12,10 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 
 .. code-block:: cmdin
 
-   cd ~/
-   git clone https://github.com/nginxinc/kubernetes-ingress/
-   cd ~/kubernetes-ingress
-   git checkout v2.1.0
+  cd ~/
+  git clone https://github.com/nginxinc/kubernetes-ingress/
+  cd ~/kubernetes-ingress
+  git checkout v2.1.0
 
 
 ライセンスファイルをコピーしてください
@@ -23,8 +23,8 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 
 .. code-block:: cmdin
    
-   cp ~/nginx-repo* .
-   ls nginx-repo.*
+  cp ~/nginx-repo* .
+  ls nginx-repo.*
 
 2. コンテナイメージの作成
 ====
@@ -33,42 +33,42 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 | 参考： `Building the Ingress Controller Image <https://docs.nginx.com/nginx-ingress-controller/installation/building-ingress-controller-image>`__
 
 .. code-block:: cmdin
-   
-   make debian-image-nap-plus PREFIX=registry.example.com/root/nic/nginxplus-ingress-nap-dos TARGET=container TAG=2.0.3
-   # Image の Build は数分(約5分)必要となります
-   docker images | grep nginxplus-ingress-nap-dos
+  
+  make debian-image-nap-plus PREFIX=registry.example.com/root/nic/nginxplus-ingress-nap-dos TARGET=container TAG=2.0.3
+  # Image の Build は数分(約5分)必要となります
+  docker images | grep nginxplus-ingress-nap-dos
 
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
 
-   registry.example.com/root/nic/nginxplus-ingress-nap-dos   2.1.0     5b5cdc61cf76   31 seconds ago   611MB
+  registry.example.com/root/nic/nginxplus-ingress-nap-dos   2.1.0     5b5cdc61cf76   31 seconds ago   611MB
 
 
 Container Image のPushのためにレジストリへログイン
 
 .. code-block:: cmdin
-   
-   # registry.example.com にログイン
-   docker login registry.example.com
-   Username: root       << 左の文字列を入力
-   Password: password   << 左の文字列を入力
+  
+  # registry.example.com にログイン
+  docker login registry.example.com
+  Username: root       << 左の文字列を入力
+  Password: password   << 左の文字列を入力
 
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
 
-   WARNING! Your password will be stored unencrypted in /home/ubuntu/.docker/config.json.
-   Configure a credential helper to remove this warning. See
-   https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+  WARNING! Your password will be stored unencrypted in /home/ubuntu/.docker/config.json.
+  Configure a credential helper to remove this warning. See
+  https://docs.docker.com/engine/reference/commandline/login/#credentials-store
 
-   Login Succeeded
+  Login Succeeded
 
 Container Image のPush
 
 .. code-block:: cmdin
-   
-   docker push registry.example.com/root/nic/nginxplus-ingress-nap-dos:2.1.0
+  
+  docker push registry.example.com/root/nic/nginxplus-ingress-nap-dos:2.1.0
 
 
 3. NGINX Ingress Controller環境のセットアップ
@@ -77,26 +77,26 @@ Container Image のPush
 先程の手順で取得したGitHubのフォルダへ移動し、必要となるリソースをデプロイします。
 
 .. code-block:: cmdin
-   
-   cd ~/kubernetes-ingress/deployments
-   kubectl apply -f common/ns-and-sa.yaml
-   kubectl apply -f rbac/rbac.yaml
-   kubectl apply -f rbac/ap-rbac.yaml
-   kubectl apply -f rbac/apdos-rbac.yaml
-   kubectl apply -f common/default-server-secret.yaml
-   kubectl apply -f common/nginx-config.yaml
-   kubectl apply -f common/ingress-class.yaml
-   kubectl apply -f common/crds/k8s.nginx.org_virtualservers.yaml
-   kubectl apply -f common/crds/k8s.nginx.org_virtualserverroutes.yaml
-   kubectl apply -f common/crds/k8s.nginx.org_transportservers.yaml
-   kubectl apply -f common/crds/k8s.nginx.org_policies.yaml
-   kubectl apply -f common/crds/k8s.nginx.org_globalconfigurations.yaml
-   kubectl apply -f common/crds/appprotect.f5.com_aplogconfs.yaml
-   kubectl apply -f common/crds/appprotect.f5.com_appolicies.yaml
-   kubectl apply -f common/crds/appprotect.f5.com_apusersigs.yaml
-   kubectl apply -f common/crds/appprotectdos.f5.com_apdoslogconfs.yaml
-   kubectl apply -f common/crds/appprotectdos.f5.com_apdospolicy.yaml
-   kubectl apply -f common/crds/appprotectdos.f5.com_dosprotectedresources.yaml
+  
+  cd ~/kubernetes-ingress/deployments
+  kubectl apply -f common/ns-and-sa.yaml
+  kubectl apply -f rbac/rbac.yaml
+  kubectl apply -f rbac/ap-rbac.yaml
+  kubectl apply -f rbac/apdos-rbac.yaml
+  kubectl apply -f common/default-server-secret.yaml
+  kubectl apply -f common/nginx-config.yaml
+  kubectl apply -f common/ingress-class.yaml
+  kubectl apply -f common/crds/k8s.nginx.org_virtualservers.yaml
+  kubectl apply -f common/crds/k8s.nginx.org_virtualserverroutes.yaml
+  kubectl apply -f common/crds/k8s.nginx.org_transportservers.yaml
+  kubectl apply -f common/crds/k8s.nginx.org_policies.yaml
+  kubectl apply -f common/crds/k8s.nginx.org_globalconfigurations.yaml
+  kubectl apply -f common/crds/appprotect.f5.com_aplogconfs.yaml
+  kubectl apply -f common/crds/appprotect.f5.com_appolicies.yaml
+  kubectl apply -f common/crds/appprotect.f5.com_apusersigs.yaml
+  kubectl apply -f common/crds/appprotectdos.f5.com_apdoslogconfs.yaml
+  kubectl apply -f common/crds/appprotectdos.f5.com_apdospolicy.yaml
+  kubectl apply -f common/crds/appprotectdos.f5.com_dosprotectedresources.yaml
 
 
 
@@ -108,108 +108,108 @@ Container Image のPush
 Deploymentの内容を確認
 
 .. code-block:: cmdin
-   
-   ## cd ~/kubernetes-ingress/deployments
-   cat deployment/appprotect-dos-arb.yaml
+  
+  ## cd ~/kubernetes-ingress/deployments
+  cat deployment/appprotect-dos-arb.yaml
 
 .. code-block:: bash
   :linenos:
   :caption: deployment/appprotect-dos-arb.yaml
 
-	apiVersion: apps/v1
-	kind: Deployment
-	metadata:
-	  name: appprotect-dos-arb
-	  namespace: nginx-ingress
-	spec:
-	  replicas: 1
-	  selector:
-	    matchLabels:
-	      app: appprotect-dos-arb
-	  template:
-	    metadata:
-	      labels:
-	        app: appprotect-dos-arb
-	    spec:
-	      containers:
-	      - name: appprotect-dos-arb
-	        image: docker-registry.nginx.com/nap-dos/app_protect_dos_arb:1.1.0
-	        imagePullPolicy: IfNotPresent
-	        resources:
-	          limits:
-	            memory: "128Mi"
-	            cpu: "500m"
-	        ports:
-	          - containerPort: 3000
-	        securityContext:
-	          allowPrivilegeEscalation: false
-	          runAsUser: 1001
-	          capabilities:
-	            drop:
-	              - ALL
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: appprotect-dos-arb
+    namespace: nginx-ingress
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: appprotect-dos-arb
+    template:
+      metadata:
+        labels:
+          app: appprotect-dos-arb
+      spec:
+        containers:
+        - name: appprotect-dos-arb
+          image: docker-registry.nginx.com/nap-dos/app_protect_dos_arb:1.1.0
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3000
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 1001
+            capabilities:
+              drop:
+                - ALL
 
 .. code-block:: cmdin
 
-	cat service/appprotect-dos-arb-svc.yaml
+  cat service/appprotect-dos-arb-svc.yaml
 
 .. code-block:: bash
   :linenos:
   :caption: service/appprotect-dos-arb-svc.yaml
 
-	apiVersion: v1
-	kind: Service
-	metadata:
-	  name: svc-appprotect-dos-arb
-	  namespace: nginx-ingress
-	spec:
-	  selector:
-	    app: appprotect-dos-arb
-	  ports:
-	    - name: arb
-	      port: 3000
-	      protocol: TCP
-	      targetPort: 3000
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: svc-appprotect-dos-arb
+    namespace: nginx-ingress
+  spec:
+    selector:
+      app: appprotect-dos-arb
+    ports:
+      - name: arb
+        port: 3000
+        protocol: TCP
+        targetPort: 3000
 
 デプロイ
 .. code-block:: cmdin
-   
-   kubectl apply -f deployment/appprotect-dos-arb.yaml
-   kubectl apply -f service/appprotect-dos-arb-svc.yaml
+  
+  kubectl apply -f deployment/appprotect-dos-arb.yaml
+  kubectl apply -f service/appprotect-dos-arb-svc.yaml
 
 
 デプロイ結果を確認
 .. code-block:: cmdin
 
-   kubectl get deployment -n nginx-ingress
+  kubectl get deployment -n nginx-ingress
 
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
 
-   NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
-   appprotect-dos-arb   1/1     1            1           4m32s
+  NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
+  appprotect-dos-arb   1/1     1            1           4m32s
 
 .. code-block:: cmdin
    
-   kubectl get pod -n nginx-ingress
+  kubectl get pod -n nginx-ingress
 
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
 
-   NAME                                  READY   STATUS    RESTARTS   AGE
-   appprotect-dos-arb-5d89486bbc-pkbrg   1/1     Running   0          4m43s
+  NAME                                  READY   STATUS    RESTARTS   AGE
+  appprotect-dos-arb-5d89486bbc-pkbrg   1/1     Running   0          4m43s
 
 .. code-block:: cmdin
-   
-   kubectl get svc -n nginx-ingress
+  
+  kubectl get svc -n nginx-ingress
 
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
 
-   NAME                     TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
-   svc-appprotect-dos-arb   ClusterIP   None         <none>        3000/TCP   6s
+  NAME                     TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
+  svc-appprotect-dos-arb   ClusterIP   None         <none>        3000/TCP   6s
 
 
 4. NGINX Ingress Controllerの実行
@@ -220,9 +220,9 @@ NGINX Ingress Controllerのpodを実行します。DeploymentとDaemonSetによ�
 argsで指定するパラメータの詳細は [Command-line Arguments](https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/command-line-arguments)を参照してください
 
 .. code-block:: cmdin
-   
-   ## cd ~/kubernetes-ingress/deployments
-   vi deployment/nginx-plus-ingress.yaml
+  
+  ## cd ~/kubernetes-ingress/deployments
+  vi deployment/nginx-plus-ingress.yaml
 
 コメントを付与した行を適切な内容に修正してください
 
@@ -230,61 +230,61 @@ argsで指定するパラメータの詳細は [Command-line Arguments](https://
   :linenos:
   :caption: deployment/nginx-plus-ingress.yaml
 
-      ** 省略 **
-      spec:
-         serviceAccountName: nginx-ingress
-         containers:
-         - image: registry.example.com/root/nic/nginxplus-ingress-nap-dos:2.1.0  # 対象のレジストリを指定してください
-         imagePullPolicy: IfNotPresent
-         name: nginx-plus-ingress
-      ** 省略 **
-         args:
-            - -nginx-plus
-            - -nginx-configmaps=$(POD_NAMESPACE)/nginx-config
-            - -default-server-tls-secret=$(POD_NAMESPACE)/default-server-secret
-            - -enable-app-protect                            # App Protect WAFを有効にします
-            - -enable-app-protect-dos                        # App Protect DoSを利用する場合、有効にします
-            #- -v=3 # Enables extensive logging. Useful for troubleshooting.
-            #- -report-ingress-status
-            #- -external-service=nginx-ingress
-            #- -enable-prometheus-metrics
-            #- -global-configuration=$(POD_NAMESPACE)/nginx-configuration
-            - -enable-preview-policies                       # OIDCに必要となるArgsを有効にします
-            - -enable-snippets                               # OIDCで一部設定を追加するためsnippetsを有効にします
+  ** 省略 **
+  spec:
+     serviceAccountName: nginx-ingress
+     containers:
+     - image: registry.example.com/root/nic/nginxplus-ingress-nap-dos:2.1.0  # 対象のレジストリを指定してください
+     imagePullPolicy: IfNotPresent
+     name: nginx-plus-ingress
+  ** 省略 **
+     args:
+        - -nginx-plus
+        - -nginx-configmaps=$(POD_NAMESPACE)/nginx-config
+        - -default-server-tls-secret=$(POD_NAMESPACE)/default-server-secret
+        - -enable-app-protect                            # App Protect WAFを有効にします
+        - -enable-app-protect-dos                        # App Protect DoSを利用する場合、有効にします
+        #- -v=3 # Enables extensive logging. Useful for troubleshooting.
+        #- -report-ingress-status
+        #- -external-service=nginx-ingress
+        #- -enable-prometheus-metrics
+        #- -global-configuration=$(POD_NAMESPACE)/nginx-configuration
+        - -enable-preview-policies                       # OIDCに必要となるArgsを有効にします
+        - -enable-snippets                               # OIDCで一部設定を追加するためsnippetsを有効にします
 
 
 修正したマニフェストを指定しPodを作成します。
 
 .. code-block:: cmdin
    
-   ## cd ~/kubernetes-ingress/deployments
-   kubectl apply -f deployment/nginx-plus-ingress.yaml
-   
+  ## cd ~/kubernetes-ingress/deployments
+  kubectl apply -f deployment/nginx-plus-ingress.yaml
+  
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
 
-   deployment.apps/nginx-ingress created
+  deployment.apps/nginx-ingress created
 
 .. code-block:: cmdin
    
-   kubectl get pods --namespace=nginx-ingress | grep nginx-ingress
+  kubectl get pods --namespace=nginx-ingress | grep nginx-ingress
    
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
 
-   nginx-ingress-7f67968b56-d8gf5       1/1     Running   0          3s
+  nginx-ingress-7f67968b56-d8gf5       1/1     Running   0          3s
 
 .. code-block:: cmdin
    
-   kubectl get deployment -n nginx-ingress | grep nginx-ingress
+  kubectl get deployment -n nginx-ingress | grep nginx-ingress
 
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
 
-   nginx-ingress   1/1     1            1           2m52s
+  nginx-ingress   1/1     1            1           2m52s
 
 
 5. NGINX Ingress Controller を外部へ NodePort で公開する
@@ -295,55 +295,56 @@ argsで指定するパラメータの詳細は [Command-line Arguments](https://
 
 .. code-block:: cmdin
    
-   ## cd ~/kubernetes-ingress/deployments
-   cat service/nodeport.yaml
+  ## cd ~/kubernetes-ingress/deployments
+  cat service/nodeport.yaml
 
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
 
-	apiVersion: v1
-	kind: Service
-	metadata:
-	  name: nginx-ingress
-	  namespace: nginx-ingress
-	spec:
-	  type: NodePort
-	  ports:
-	  - port: 80
-	    targetPort: 80
-	    protocol: TCP
-	    name: http
-	  - port: 443
-	    targetPort: 443
-	    protocol: TCP
-	    name: https
-	  selector:
-	    app: nginx-ingress
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: nginx-ingress
+    namespace: nginx-ingress
+  spec:
+    type: NodePort
+    ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+    - port: 443
+      targetPort: 443
+      protocol: TCP
+      name: https
+    selector:
+      app: nginx-ingress
+
 
 
 NodePortをデプロイします。
 
 .. code-block:: cmdin
    
-	## cd ~/kubernetes-ingress/deployments
-	kubectl apply -f service/nodeport.yaml
+  ## cd ~/kubernetes-ingress/deployments
+  kubectl apply -f service/nodeport.yaml
 
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
 
-	service/nginx-ingress created
+  service/nginx-ingress created
 
 .. code-block:: cmdin
    
-	kubectl get svc -n nginx-ingress | grep nginx-ingress
+  kubectl get svc -n nginx-ingress | grep nginx-ingress
 
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
 
-	nginx-ingress   NodePort   10.108.250.160   <none>        80:32692/TCP,443:31957/TCP   5s
+  nginx-ingress   NodePort   10.108.250.160   <none>        80:32692/TCP,443:31957/TCP   5s
 
 このコマンドを実行した結果、Kubernetes の Worker Nodeでそれぞれのサービスに対しポートが割り当てられています。
 図の内容を確認してください。
@@ -361,42 +362,42 @@ NodePortをデプロイします。
 
 .. code-block:: cmdin
    
-   sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf-
-   sudo cat << EOF > nginx.conf
-   user  nginx;
-   worker_processes  auto;
+  sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf-
+  sudo cat << EOF > nginx.conf
+  user  nginx;
+  worker_processes  auto;
 
-   error_log  /var/log/nginx/error.log notice;
-   pid        /var/run/nginx.pid;
-
-
-   events {
-      worker_connections  1024;
-   }
+  error_log  /var/log/nginx/error.log notice;
+  pid        /var/run/nginx.pid;
 
 
-   # TCP/UDP load balancing
-   #
-   stream {
-      upstream tcp80_backend {
-         server node1:32692；    # HTTP(TCP/80)に割り当てられたポート番号
-      }
-      upstream tcp443_backend {
-         server node1:31957;     # HTTPS(TCP/443)に割り当てられたポート番号
-      }
+  events {
+     worker_connections  1024;
+  }
 
-      server {
-         listen 80;
-         proxy_pass tcp80_backend;
-      }
-      server {
-         listen 443;
-         proxy_pass tcp443_backend;
-      }
-   }
-   EOF
-   sudo cp nginx.conf /etc/nginx/nginx.conf
-   sudo nginx -s reload
+
+  # TCP/UDP load balancing
+  #
+  stream {
+     upstream tcp80_backend {
+        server node1:32692；    # HTTP(TCP/80)に割り当てられたポート番号
+     }
+     upstream tcp443_backend {
+        server node1:31957;     # HTTPS(TCP/443)に割り当てられたポート番号
+     }
+
+     server {
+        listen 80;
+        proxy_pass tcp80_backend;
+     }
+     server {
+        listen 443;
+        proxy_pass tcp443_backend;
+     }
+  }
+  EOF
+  sudo cp nginx.conf /etc/nginx/nginx.conf
+  sudo nginx -s reload
 
    
 現在の状態は以下となり、サービスを外部に公開する準備が完了しました。
