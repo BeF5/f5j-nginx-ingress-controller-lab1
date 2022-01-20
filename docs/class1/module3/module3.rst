@@ -78,7 +78,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 動作確認
 ----
 
-Curlコマンドで作成したWebアプリケーションへ到達でき、応答があることを確認します。 ``/coffee`` 、 ``/tea`` というURLに応じて異なるアプリケーションに転送されていることが確認できます
+Curlコマンドでリクエストを送信します。作成したWebアプリケーションから応答があることを確認します。 ``/coffee`` 、 ``/tea`` というURLに応じて異なるアプリケーションに転送されていることが確認できます
 
 .. code-block:: cmdin
  
@@ -241,7 +241,7 @@ Curlコマンドで作成したWebアプリケーションへ到達でき、応�
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/cross-namespace-configuration
 
 NGINX Ingress Controller はCRDを用い、Virtual Server / Virtual Server Router / Policy といったリソースを使うことで、権限と設定範囲を適切に管理することが可能です。
-ここでは、通信を待ち受けるため、 ``cafe`` namespace に、VirtualServer をデプロイします。そして ``tea`` / ``coffee`` namespace に アプリケーションと、アプリケーション宛に通信を転送するための VirtualServerRoute をデプロイします。 
+ここでは、通信を待ち受けるため ``cafe`` namespace に、VirtualServer をデプロイします。そして ``tea`` / ``coffee`` namespace に アプリケーションと、アプリケーション宛に通信を転送するための VirtualServerRoute をデプロイします。 
 
 サンプルアプリケーションをデプロイ
 ----
@@ -336,7 +336,7 @@ NGINX Ingress Controller はCRDを用い、Virtual Server / Virtual Server Route
 動作確認
 ----
 
-Curlコマンドで作成したWebアプリケーションへ到達でき、応答があることを確認します。 ``/coffee`` 、 ``/tea`` というURLに応じて異なるアプリケーションに転送されていることが確認できます
+Curlコマンドでリクエストを送信します。作成したWebアプリケーションから応答があることを確認します。 ``/coffee`` 、 ``/tea`` というURLに応じて異なるアプリケーションに転送されていることが確認できます
 
 .. code-block:: cmdin
    
