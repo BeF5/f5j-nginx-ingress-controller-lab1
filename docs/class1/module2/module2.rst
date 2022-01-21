@@ -353,7 +353,8 @@ NodePortをデプロイします。
 先程確認したNoder Portで割り当てられたポート番号宛に通信を転送するように、NGINXを設定します。
 
 .. code-block:: cmdin
-   
+  
+  cd ~/
   sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf-
   cat << EOF > nginx.conf
   user  nginx;
@@ -372,7 +373,7 @@ NodePortをデプロイします。
   #
   stream {
      upstream tcp80_backend {
-        server node1:32692；    # HTTP(TCP/80)に割り当てられたポート番号
+        server node1:32692;    # HTTP(TCP/80)に割り当てられたポート番号
      }
      upstream tcp443_backend {
         server node1:31957;     # HTTPS(TCP/443)に割り当てられたポート番号

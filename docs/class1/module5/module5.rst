@@ -29,7 +29,8 @@ Deploymentのargsで指定するパラメータの詳細は [Command-line Argume
 .. code-block:: yaml
   :linenos:
   :caption: deployment/nginx-plus-ingress-tcpudp.yaml
-
+  :emphasize-lines: 9,10,11,12,13,14,15,16,17,29
+ 
   ** 省略 **
   spec:
      serviceAccountName: nginx-ingress
@@ -68,9 +69,12 @@ Deploymentのargsで指定するパラメータの詳細は [Command-line Argume
   cp service/nodeport.yaml  service/nodeport-tcp.yaml
   vi service/nodeport-tcp.yaml
 
+以下の内容を参考に修正してください。
+
 .. code-block:: yaml
   :linenos:
   :caption: service/nodeport-tcp.yaml
+  :emphasize-lines: 4,9,10,11,12,13
 
   apiVersion: v1
   kind: Service
@@ -93,10 +97,12 @@ Deploymentのargsで指定するパラメータの詳細は [Command-line Argume
   cp service/nodeport.yaml  service/nodeport-udp.yaml
   vi service/nodeport-udp.yaml
 
+以下の内容を参考に修正してください。
 
 .. code-block:: yaml
   :linenos:
   :caption: service/nodeport-udp.yaml
+  :emphasize-lines: 4,9,10,11,12,13
 
   apiVersion: v1
   kind: Service
@@ -121,10 +127,11 @@ TCP/UDPではGlobal Configurationにより外部から通信を待ち受ける�
   cp global-configuration.yaml  global-configuration.yaml-bak
   vi global-configuration.yaml
 
+以下の内容を参考に修正してください。
 
 .. code-block:: yaml
   :linenos:
-  :caption: service/nodeport-udp.yaml
+  :caption: global-configuration.yaml
 
   apiVersion: k8s.nginx.org/v1alpha1
   kind: GlobalConfiguration
@@ -191,7 +198,8 @@ UDPの設定です。TCPとほぼ同様です
       pass: dns-app
 
 
-サンプルアプリケーションです。TCP/UDP共に5353で通信を待ち受けます。またDNSを 8.8.8.8:53 へと転送する
+サンプルアプリケーションです。TCP/UDP共に5353で通信を待ち受けます。またDNSを 8.8.8.8:53 へと転送する動作となります。
+
 
 .. code-block:: yaml
   :linenos:
@@ -266,6 +274,8 @@ UDPの設定です。TCPとほぼ同様です
 修正した内容、各種リソースをデプロイします。
 デプロイする内容に応じてディレクトリが変更となりますので注意ください
 
+``~/kubernetes-ingress/deployments`` 配下の内容を設定してください。(NICのDeployment, NodePort)
+
 .. code-block:: cmdin
   
   ## cd ~/kubernetes-ingress/deployments
@@ -273,10 +283,12 @@ UDPの設定です。TCPとほぼ同様です
   kubectl apply -f service/nodeport-udp.yaml
   kubectl apply -f deployment/nginx-plus-ingress-tcpudp.yaml
 
+``~/kubernetes-ingress/examples/custom-resources/basic-tcp-udp`` 配下の内容を設定してください。(サンプルアプリケーション、分散設定等)
+
 .. code-block:: cmdin
 
   ## cd ~/kubernetes-ingress/examples/custom-resources/basic-tcp-udp
-  kubectl apply -f  global-configuration.yaml
+  kubectl apply -f global-configuration.yaml
   kubectl apply -f dns.yaml
   kubectl apply -f transport-server-tcp.yaml
   kubectl apply -f transport-server-udp.yaml
@@ -287,14 +299,22 @@ UDPの設定です。TCPとほぼ同様です
 .. code-block:: cmdin
 
   kubectl get svc -n nginx-ingress
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 2,3
+
   NAME                     TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
   nginx-ingress            NodePort    10.108.250.160   <none>        5353:30292/TCP   6d14h
   nginx-ingress-udp        NodePort    10.99.147.245    <none>        53:31482/UDP     16m
 
 確認したNode Portで割り当てられたポート番号宛に通信を転送するように、NGINXを設定します。
+転送するポート番号は、環境に合わせて適切に変更してください。
 
 .. code-block:: cmdin
-   
+  
+  cd ~/
   sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf-
   cat << EOF > nginx.conf
   user  nginx;
@@ -357,7 +377,7 @@ NGINX Ingress ControllerのPodの詳細を確認します
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 7,13
+  :emphasize-lines: 8,14
 
   ** 省略 **
 
@@ -521,9 +541,29 @@ UDPでDNS Queryを送信します。Portは ``53`` です。
 リソースの削除
 ----
 
+サンプルアプリケーション、及び分散設定を削除します
+
 .. code-block:: cmdin
 
-.. code-block:: bash
-  :linenos:
-  :caption: 実行結果サンプル
-  :emphasize-lines: 1
+  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-tcp-udp
+  kubectl delete -f global-configuration.yaml
+  kubectl delete -f dns.yaml
+  kubectl delete -f transport-server-tcp.yaml
+  kubectl delete -f transport-server-udp.yaml
+
+HTTP/HTTPSを待ち受ける設定に戻す場合、以下の操作を参考に実施してください。
+
+NGINXの設定については、再度デプロイの後、待受のポート番号を確認して適切にnginx.confを変更してください。
+手順は以下を参照してください。
+`5. NGINX Ingress Controller を外部へ NodePort で公開する <https://f5j-nginx-ingress-controller-lab1.readthedocs.io/en/latest/class1/module2/module2.html#nginx-ingress-controller-nodeport>`__
+
+.. code-block:: cmdin
+  
+  ## cd ~/kubernetes-ingress/deployments
+  kubectl delete -f service/nodeport-tcp.yaml
+  kubectl delete -f service/nodeport-udp.yaml
+  kubectl delete -f deployment/nginx-plus-ingress-tcpudp.yaml
+
+  kubectl apply -f service/nodeport.yaml
+  kubectl apply -f deployment/nginx-plus-ingress.yaml
+  ## 手順を参考にnginx.confを変更してください
