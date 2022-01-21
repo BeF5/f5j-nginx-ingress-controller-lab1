@@ -341,7 +341,7 @@ NodePortをデプロイします。
 このコマンドを実行した結果、Kubernetes の Worker Nodeでそれぞれのサービスに対しポートが割り当てられています。
 図の内容を確認してください。
 
-   .. image:: ./media/nodeport.jpg
+   .. image:: ./media/kube_nodeport.jpg
        :width: 400
 
 | クライアントからアクセスするため、HTTP(TCP/80)、HTTPS(TCP/443)を待ち受け、それぞれNodePortで公開するポート番号へ転送するLBを用意します。
@@ -395,5 +395,5 @@ NodePortをデプロイします。
    
 現在の状態は以下となり、サービスを外部に公開する準備が完了しました。
 
-   .. image:: ./media/set_external_nginx.jpg
+   .. image:: ./media/kube_external_nginx.jpg
        :width: 400
