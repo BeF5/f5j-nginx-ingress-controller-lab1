@@ -78,7 +78,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 動作確認
 ----
 
-Curlコマンドでリクエストを送信します。作成したWebアプリケーションから応答があることを確認します。 ``/coffee`` 、 ``/tea`` というURLに応じて異なるアプリケーションに転送されていることが確認できます
+curlコマンドでリクエストを送信します。作成したWebアプリケーションから応答があることを確認します。 ``/coffee`` 、 ``/tea`` というURLに応じて異なるアプリケーションに転送されていることが確認できます
 
 .. code-block:: cmdin
  
@@ -336,7 +336,7 @@ NGINX Ingress Controller はCRDを用い、Virtual Server / Virtual Server Route
 動作確認
 ----
 
-Curlコマンドでリクエストを送信します。作成したWebアプリケーションから応答があることを確認します。 ``/coffee`` 、 ``/tea`` というURLに応じて異なるアプリケーションに転送されていることが確認できます
+curlコマンドでリクエストを送信します。作成したWebアプリケーションから応答があることを確認します。 ``/coffee`` 、 ``/tea`` というURLに応じて異なるアプリケーションに転送されていることが確認できます
 
 .. code-block:: cmdin
    

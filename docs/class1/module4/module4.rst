@@ -49,7 +49,6 @@ Syslogイメージのデプロイ
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 1
 
   NAME       READY   UP-TO-DATE   AVAILABLE   AGE
   syslog     1/1     1            1           9m
@@ -180,7 +179,7 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
 .. code-block:: yaml
   :linenos:
   :caption: ap-logconf.yaml
-  :emphasize-lines: 1
+  :emphasize-lines: 4
 
   apiVersion: appprotect.f5.com/v1beta1
   kind: APLogConf
@@ -255,24 +254,6 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
 
   kubectl get aplogconf
 
-.. code-block:: bash
-  :linenos:
-  :caption: 実行結果サンプル
-
-  NAME      AGE
-  logconf   39m
-
-.. code-block:: cmdin
-
-  kubectl get policy
-
-.. code-block:: bash
-  :linenos:
-  :caption: 実行結果サンプル
-
-  NAME                  STATE   AGE
-  ingress-mtls-policy   Valid   11h
-  waf-policy            Valid   39m
 
 .. code-block:: cmdin
 
@@ -285,17 +266,13 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
   NAME              AGE
   dataguard-alarm   39m
 
-.. code-block:: cmdin
-
-  kubectl get policy
-
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
 
-  NAME                  STATE   AGE
-  ingress-mtls-policy   Valid   11h
-  waf-policy            Valid   39m
+  NAME      AGE
+  logconf   39m
+
 
 .. code-block:: cmdin
 
@@ -312,6 +289,7 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
 動作確認
 ----
 
+curlコマンドでリクエストを送信します。
 
 .. code-block:: cmdin
 
@@ -320,7 +298,7 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 1
+  :emphasize-lines: 12,22
 
   * Added webapp.example.com:80:127.0.0.1 to DNS cache
   * Hostname webapp.example.com was found in DNS cache
@@ -347,10 +325,12 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
   Request ID: e0b6f00106a11885f85300ffcaf5b912
   * Connection #0 to host webapp.example.com left intact
 
-.. code-block:: xml
+ログメッセージを見ると、通信をブロックせず転送(PASSED)していることが確認できます。NGINX App ProtectはBot Signatureの機能をもっておりますので、curlコマンドであることを“人によるブラウザの通信ではなくBot Clientである”という形で検知をしておりますが、即座に驚異であると判断される設定となっておりませんので適切な通信としてWebアプリケーションへ転送が行われております。
+
+.. code-block:: json
   :linenos:
   :caption: 該当するSyslogのサンプル
-  :emphasize-lines: 1
+  :emphasize-lines: 23,24,27,28,29,31,32,35
   
   Jan 20 03:07:28 nginx-ingress-5ddc7f4f-zjlt2 ASM:
   attack_type="Non-browser Client",
@@ -393,6 +373,8 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
   transport_protocol="HTTP/1.1"
 
 
+次にNAP WAFで攻撃として検知するリクエストを、curlコマンドで送信します。クロスサイトスクリプティング(XSS)を想定した接続をします。
+
 .. code-block:: cmdin
 
   curl -v --resolve webapp.example.com:80:127.0.0.1 "http://webapp.example.com/<script>"
@@ -400,7 +382,7 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル (区切り位置で改行して表示)
-  :emphasize-lines: 1
+  :emphasize-lines: 12,20
 
   * Added webapp.example.com:80:127.0.0.1 to DNS cache
   * Hostname webapp.example.com was found in DNS cache
@@ -421,12 +403,18 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
   < Content-Length: 247
   <
   * Closing connection 0
-  <html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 16242938385820378683<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>ubuntu@ip-10-1-1-8:~/kubernetes-ingress/examples/custom-resources/waf$
+  <html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 16242938385820378683<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>
 
-.. code-block:: xml
+通信が ``拒否`` され、エラーページが応答されています。 ``support ID`` に表示される値を確認してください。
+
+| ログメッセージを見ると、URLに不正な文字列が含まれており、XSS script tag(URI)などのSignatureで検知、通信をブロック(REJECTED)していることが確認できます。また、 ``violation_rating="5"`` となっています。
+Violation Rating はNAP WAFが通信の内容を元にリクエストのリスクを判定します。デフォルトテンプレートはこちらの値を元にブロックする挙動となります。詳細は以下のページを参照してください。
+| `NGINX App Protect WAF Configuration Guide/Basic Configuration and the Default Policy <https://docs.nginx.com/nginx-app-protect/configuration-guide/configuration/#basic-configuration-and-the-default-policy>`__
+
+.. code-block:: json
   :linenos:
   :caption: 該当するSyslogのサンプル
-  :emphasize-lines: 1
+  :emphasize-lines: 15,16,17,20,23,24,27,28,29,31,32,35
 
   Jan 20 03:07:39 nginx-ingress-5ddc7f4f-zjlt2 ASM:
   attack_type="Non-browser Client,Abuse of Functionality,Cross Site Scripting (XSS)",
@@ -468,6 +456,10 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
   request="GET /<script> HTTP/1.1\r\nHost: webapp.example.com\r\nUser-Agent: curl/7.68.0\r\nAccept: */*\r\n\r\n",
   transport_protocol="HTTP/1.1"
 
+参考の情報ですが、curlコマンドの **<script>** を **?a=a?%27+OR+1=1--** などの文字列に入れ替えると、SQL Injectionのブロックを見ることができますのでご確認ください。
+
+User Defined Signatureで指定した内容が正しく動作しているか確認します。Webアプリケーションに”apple”という文字を送信します。
+
 .. code-block:: cmdin
 
   curl -v --resolve webapp.example.com:80:127.0.0.1 "http://webapp.example.com/" -X POST -d "apple"
@@ -475,7 +467,7 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル (区切り位置で改行して表示)
-  :emphasize-lines: 1
+  :emphasize-lines: 12,20
 
   Note: Unnecessary use of -X or --request, POST is already inferred.
   * Added webapp.example.com:80:127.0.0.1 to DNS cache
@@ -500,12 +492,14 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
   < Content-Length: 247
   <
   * Closing connection 0
-  <html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 16242938385820379193<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>ubuntu@ip-10-1-1-8:~/kubernetes-ingress/examples/custom-resources/waf$
+  <html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 16242938385820379193<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>
 
-.. code-block:: xml
+ログメッセージを見ると、該当のログメッセージが、User Defined Signatureの ``Apple_medium_acc`` というSignature Nameで検知されブロック(REJECTED)されていることが確認できます。
+
+.. code-block:: json
   :linenos:
   :caption: 該当するSyslogのサンプル (区切り位置で改行して表示)
-  :emphasize-lines: 1
+  :emphasize-lines: 15,16,17,20,23,24,27,28,29,31,32,35
 
   Jan 20 03:07:51 nginx-ingress-5ddc7f4f-zjlt2 ASM:
   attack_type="Non-browser Client,Brute Force Attack",
@@ -614,9 +608,52 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
 
 ポイントとなるファイルの内容を確認します。
 
+
+``apdos-policy.yaml`` は、DosProtectResourceが参照する NAP DoS の Policy 設定となります。
+
+.. code-block:: yaml
+  :linenos:
+  :caption: apdos-policy.yaml
+
+  apiVersion: appprotectdos.f5.com/v1beta1
+  kind: APDosPolicy
+  metadata:
+    name: dospolicy
+  spec:
+    mitigation_mode: "standard"
+    signatures: "on"
+    bad_actors: "on"
+    automation_tools_detection: "on"
+    tls_fingerprint: "on"
+
+
+``apdos-logconf.yaml`` は、DosProtectResourceが参照する Security Log の設定となります。
+
+.. code-block:: yaml
+  :linenos:
+  :caption: apdos-logconf.yaml
+  :emphasize-lines: 3
+
+  apiVersion: appprotectdos.f5.com/v1beta1
+  kind: APDosLogConf
+  metadata:
+    name: doslogconf
+  spec:
+    content:
+      format: splunk
+      max_message_size: 64k
+    filter:
+      traffic-mitigation-stats: all
+      bad-actors: top 10
+      attack-signatures: top 10
+
+``apdos-protected.yaml`` は、VirtualServerが参照する DosProtectResource の設定となります。
+利用するNAP DoSのリソースとして ``dospolicy`` を指定し、Dos Access Log、Dos Security Logを指定します。
+
 .. code-block:: yaml
   :linenos:
   :caption: apdos-protected.yaml
+  :emphasize-lines: 3,8,13,17
 
   apiVersion: appprotectdos.f5.com/v1beta1
   kind: DosProtectedResource
@@ -636,41 +673,13 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
       apDosLogConf: "doslogconf"
       dosLogDest: "syslog-svc.default.svc.cluster.local:514"
 
-.. code-block:: yaml
-  :linenos:
-  :caption: apdos-policy.yaml
 
-  apiVersion: appprotectdos.f5.com/v1beta1
-  kind: APDosPolicy
-  metadata:
-    name: dospolicy
-  spec:
-    mitigation_mode: "standard"
-    signatures: "on"
-    bad_actors: "on"
-    automation_tools_detection: "on"
-    tls_fingerprint: "on"
-
-.. code-block:: yaml
-  :linenos:
-  :caption: apdos-logconf.yaml
-
-  apiVersion: appprotectdos.f5.com/v1beta1
-  kind: APDosLogConf
-  metadata:
-    name: doslogconf
-  spec:
-    content:
-      format: splunk
-      max_message_size: 64k
-    filter:
-      traffic-mitigation-stats: all
-      bad-actors: top 10
-      attack-signatures: top 10
+``virtual-server.yaml`` で、作成した ``dos-protected`` を割り当てます 
 
 .. code-block:: yaml
   :linenos:
   :caption: virtual-server.yaml
+  :emphasize-lines: 13
 
   apiVersion: k8s.nginx.org/v1
   kind: VirtualServer
@@ -851,8 +860,6 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
   block_slow_rps="0",
   mitigated_connections_rps="0",
   Jan 20 09:30:57 syslog-cccc648c6-2n9v4 syslog-ng[1]: Syslog connection closed; fd='20', client='AF_INET(192.168.127.46:34588)', local='AF_INET(0.0.0.0:514)'
-
-
 
 
 リソースの削除
