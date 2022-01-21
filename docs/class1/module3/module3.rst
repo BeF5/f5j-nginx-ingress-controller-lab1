@@ -1350,20 +1350,15 @@ NGINX Ingress Controller で JWT の Validation を行い、通信制御を行�
 
 aaaaa
 
-.. code-block:: json
-  :lineos:
-  :caption: jwkの内容
+::
   
   {"keys": [{ "k":"ZmFudGFzdGljand0", "kty":"oct", "kid":"0001" }] }
 
 
 bbb
 
-.. code-block:: bash
-  :lineos:
-  :caption: jwkの内容
-  :emphasize-lines: 3
-  
+::
+    
   \{"keys":
       [{
           "k":"ZmFudGFzdGljand0",
