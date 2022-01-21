@@ -1348,12 +1348,11 @@ NGINX Ingress Controller で JWT の Validation を行い、通信制御を行�
 
 出力結果が以下となります。
 
-
 .. code-block:: json
   :lineos:
   :caption: jwk
   :emphasize-lines: 3
-
+  
   {"keys":
       [{
           "k":"ZmFudGFzdGljand0",
@@ -1367,7 +1366,7 @@ NGINX Ingress Controller で JWT の Validation を行い、通信制御を行�
   :lineos:
   :caption: jwk
   :emphasize-lines: 3
-
+  
   {"keys":
       [{
           "k":"ZmFudGFzdGljand0",
@@ -1375,7 +1374,7 @@ NGINX Ingress Controller で JWT の Validation を行い、通信制御を行�
           "kid":"0001"
       }]
   }
- 
+
 
 
 各パラメータ内容は以下の通り
@@ -1495,7 +1494,9 @@ hostに対し ``jwt-policy`` というポリシーが適用されていること
 
   NAME     READY   UP-TO-DATE   AVAILABLE   AGE
   webapp   1/1     1            1           23s
-  
+
+.. code-block:: cmdin
+   
   kubectl get secret | grep jwk
     
 .. code-block:: bash
@@ -1514,7 +1515,10 @@ hostに対し ``jwt-policy`` というポリシーが適用されていること
 
   NAME         STATE   AGE
   jwt-policy   Valid   38s
-  
+
+
+.. code-block:: cmdin
+   
   kubectl get vs
     
 .. code-block:: bash
