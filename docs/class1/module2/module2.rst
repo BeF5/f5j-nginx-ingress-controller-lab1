@@ -290,9 +290,9 @@ argsで指定するパラメータの詳細は [Command-line Arguments](https://
 本ラボの環境ではKubernetesへのアクセスを受けるため、NGINX Ingress Controllerを外部へNodePortで公開します。
 以下コマンドで設定の内容を確認します。type NodePortでHTTP、HTTPSで待ち受ける設定であることを確認します。
 
-.. code-block:: bash
+.. code-block:: yaml
   :linenos:
-  :caption: 実行結果サンプル
+  :caption: service/nodeport.yaml
 
   apiVersion: v1
   kind: Service
@@ -355,7 +355,7 @@ NodePortをデプロイします。
 .. code-block:: cmdin
    
   sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf-
-  sudo cat << EOF > nginx.conf
+  cat << EOF > nginx.conf
   user  nginx;
   worker_processes  auto;
 
