@@ -254,6 +254,12 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
 
   kubectl get aplogconf
 
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME      AGE
+  logconf   39m
 
 .. code-block:: cmdin
 
@@ -265,14 +271,6 @@ NAP WAFではお客様アプリケーションに合わせた制御や、特定�
 
   NAME              AGE
   dataguard-alarm   39m
-
-.. code-block:: bash
-  :linenos:
-  :caption: 実行結果サンプル
-
-  NAME      AGE
-  logconf   39m
-
 
 .. code-block:: cmdin
 
@@ -407,8 +405,7 @@ curlコマンドでリクエストを送信します。
 
 通信が ``拒否`` され、エラーページが応答されています。 ``support ID`` に表示される値を確認してください。
 
-| ログメッセージを見ると、URLに不正な文字列が含まれており、XSS script tag(URI)などのSignatureで検知、通信をブロック(REJECTED)していることが確認できます。また、 ``violation_rating="5"`` となっています。
-Violation Rating はNAP WAFが通信の内容を元にリクエストのリスクを判定します。デフォルトテンプレートはこちらの値を元にブロックする挙動となります。詳細は以下のページを参照してください。
+| ログメッセージを見ると、URLに不正な文字列が含まれており、XSS script tag(URI)などのSignatureで検知、通信をブロック(REJECTED)していることが確認できます。また、 ``violation_rating="5"`` となっています。Violation Rating はNAP WAFが通信の内容を元にリクエストのリスクを判定します。デフォルトテンプレートはこちらの値を元にブロックする挙動となります。詳細は以下のページを参照してください。
 | `NGINX App Protect WAF Configuration Guide/Basic Configuration and the Default Policy <https://docs.nginx.com/nginx-app-protect/configuration-guide/configuration/#basic-configuration-and-the-default-policy>`__
 
 .. code-block:: json
@@ -467,7 +464,7 @@ User Defined Signatureで指定した内容が正しく動作しているか確�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル (区切り位置で改行して表示)
-  :emphasize-lines: 12,20
+  :emphasize-lines: 16,24
 
   Note: Unnecessary use of -X or --request, POST is already inferred.
   * Added webapp.example.com:80:127.0.0.1 to DNS cache
@@ -632,7 +629,7 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
 .. code-block:: yaml
   :linenos:
   :caption: apdos-logconf.yaml
-  :emphasize-lines: 3
+  :emphasize-lines: 4
 
   apiVersion: appprotectdos.f5.com/v1beta1
   kind: APDosLogConf
@@ -653,7 +650,7 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
 .. code-block:: yaml
   :linenos:
   :caption: apdos-protected.yaml
-  :emphasize-lines: 3,8,13,17
+  :emphasize-lines: 4,8,13,17
 
   apiVersion: appprotectdos.f5.com/v1beta1
   kind: DosProtectedResource
@@ -706,7 +703,6 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 1
 
   NAME         AGE
   doslogconf   10m
@@ -718,7 +714,6 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 1
 
   NAME        AGE
   dospolicy   10m
@@ -730,7 +725,6 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 1
 
   NAME            AGE
   dos-protected   11m
@@ -742,7 +736,6 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 1
 
   NAME     STATE   HOST                 IP    PORTS   AGE
   webapp   Valid   webapp.example.com                 12m
@@ -754,7 +747,6 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 1
 
   NAME       READY   UP-TO-DATE   AVAILABLE   AGE
   syslog     1/1     1            1           1h
@@ -773,7 +765,6 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 1
 
   Server address: 192.168.127.38:8080
   Server name: webapp-64d444885-bgrj7
@@ -783,10 +774,9 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
 
 .. code-block:: bash
   :linenos:
-  :caption: Terminal1 Log (区切り位置で改行して表示)
-  :emphasize-lines: 1
+  :caption: Terminal2 Log:Access Log (区切り位置で改行して表示)
   
-  # Terminal1 log : 上記アクセスをした際に、以下のログが出力されます
+  # Terminal2 log : 上記アクセスをした際に、以下のログが出力されます
   Jan 20 09:30:55 nginx-ingress-5ddc7f4f-zjlt2 nginx: ,
   vs_name_al=default/dos-protected/webapp.example.com,
   ip=10.1.1.9,
@@ -798,10 +788,9 @@ syslog、syslog-2 それぞれのPOD名を参考に、追加するターミナ�
 
 .. code-block:: bash
   :linenos:
-  :caption: Terminal2 Log (区切り位置で改行して表示)
-  :emphasize-lines: 1
+  :caption: Terminal1 Log:Security Log (区切り位置で改行して表示)
 
-  # Terminal2 log : 定期的にログが出力されます
+  # Terminal1 log : 定期的にログが出力されます
   Jan 20 09:30:57 syslog-cccc648c6-2n9v4 syslog-ng[1]: Syslog connection accepted; fd='20', client='AF_INET(192.168.127.46:34588)', local='AF_INET(0.0.0.0:514)'
   Jan 20 09:30:57 192-168-127-46 date_time="Jan 20 2022 09:30:57",
   product="app-protect-dos",
