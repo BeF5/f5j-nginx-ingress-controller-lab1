@@ -1353,14 +1353,14 @@ NGINX Ingress Controller で JWT の Validation を行い、通信制御を行�
   :caption: jwk
   :emphasize-lines: 3
   
-  ---
-  {"keys":
+  # 出力結果
+  ``{"keys":
       [{
           "k":"ZmFudGFzdGljand0",
           "kty":"oct",
           "kid":"0001"
       }]
-  }
+  ``}
   ---
 
 .. code-block:: bash
@@ -1368,14 +1368,13 @@ NGINX Ingress Controller で JWT の Validation を行い、通信制御を行�
   :caption: jwk
   :emphasize-lines: 3
   
-  {"keys":
+  \{"keys":
       [{
           "k":"ZmFudGFzdGljand0",
           "kty":"oct",
           "kid":"0001"
       }]
-  }
-  ---
+  \}
 
 
 各パラメータ内容は以下の通り
