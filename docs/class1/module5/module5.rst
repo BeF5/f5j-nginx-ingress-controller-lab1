@@ -553,9 +553,9 @@ UDPでDNS Queryを送信します。Portは ``53`` です。
 
 HTTP/HTTPSを待ち受ける設定に戻す場合、以下の操作を参考に実施してください。
 
-NGINXの設定については、再度デプロイの後、待受のポート番号を確認して適切にnginx.confを変更してください。
-手順は以下を参照してください。
-`5. NGINX Ingress Controller を外部へ NodePort で公開する <https://f5j-nginx-ingress-controller-lab1.readthedocs.io/en/latest/class1/module2/module2.html#nginx-ingress-controller-nodeport>`__
+| NGINXの設定については、再度デプロイの後、待受のポート番号を確認して適切にnginx.confを変更してください。
+| 手順は以下を参照してください。
+| `5. NGINX Ingress Controller を外部へ NodePort で公開する <https://f5j-nginx-ingress-controller-lab1.readthedocs.io/en/latest/class1/module2/module2.html#nginx-ingress-controller-nodeport>`__
 
 .. code-block:: cmdin
   
