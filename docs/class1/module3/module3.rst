@@ -1348,24 +1348,15 @@ NGINX Ingress Controller で JWT の Validation を行い、通信制御を行�
 
 出力結果が以下となります。
 
-aaaaa
-
-.. code-block::
-  
-  {"keys": [{ "k":"ZmFudGFzdGljand0", "kty":"oct", "kid":"0001" }] }
-
-
-bbb
-
-.. code-block::
-
-  \{"keys":
+::
+  # JSONを見やすいよう整形しております
+  {"keys":
       [{
           "k":"ZmFudGFzdGljand0",
           "kty":"oct",
           "kid":"0001"
       }]
-  \}
+  }
 
 
 各パラメータ内容は以下の通り
