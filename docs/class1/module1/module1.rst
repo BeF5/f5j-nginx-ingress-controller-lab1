@@ -40,12 +40,12 @@ Windows Jump HostからCLIの操作を行う場合、以下タブからRDP Clien
    
 Windows Jump Hostへログインいただくと、SSH
 Clientのショートカットがありますので、そちらをダブルクリックし
-``ubuntu01`` へ接続ください
+``ubuntu-master`` を示すホストへ接続ください
 
    - .. image:: ./media/putty_icon.jpg
       :width: 50
 
-   - .. image:: ./media/putty_menu.jpg
+   - .. image:: ./media/putty_menu_kic.jpg
       :width: 200
 
 
