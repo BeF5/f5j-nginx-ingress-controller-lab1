@@ -1348,7 +1348,7 @@ NGINX Ingress Controller で JWT の Validation を行い、通信制御を行�
 
 出力結果が以下となります。
 
-::
+.. code-block:: cmdin
 
   {"keys":
       [{
