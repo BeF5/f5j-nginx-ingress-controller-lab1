@@ -1348,7 +1348,10 @@ NGINX Ingress Controller で JWT の Validation を行い、通信制御を行�
 
 出力結果が以下となります。
 
-.. code-block:: cmdin
+.. code-block:: json
+  :linenos:
+  :caption: jwk を base64 デコードした結果
+  :emphasize-lines: 3
 
   {"keys":
       [{
