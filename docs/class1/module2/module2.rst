@@ -34,7 +34,7 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 
 .. code-block:: cmdin
   
-  make debian-image-nap-plus PREFIX=registry.example.com/root/nic/nginxplus-ingress-nap-dos TARGET=container TAG=2.0.3
+  make debian-image-nap-dos-plus PREFIX=registry.example.com/root/nic/nginxplus-ingress-nap-dos TARGET=container TAG=2.1.0
   # Image の Build は数分(約5分)必要となります
   docker images | grep nginxplus-ingress-nap-dos
 
