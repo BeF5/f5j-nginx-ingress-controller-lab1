@@ -1599,7 +1599,12 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   virtual-server.yaml:  host: webapp.example.com
 
 | ブラウザからKeyCloakにアクセスし、設定を行います。
-| Chromeを開き、 ``https://keycloak.exmaple.com`` へアクセスしてください。
+| Chromeを開き、 ``https://keycloak.example.com`` へアクセスしてください。
+
+.. NOTE::
+  Keycloak はデプロイから起動まで数分(2～3分)かかります。正しく疎通ができない場合は一定時間おいて再度接続してください
+  
+
 
    .. image:: ./media/keycloak_top.jpg
       :width: 500
