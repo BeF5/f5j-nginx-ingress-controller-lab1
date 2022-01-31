@@ -1,7 +1,7 @@
 カスタム設定の実施
 ####
 
-この章では様々なカスタム設定を行う方法について確認をいただきます。
+この章では、様々なカスタム設定を行う方法について確認をいただきます。
 まずベースとなるアプリケーションとして `シンプルなアプリケーション <https://f5j-nginx-ingress-controller-lab1.readthedocs.io/en/latest/class1/module3/module3.html#web>`__ の手順に従ってアプリケーションをデプロイしてください
 
 ConfigMapによる設定
@@ -140,6 +140,7 @@ LogFormatが変更されていることを確認します
 
 .. code-block:: cmdin
 
+  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
   kubectl delete -f log-configmap.yaml
   rm log-configmap.yaml
 
@@ -244,6 +245,7 @@ Snippetsを利用する場合、予めDeploymentのコマンドラインオプ�
 
 .. code-block:: cmdin
 
+  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
   cat snippet-cafe-virtual-server.yaml
 
 .. code-block:: bash
@@ -284,6 +286,7 @@ Snippetsを利用する場合、予めDeploymentのコマンドラインオプ�
 
 .. code-block:: cmdin
 
+  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
   kubectl apply -f snippets-cafe-virtual-server.yaml
 
 リソースを確認
@@ -293,6 +296,7 @@ VSの設定を変更しましたので、実際に生成されるNGINXの設定�
 
 .. code-block:: cmdin
 
+  # kubectl exec -it  <対象のPOD名> -n nginx-ingress -- grep -e "server {" -e location -e limit_req /etc/nginx/conf.d/vs_default_cafe.conf
   kubectl exec -it nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress -- grep -e "server {" -e location -e limit_req /etc/nginx/conf.d/vs_default_cafe.conf
 
 .. code-block:: bash
@@ -354,6 +358,7 @@ forを用いて、HTTPリクエストを連続して２回送ります。まず�
 
 .. code-block:: cmdin
 
+  # kubectl logs  <対象のPOD名> -n nginx-ingress --tail=3
   kubectl logs nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress --tail=3
 
 .. code-block:: bash
@@ -399,6 +404,7 @@ forを用いて、HTTPリクエストを連続して２回送ります。まず�
 
 .. code-block:: cmdin
 
+  # kubectl logs  <対象のPOD名> -n nginx-ingress --tail=3
   kubectl logs nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress --tail=3
 
 .. code-block:: bash
@@ -421,6 +427,7 @@ forを用いて、HTTPリクエストを連続して２回送ります。まず�
 
 .. code-block:: cmdin
 
+  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
   kubectl apply -f cafe-virtual-server.yaml
   rm snippets-cafe-virtual-server.yaml
 
@@ -483,7 +490,7 @@ Template 用 ConfigMapの作成
 
 .. NOTE::
 
-  Templateで ``$http_x_authtype`` と指定しています。これはHTTP Headerの値を参照しており、 ``$http_<name>`` という書式で指定します。HTTPヘッダの名称(<name>)はダッシュ( ``-`` )をアンダースコア( ``_`` )に置換して指定する必要があります。
+  Templateで ``$http_x_authtype`` と指定しています。これはHTTP Headerの値を参照しており、 ``$http_<name>`` という書式で指定します。HTTP Headerの名称(<name>)はダッシュ( ``-`` )をアンダースコア( ``_`` )に置換して指定する必要があります。
 
 今回のサンプルは、NGINX Ingress Controller を経由する通信全てに新たなHTTP Header ``X-App-Authentication $http_x_authtype:$arg_userapikey;`` を追加する例となります
 
@@ -500,6 +507,7 @@ ConfigMapをデプロイします。
 
 .. code-block:: cmdin
 
+  # kubectl logs  <対象のPOD名> -n nginx-ingress --tail=5
   kubectl logs nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress --tail=5
 
 .. code-block:: bash
@@ -522,6 +530,7 @@ ConfigMapをデプロイします。
 
 .. code-block:: cmdin
 
+  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
   sed -e "s#nginxdemos/nginx-hello:plain-text#rteller/nginx_echo:latest#g" -e "s#8080#8000#g" cafe.yaml  > echo-cafe.yaml
 
 変更した内容を確認します。
@@ -585,6 +594,7 @@ ConfigMapをデプロイします。
 
 .. code-block:: cmdin
 
+  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
   kubectl apply -f echo-cafe.yaml
 
 新たにコンテナイメージを取得するため、デプロイに1分ほど必要となります。以下のように各Podが正しく動作していることを確認してください
@@ -606,7 +616,7 @@ ConfigMapをデプロイします。
 動作確認
 ----
 
-Curlコマンドを用いて、サンプルリクエストを送信します。 ``jq`` コマンドを用いて、レスポンスのJSONデータからリクエストに含まれるHTTP Header情報を表示しています
+curlコマンドを用いて、サンプルリクエストを送信します。 ``jq`` コマンドを用いて、レスポンスのJSONデータからリクエストに含まれるHTTP Header情報を表示しています
 
 .. code-block:: cmdin
 
@@ -630,10 +640,11 @@ Curlコマンドを用いて、サンプルリクエストを送信します。 
     "Accept": "*/*"
   }
 
-Curlコマンドでは指定していない ``X-App-Authentication`` というヘッダが追加されています。つまりこのヘッダがNGINX Ingress Controllerによって新たに追加されています。
+curlコマンドでは指定していないHTTP Headerがいくつか表示されています。これらは、NGINX Ingress Controllerによって新たに追加された内容となります。
+今回設定で追加した内容は、 ``X-App-Authentication`` で、正しくバックエンドのアプリケーションまで到達していることが確認できます。
 
 
-次に、対象の ``X-App-Authentication`` というヘッダに値が表示されるよう、サンプルリクエストを送ります。Templateに追加した内容の通り、ヘッダーに表示されていることが確認できます。
+次に、対象の ``X-App-Authentication`` というHeaderに値が表示されるよう、サンプルリクエストを送ります。Templateに追加した内容の通り、Headerに表示されていることが確認できます。
 
 .. code-block:: cmdin
 
@@ -662,6 +673,7 @@ Curlコマンドでは指定していない ``X-App-Authentication`` という�
 
 .. code-block:: cmdin
 
+  # kubectl logs  <対象のPOD名> -n nginx-ingress --tail=5
   kubectl logs nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress --tail=5
 
 .. code-block:: bash
@@ -681,6 +693,7 @@ Curlコマンドでは指定していない ``X-App-Authentication`` という�
   # 再度 Pod をデプロイします
   kubectl replace --force -f ~/kubernetes-ingress/deployments/deployment/nginx-plus-ingress.yaml
   
+  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
   # 不要なファイルを削除します
   rm vs-custom-template.yaml
   rm echo-cafe.yaml
