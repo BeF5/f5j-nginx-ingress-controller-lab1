@@ -181,7 +181,7 @@ Snippetsを利用する場合、予めDeploymentのコマンドラインオプ�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 13
+  :emphasize-lines: 14
 
   Name:                   nginx-ingress
   Namespace:              nginx-ingress
@@ -239,6 +239,8 @@ Snippetsを利用する場合、予めDeploymentのコマンドラインオプ�
       action:
         pass: coffee
   EOF
+
+設定した内容を確認します。以下の通り指定し、各Snipettsにより設定を追加しています
 
 .. code-block:: cmdin
 
@@ -309,14 +311,14 @@ VSの設定を変更しましたので、実際に生成されるNGINXの設定�
 少し恣意的な出力結果となりますが、こちらを元に設定内容を確認します。
 
 - 1行目
-  - conf.d ディレクトリの設定ファイルは http block で include される内容となります
-  - 2行目の server block より前・同じ位置で表示されることから、こちらの内容は http block に追加された設定となります
+    - conf.d ディレクトリの設定ファイルは http block で include される内容となります
+    - 2行目の server block より前、同じ階層で表示されることから、こちらの内容は http block に追加された設定となります
 - 3行目
-  - server block 内、4行目の location /tea の前に表示されています
-  - こちらの内容は server block に追加された内容となります
+    - server block 内、4行目の location /tea の前に表示されています
+    - こちらの内容は server block に追加された内容となります
 - 5行目
-  - location block 内、location /tea の中に表示されています
-  - こちらの内容は location /tea に追加された内容となります
+    - location block 内、location /tea の中に表示されています
+    - こちらの内容は location /tea に追加された内容となります
 
 動作確認
 ----
@@ -365,7 +367,9 @@ forを用いて、HTTPリクエストを連続して２回送ります。まず�
 
 | ログを確認すると、1行目が1つ目のリクエストの結果となります。
 | 2行目がrate limitのエラー、そして3行目がrate limitが発生した通信のアクセスログとなります。
-| 2行目のログレベルを見ると ``[error]`` となっていることが確認できます。
+| 2行目のログレベルを見ると ``[error]`` となっていることが確認できます
+
+次に、 ``/coffee`` 宛のリクエストを確認します
 
 .. code-block:: cmdin
 
@@ -391,7 +395,7 @@ forを用いて、HTTPリクエストを連続して２回送ります。まず�
   </html>
 
 | 先程と同様に、1つ目のリクエストは正しく結果が表示されています。2つ目のリクエストは 503 が応答されています。
-| ログを確認します。
+| ログを確認します
 
 .. code-block:: cmdin
 
@@ -476,6 +480,10 @@ Template 用 ConfigMapの作成
             {{ $proxyOrGRPC }}_set_header X-App-Authentication $http_x_authtype:$arg_userapikey;
                 {{ range $h := $l.ProxySetHeaders }}
   ※省略※
+
+.. NOTE::
+
+  Templateで ``$http_x_authtype`` と指定しています。これはHTTP Headerの値を参照しており、 ``$http_<name>`` という書式で指定します。HTTPヘッダの名称(<name>)はダッシュ( ``-`` )をアンダースコア( ``_`` )に置換して指定する必要があります。
 
 今回のサンプルは、NGINX Ingress Controller を経由する通信全てに新たなHTTP Header ``X-App-Authentication $http_x_authtype:$arg_userapikey;`` を追加する例となります
 
@@ -626,10 +634,6 @@ Curlコマンドでは指定していない ``X-App-Authentication`` という�
 
 
 次に、対象の ``X-App-Authentication`` というヘッダに値が表示されるよう、サンプルリクエストを送ります。Templateに追加した内容の通り、ヘッダーに表示されていることが確認できます。
-
-.. NOTE::
-
-  Templateに追加したHTTP Headerの値は ``$http_<name>`` という書式で参照しています。HTTPヘッダの名称(<name>)はダッシュ( ``-`` )をアンダースコア( ``_`` )に置換して指定する必要があります
 
 .. code-block:: cmdin
 
