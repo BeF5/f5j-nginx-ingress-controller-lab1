@@ -18,9 +18,10 @@ https://github.com/nginxinc/kubernetes-ingress/tree/master/examples/custom-log-f
 設定変更前のLogFormatの確認
 ----
 
+NGINX Ingress Controller の POD名を確認します
+
 .. code-block:: cmdin
 
-  # POD名を確認
   kubectl get pod -n nginx-ingress | grep ingress
 
 .. code-block:: bash
@@ -28,6 +29,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/master/examples/custom-log-f
   :caption: 実行結果サンプル
 
   nginx-ingress-5ddc7f4f-4xhpn          1/1     Running   4 (4d6h ago)   5d19h
+
+POD名を指定し、現在の設定を確認します
 
 .. code-block:: cmdin
 
@@ -45,10 +48,12 @@ https://github.com/nginxinc/kubernetes-ingress/tree/master/examples/custom-log-f
 設定の追加
 ----
 
+
+ファイルを作成し、デプロイします
+
 .. code-block:: cmdin
 
   ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
-  ## # 設定はどのディレクトリでも問題ありません
   cat << EOF > log-configmap.yaml
   kind: ConfigMap
   apiVersion: v1
@@ -58,9 +63,13 @@ https://github.com/nginxinc/kubernetes-ingress/tree/master/examples/custom-log-f
   data:
     log-format: 'CONFIGMAP \$remote_addr - \$remote_user [\$time_local] "\$request" \$status \$body_bytes_sent "\$http_referer"  "\$http_user_agent" "\$http_x_forwarded_for" "\$resource_name" "\$resource_type" "\$resource_namespace" "\$service"'
   EOF
+  
+  kubectl apply -f log-configmap.yaml
 
 リソースを確認
 ----
+
+ConfigMapがデプロイされていることを確認します
 
 .. code-block:: cmdin
 
@@ -72,6 +81,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/master/examples/custom-log-f
 
   nginx-config                    1      1m
 
+
+LogFormatが変更されていることを確認します
 
 .. code-block:: cmdin
 
@@ -86,8 +97,14 @@ https://github.com/nginxinc/kubernetes-ingress/tree/master/examples/custom-log-f
                      'CONFIGMAP $remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer"  "$http_user_agent" "$http_x_forwarded_for" "$resource_name" "$resource_type" "$resource_namespace" "$service"'
                      ;
 
+
+変更したLogFormatのであり、先頭に ``CONFIGMAP`` という文字列が追加されていることが確認できます
+
+
 動作確認
 ----
+
+アプリケーションに対しリクエストを送ります
 
 .. code-block:: cmdin
 
@@ -101,6 +118,8 @@ https://github.com/nginxinc/kubernetes-ingress/tree/master/examples/custom-log-f
   Date: 31/Jan/2022:06:55:55 +0000
   URI: /tea
   Request ID: c91d025f4089dcf3db6f6127099c6965
+
+ログを確認します
 
 .. code-block:: cmdin
 
@@ -117,10 +136,14 @@ https://github.com/nginxinc/kubernetes-ingress/tree/master/examples/custom-log-f
 リソースの削除
 ----
 
+作成したリソース、ファイルを削除します
+
 .. code-block:: cmdin
 
   kubectl delete -f log-configmap.yaml
   rm log-configmap.yaml
+
+設定を確認し、反映前の状態となっていることを確認します
 
 .. code-block:: cmdin
 
@@ -255,7 +278,7 @@ Snippetsを利用する場合、予めDeploymentのコマンドラインオプ�
       action:
         pass: coffee
 
-作成した内容を反映します。
+作成した内容を反映します
 
 .. code-block:: cmdin
 
@@ -284,6 +307,7 @@ VSの設定を変更しましたので、実際に生成されるNGINXの設定�
 
 
 少し恣意的な出力結果となりますが、こちらを元に設定内容を確認します。
+
 - 1行目
   - conf.d ディレクトリの設定ファイルは http block で include される内容となります
   - 2行目の server block より前・同じ位置で表示されることから、こちらの内容は http block に追加された設定となります
@@ -297,7 +321,7 @@ VSの設定を変更しましたので、実際に生成されるNGINXの設定�
 動作確認
 ----
 
-forを用いて、HTTPリクエストを連続して２回送ります。まず、 `/coffee` 宛のリクエストを確認します
+forを用いて、HTTPリクエストを連続して２回送ります。まず、 ``/coffee`` 宛のリクエストを確認します
 
 .. code-block:: cmdin
 
@@ -338,9 +362,10 @@ forを用いて、HTTPリクエストを連続して２回送ります。まず�
   2022/01/31 09:55:01 [error] 205#205: *50 limiting requests, excess: 0.972 by zone "mylimit", client: 10.1.1.9, server: cafe.example.com, request: "GET /coffee HTTP/1.1", host: "cafe.example.com"
   10.1.1.9 - - [31/Jan/2022:09:55:01 +0000] "GET /coffee HTTP/1.1" 503 197 "-" "curl/7.68.0" "-"
 
+
 | ログを確認すると、1行目が1つ目のリクエストの結果となります。
 | 2行目がrate limitのエラー、そして3行目がrate limitが発生した通信のアクセスログとなります。
-| 2行目のログレベルを見ると `[error]` となっていることが確認できます。
+| 2行目のログレベルを見ると ``[error]`` となっていることが確認できます。
 
 .. code-block:: cmdin
 
@@ -380,14 +405,15 @@ forを用いて、HTTPリクエストを連続して２回送ります。まず�
   2022/01/31 09:55:30 [warn] 205#205: *53 limiting requests, excess: 0.984 by zone "mylimit", client: 10.1.1.9, server: cafe.example.com, request: "GET /tea HTTP/1.1", host: "cafe.example.com"
   10.1.1.9 - - [31/Jan/2022:09:55:30 +0000] "GET /tea HTTP/1.1" 503 197 "-" "curl/7.68.0" "-"
 
+
 | 基本的な内容は先程と同じです。
-| 一点異なるのが、2行目のログレベルを見ると `[warn]` となっていることが確認できます。
-| これは `location-snippets` で指定した `limit_req_log_level` により、ログレベルを変更した結果となります
+| 一点異なるのが、2行目のログレベルを見ると ``[warn]`` となっていることが確認できます。
+| これは ``location-snippets`` で指定した ``limit_req_log_level`` により、ログレベルを変更した結果となります
 
 リソースの削除
 ----
 
-こちらでは `snippets` を追加したVSへと変更したので、元の `snippets` の指定がない設定を再度反映します
+こちらでは ``snippets`` を追加したVSへと変更したので、元の ``snippets`` の指定がない設定を再度反映します。また、ファイルを削除します
 
 .. code-block:: cmdin
 
@@ -407,8 +433,8 @@ Templateファイルは以下フォルダに格納されています。
 
 https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/internal/configs
 
-- version1 : NGINX ( main `nginx.tmpl` 、Ingress `nginx.ingress.tmpl` ) 、NGINX Plus ( main `nginx-plus.tmpl` 、 Ingress `nginx-plus.ingress.tmpl` )のTemplateが格納されています 
-- version2 : NGINX ( `nginx.virtualserver.tmpl` ) 、 NGINX Plus ( `nginx-plus.virtualserver.tmpl` )の VirtualServer Templateが格納されています
+- version1 : NGINX ( main ``nginx.tmpl`` 、Ingress ``nginx.ingress.tmpl`` ) 、NGINX Plus ( main ``nginx-plus.tmpl`` 、 Ingress ``nginx-plus.ingress.tmpl`` )のTemplateが格納されています 
+- version2 : NGINX ( ``nginx.virtualserver.tmpl`` ) 、 NGINX Plus ( ``nginx-plus.virtualserver.tmpl`` )の VirtualServer Templateが格納されています
 
 
 設定の追加
@@ -461,7 +487,7 @@ ConfigMapをデプロイします。
   kubectl apply -f vs-custom-template.yaml
 
 
-反映した結果を確認します。ConfigMapの反映エラーは `kubectl logs <NIC Pod>` で確認いただけます。正しく反映されない場合はエラーの内容をよく確認して適宜対応してください。
+反映した結果を確認します。ConfigMapの反映エラーは ``kubectl logs <NIC Pod>`` で確認いただけます。正しく反映されない場合はエラーの内容をよく確認して適宜対応してください。
 以下の場合、エラーなくコンフィグが正しく反映された例となります
 
 .. code-block:: cmdin
@@ -482,7 +508,7 @@ ConfigMapをデプロイします。
 
 今回のサンプルではバックエンドに到達した通信の情報を確認するため、以下のコンテナイメージをデプロイしますサービスとして以下を利用します。
 
-https://hub.docker.com/r/rteller/nginx_echo
+`rteller/nginx_echo <https://hub.docker.com/r/rteller/nginx_echo>`__
 
 バックエンドのアプリケーションの内容を以下コマンドで変更します
 
@@ -572,7 +598,7 @@ https://hub.docker.com/r/rteller/nginx_echo
 動作確認
 ----
 
-Curlコマンドを用いて、サンプルリクエストを送信します。 `jq` コマンドを用いて、レスポンスのJSONデータからリクエストに含まれるHTTP Header情報を表示しています
+Curlコマンドを用いて、サンプルリクエストを送信します。 ``jq`` コマンドを用いて、レスポンスのJSONデータからリクエストに含まれるHTTP Header情報を表示しています
 
 .. code-block:: cmdin
 
@@ -581,7 +607,7 @@ Curlコマンドを用いて、サンプルリクエストを送信します。 
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 9
+  :emphasize-lines: 8
 
   {
     "Connection": "close",
@@ -596,14 +622,14 @@ Curlコマンドを用いて、サンプルリクエストを送信します。 
     "Accept": "*/*"
   }
 
-Curlコマンドでは指定していない `X-App-Authentication` というヘッダが追加されています。つまりこのヘッダがNGINX Ingress Controllerによって新たに追加されています。
+Curlコマンドでは指定していない ``X-App-Authentication`` というヘッダが追加されています。つまりこのヘッダがNGINX Ingress Controllerによって新たに追加されています。
 
 
-次に、対象の `X-App-Authentication` というヘッダに値が表示されるよう、サンプルリクエストを送ります。Templateに追加した内容の通り、ヘッダーに表示されていることが確認できます。
+次に、対象の ``X-App-Authentication`` というヘッダに値が表示されるよう、サンプルリクエストを送ります。Templateに追加した内容の通り、ヘッダーに表示されていることが確認できます。
 
 .. NOTE::
 
-  Templateに追加したHTTP Headerの値は `$http_<name>` という書式で参照しています。HTTPヘッダの名称(<name>)はダッシュ( `-` )をアンダースコア( `_` )に置換して指定する必要があります
+  Templateに追加したHTTP Headerの値は ``$http_<name>`` という書式で参照しています。HTTPヘッダの名称(<name>)はダッシュ( ``-`` )をアンダースコア( ``_`` )に置換して指定する必要があります
 
 .. code-block:: cmdin
 
@@ -612,7 +638,7 @@ Curlコマンドでは指定していない `X-App-Authentication` というヘ�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 9
+  :emphasize-lines: 10
 
   {
     "User-Agent": "curl/7.68.0",
