@@ -99,9 +99,6 @@ Container Image のPush
   kubectl apply -f common/crds/appprotectdos.f5.com_dosprotectedresources.yaml
 
 
-
-
-
 4. NGINX App Protect Dosで利用するArbitratorを実行
 ====
 
@@ -209,12 +206,12 @@ Deploymentの内容を確認
   svc-appprotect-dos-arb   ClusterIP   None         <none>        3000/TCP   6s
 
 
-4. NGINX Ingress Controllerの実行
+5. NGINX Ingress Controllerの実行
 ====
 
 NGINX Ingress Controllerのpodを実行します。DeploymentとDaemonSetによる実行が可能ですが、のこの記事ではDeploymentで実行します。DaemonSetで実行したい場合にはマニュアルを参照して適切に読み替えて進めてください。
 
-argsで指定するパラメータの詳細は [Command-line Arguments](https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/command-line-arguments)を参照してください
+argsで指定するパラメータの詳細は `Command-line Arguments <https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/command-line-arguments>`__ を参照してください
 
 .. code-block:: cmdin
   
@@ -285,7 +282,7 @@ argsで指定するパラメータの詳細は [Command-line Arguments](https://
   nginx-ingress   1/1     1            1           2m52s
 
 
-5. NGINX Ingress Controller を外部へ NodePort で公開する
+6. NGINX Ingress Controller を外部へ NodePort で公開する
 ====
 
 本ラボの環境ではKubernetesへのアクセスを受けるため、NGINX Ingress Controllerを外部へNodePortで公開します。

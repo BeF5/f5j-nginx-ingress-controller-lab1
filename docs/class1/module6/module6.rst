@@ -1,75 +1,656 @@
-想定外の動作となった場合の切り分け方法
+カスタム設定の実施
 ####
 
-事象の切り分け方法
+この章では様々なカスタム設定を行う方法について確認をいただきます。
+まずベースとなるアプリケーションとして `シンプルなアプリケーション <https://f5j-nginx-ingress-controller-lab1.readthedocs.io/en/latest/class1/module3/module3.html#web>`__ の手順に従ってアプリケーションをデプロイしてください
+
+ConfigMapによる設定
 ====
 
-各パートでKubernetes環境にデプロイしたアプリケーションの動作が期待した通りとならない場合の切り分けについてご紹介します。
-その他の対応方法のヒントは `NGINX Docs <https://docs.nginx.com/nginx-ingress-controller/troubleshooting/troubleshoot-ingress-controller/>`__ をご覧ください
+ConfigMapによる、設定内容の追加を確認します。
+
+https://github.com/nginxinc/kubernetes-ingress/tree/master/examples/custom-log-format
+
+| 様々な項目を設定することが可能ですが、このサンプルでは ``log-format`` に関する動作を確認します。その他パラメータについては以下の記事を参照してください。
+| `ConfigMap Resource <https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/>`__
 
 
-1.	各リソースのデプロイに失敗する
+設定変更前のLogFormatの確認
 ----
 
-- ``kubectl describe <resource type> <resource name> (-n <namespace>)`` コマンドの結果を確認し、リソースのデプロイでエラーが発生していないか確認してください
-- ``kubectl logs <pod name> (-n <namespace>)`` コマンドの結果を確認し、PODのログメッセージを確認し、エラーが発生していないか確認してください
+.. code-block:: cmdin
 
-2.	リソースは正しく作成できたが設定が反映されない
-----
-
-- １．の内容を参考にコマンドを実行してください
-- 特にリソースが正しく生成された場合でも、NGINXのコンフィグロードでエラーとなる場合があります。その場合には、``kubectl logs`` コマンドでコンフィグロードに失敗する理由が表示されておりますのでそちらでご確認ください
-- 一度設定の反映に成功し、その後リソースの内容変更によりエラーが発生した場合には、リソースの変更前の設定で動作いたします。注意深くログを確認し、問題箇所を特定してください
-
-3.	期待した疎通ができない
-----
-
-- ``kubectl logs <NGINX Ingress Controller pod> -n nginx-ingress`` コマンドの結果を確認し、Access LogとError Logの内容を確認してください
-- NGINX Ingress Controllerで通信を受け付けた場合には以下のようにログが出力されます。ログが出力されること、ログの内容をもとに期待した通信となっているか確認してください
+  # POD名を確認
+  kubectl get pod -n nginx-ingress | grep ingress
 
 .. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
 
-  10.244.0.1 - - [24/Aug/2021:14:30:51 +0000] "GET / HTTP/1.1" 500 178 "-" "curl/7.68.0" "-"
-  10.244.0.1 - - [25/Aug/2021:05:47:17 +0000] "POST / HTTP/1.1" 200 246 "-" "curl/7.68.0" "-"
-  10.244.0.1 - - [25/Aug/2021:05:47:09 +0000] "POST / HTTP/1.1" 200 246 "-" "curl/7.68.0" "-"
+  nginx-ingress-5ddc7f4f-4xhpn          1/1     Running   4 (4d6h ago)   5d19h
 
+.. code-block:: cmdin
 
-4.	設定の内容を確認したい
+  # kubectl exec -it <対象のPOD名> -n nginx-ingress -- grep -A3 "log_format  main" /etc/nginx/nginx.conf
+  kubectl exec -it nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress -- grep -A3 "log_format  main" /etc/nginx/nginx.conf
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+設定の追加
 ----
 
-- NGINX Ingress Controllerは本書で紹介のVirtualServer / VirtualServerRoute / PolicyやIngressにより設定を行うと、それらの内容からNGINXの設定ファイルに変換し、その内容を反映しています
-- ``kubectl exec -it <NGINX Ingress Controller pod> -n nginx-ingress -- bash`` コマンドを実行し、NGINX Ingress ControllerのShellを操作することが可能です
-- 以下フォルダの各ファイルが適切な設定となっているかご確認ください。意図したファイルが生成されていない場合にはリソースの作成に失敗している可能性がありますのでログをご確認ください。
+.. code-block:: cmdin
 
-.. list-table::
-    :widths: 20 40 20 
-    :header-rows: 1
-    :stub-columns: 1
+  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
+  ## # 設定はどのディレクトリでも問題ありません
+  cat << EOF > log-configmap.yaml
+  kind: ConfigMap
+  apiVersion: v1
+  metadata:
+    name: nginx-config
+    namespace: nginx-ingress
+  data:
+    log-format: 'CONFIGMAP \$remote_addr - \$remote_user [\$time_local] "\$request" \$status \$body_bytes_sent "\$http_referer"  "\$http_user_agent" "\$http_x_forwarded_for" "\$resource_name" "\$resource_type" "\$resource_namespace" "\$service"'
+  EOF
 
-    * - **PATH**
-      - **Content**
-      - **File Name**
-    * - /etc/nginx/conf.d/
-      - HTTP/HTTPSの主な設定が格納されます。複数のVirtualServerをデプロイした場合には複数のファイルが生成されます。
-      - vs_<namespace>_<object name>.conf
-    * - /etc/nginx/stream-conf.d/
-      - TCP/UDPの主な設定が格納されます。複数のTransportServerをデプロイした場合には複数のファイルが生成されます。合わせて必要となるGlobalConfigurationの作成も完了していることを確認してください。
-      - ts_<namespace>_<object name>.conf
-    * - /etc/nginx/secrets/
-      - 証明書・鍵のファイルが格納されます。複数のSecretをデプロイした場合には複数のファイルが生成されます。参照先のオブジェクトの生成が成功した際に、本ファイルが生成されます。
-      - <namespace>-<object name>
-    * - /etc/nginx/waf/nac-policies/
-      - WAFのセキュリティポリシーが格納されます。複数のAPPolicyをデプロイした場合には複数のファイルが生成されます。
-      - <namespace>_<object name>
-    * - /etc/nginx/waf/nac-logconfs/
-      - WAFのログポリシーが格納されます。複数のAPLogConfをデプロイした場合には複数のファイルが生成されます。ログポリシーの参照先となるWAFセキュリティポリシーの生成が成功した際に、本ファイルが生成されます。
-      - <namespace>_<object name>
-    * - /etc/nginx/waf/nac-usersigs/
-      - WAFのユーザ定義Signatureが格納されます。複数のAPUserSigをデプロイした場合には複数のファイルが生成されます。ログポリシーの参照先となるWAFセキュリティポリシーの生成が成功した際に、本ファイルが生成されます。
-      - <namespace>_<object name>
-    * - /etc/nginx/oidc/
-      - OIDCで参照するファイルが格納されています。
-      - (各種JSファイル等)
-	
+リソースを確認
+----
 
-	
+.. code-block:: cmdin
+
+  kubectl get configmap -n nginx-ingress | grep nginx-config
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  nginx-config                    1      1m
+
+
+.. code-block:: cmdin
+
+  # kubectl exec -it <対象のPOD名> -n nginx-ingress -- grep -A3 "log_format  main" /etc/nginx/nginx.conf
+  kubectl exec -it nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress -- grep -A3 "log_format" /etc/nginx/nginx.conf
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+    log_format  main
+                     'CONFIGMAP $remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer"  "$http_user_agent" "$http_x_forwarded_for" "$resource_name" "$resource_type" "$resource_namespace" "$service"'
+                     ;
+
+動作確認
+----
+
+.. code-block:: cmdin
+
+  curl -H "Host:cafe.example.com" http://localhost/tea
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  Server name: tea-5c457db9-rfpxs
+  Date: 31/Jan/2022:06:55:55 +0000
+  URI: /tea
+  Request ID: c91d025f4089dcf3db6f6127099c6965
+
+.. code-block:: cmdin
+
+  # kubectl logs  <対象のPOD名> -n nginx-ingress --tail=1
+  kubectl logs nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress --tail=1
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  CONFIGMAP 10.1.1.9 - - [31/Jan/2022:06:55:55 +0000] "GET /tea HTTP/1.1" 200 156 "-"  "curl/7.68.0" "-" "cafe" "virtualserver" "default" "tea-svc"
+
+
+リソースの削除
+----
+
+.. code-block:: cmdin
+
+  kubectl delete -f log-configmap.yaml
+  rm log-configmap.yaml
+
+.. code-block:: cmdin
+
+  # kubectl exec -it <対象のPOD名> -n nginx-ingress -- grep -A3 "log_format  main" /etc/nginx/nginx.conf
+  kubectl exec -it nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress -- grep -A3 "log_format  main" /etc/nginx/nginx.conf
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+
+Snippetsによる設定
+====
+
+Snippetsの機能を利用することにより、VirtualServer/VirtualServerRouteなどで対応していないパラメータをNGINXの設定ファイル記述方式のまま設定に反映することが可能です。
+
+`<https://docs.nginx.com/nginx-ingress-controller/configuration/virtualserver-and-virtualserverroute-resources/#using-snippets>`__
+
+
+設定変更前の確認
+----
+
+Snippetsを利用する場合、予めDeploymentのコマンドラインオプションで ``-enable-snippets`` を指定する必要があります。正しく設定されていることを確認します。
+
+`Command-line Arguments <https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/command-line-arguments/>`__
+
+.. code-block:: cmdin
+
+  kubectl describe deployment nginx-ingress -n nginx-ingress
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 13
+
+  Name:                   nginx-ingress
+  Namespace:              nginx-ingress
+  CreationTimestamp:      Tue, 25 Jan 2022 11:29:13 +0000
+  
+  ** 省略 **
+  
+      Args:
+        -nginx-plus
+        -nginx-configmaps=$(POD_NAMESPACE)/nginx-config
+        -default-server-tls-secret=$(POD_NAMESPACE)/default-server-secret
+        -enable-app-protect
+        -enable-app-protect-dos
+        -enable-preview-policies
+        -enable-snippets
+   
+  ** 省略 **
+  
+有効となってないない場合、 `NGINX Ingress Controllerの実行 <https://f5j-nginx-ingress-controller-lab1.readthedocs.io/en/latest/class1/module2/module2.html#id3>`__ を参考に再度デプロイを行ってください
+
+
+設定の追加
+----
+
+.. code-block:: cmdin
+
+  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration
+  cat << EOF > snippets-cafe-virtual-server.yaml
+  apiVersion: k8s.nginx.org/v1
+  kind: VirtualServer
+  metadata:
+    name: cafe
+  spec:
+    http-snippets: |
+      limit_req_zone $binary_remote_addr zone=mylimit:10m rate=1r/s;
+    host: cafe.example.com
+    tls:
+      secret: cafe-secret
+    server-snippets: |
+          limit_req zone=mylimit burst=20;
+    upstreams:
+    - name: tea
+      service: tea-svc
+      port: 80
+    - name: coffee
+      service: coffee-svc
+      port: 80
+    routes:
+    - path: /tea
+      location-snippets:
+        limit_req_log_level warn;
+      action:
+        pass: tea
+    - path: /coffee
+      action:
+        pass: coffee
+  EOF
+
+.. code-block:: cmdin
+
+  cat snippet-cafe-virtual-server.yaml
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 6,7,11,12,22,23
+
+  apiVersion: k8s.nginx.org/v1
+  kind: VirtualServer
+  metadata:
+    name: cafe
+  spec:
+    http-snippets: |
+      limit_req_zone $binary_remote_addr zone=mylimit:10m rate=1r/s;
+    host: cafe.example.com
+    tls:
+      secret: cafe-secret
+    server-snippets: |
+          limit_req zone=mylimit;
+    upstreams:
+    - name: tea
+      service: tea-svc
+      port: 80
+    - name: coffee
+      service: coffee-svc
+      port: 80
+    routes:
+    - path: /tea
+      location-snippets:
+        limit_req_log_level warn;
+      action:
+        pass: tea
+    - path: /coffee
+      action:
+        pass: coffee
+
+作成した内容を反映します。
+
+.. code-block:: cmdin
+
+  kubectl apply -f snippets-cafe-virtual-server.yaml
+
+リソースを確認
+----
+
+VSの設定を変更しましたので、実際に生成されるNGINXの設定ファイルに正しく snippets で指定した内容が追加されていることを確認します
+
+.. code-block:: cmdin
+
+  kubectl exec -it nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress -- grep -e "server {" -e location -e limit_req /etc/nginx/conf.d/vs_default_cafe.conf
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 1,3,5
+
+  limit_req_zone $binary_remote_addr zone=mylimit:10m rate=1r/s;
+  server {
+      limit_req zone=mylimit;
+      location /tea {
+          limit_req_log_level warn;
+      location /coffee {
+
+
+少し恣意的な出力結果となりますが、こちらを元に設定内容を確認します。
+- 1行目
+  - conf.d ディレクトリの設定ファイルは http block で include される内容となります
+  - 2行目の server block より前・同じ位置で表示されることから、こちらの内容は http block に追加された設定となります
+- 3行目
+  - server block 内、4行目の location /tea の前に表示されています
+  - こちらの内容は server block に追加された内容となります
+- 5行目
+  - location block 内、location /tea の中に表示されています
+  - こちらの内容は location /tea に追加された内容となります
+
+動作確認
+----
+
+forを用いて、HTTPリクエストを連続して２回送ります。まず、 `/coffee` 宛のリクエストを確認します
+
+.. code-block:: cmdin
+
+  for i in {1..2}; do echo "==$i==" ; curl -s -H "Host: cafe.example.com" http://localhost/coffee; done;
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  ==1==
+  Server address: 192.168.127.53:8080
+  Server name: coffee-7c86d7d67c-ss2j8
+  Date: 31/Jan/2022:09:55:01 +0000
+  URI: /coffee
+  Request ID: 0bfa4fe0baf1f0437756a448ab815d03
+  ==2==
+  <html>
+  <head><title>503 Service Temporarily Unavailable</title></head>
+  <body>
+  <center><h1>503 Service Temporarily Unavailable</h1></center>
+  <hr><center>nginx/1.21.3</center>
+  </body>
+  </html>
+
+
+| 1つ目のリクエストは正しく結果が表示されています。2つ目のリクエストは 503 が応答されています。
+| ログを確認します。
+
+.. code-block:: cmdin
+
+  kubectl logs nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress --tail=3
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  10.1.1.9 - - [31/Jan/2022:09:55:01 +0000] "GET /coffee HTTP/1.1" 200 164 "-" "curl/7.68.0" "-"
+  2022/01/31 09:55:01 [error] 205#205: *50 limiting requests, excess: 0.972 by zone "mylimit", client: 10.1.1.9, server: cafe.example.com, request: "GET /coffee HTTP/1.1", host: "cafe.example.com"
+  10.1.1.9 - - [31/Jan/2022:09:55:01 +0000] "GET /coffee HTTP/1.1" 503 197 "-" "curl/7.68.0" "-"
+
+| ログを確認すると、1行目が1つ目のリクエストの結果となります。
+| 2行目がrate limitのエラー、そして3行目がrate limitが発生した通信のアクセスログとなります。
+| 2行目のログレベルを見ると `[error]` となっていることが確認できます。
+
+.. code-block:: cmdin
+
+  for i in {1..2}; do echo "==$i==" ; curl -s -H "Host: cafe.example.com" http://localhost/tea; done;
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  ==1==
+  Server address: 192.168.127.55:8080
+  Server name: tea-5c457db9-rfpxs
+  Date: 31/Jan/2022:09:55:30 +0000
+  URI: /tea
+  Request ID: 3d14ac59fd88c1b507a611283045be98
+  ==2==
+  <html>
+  <head><title>503 Service Temporarily Unavailable</title></head>
+  <body>
+  <center><h1>503 Service Temporarily Unavailable</h1></center>
+  <hr><center>nginx/1.21.3</center>
+  </body>
+  </html>
+
+| 先程と同様に、1つ目のリクエストは正しく結果が表示されています。2つ目のリクエストは 503 が応答されています。
+| ログを確認します。
+
+.. code-block:: cmdin
+
+  kubectl logs nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress --tail=3
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  10.1.1.9 - - [31/Jan/2022:09:55:30 +0000] "GET /tea HTTP/1.1" 200 156 "-" "curl/7.68.0" "-"
+  2022/01/31 09:55:30 [warn] 205#205: *53 limiting requests, excess: 0.984 by zone "mylimit", client: 10.1.1.9, server: cafe.example.com, request: "GET /tea HTTP/1.1", host: "cafe.example.com"
+  10.1.1.9 - - [31/Jan/2022:09:55:30 +0000] "GET /tea HTTP/1.1" 503 197 "-" "curl/7.68.0" "-"
+
+| 基本的な内容は先程と同じです。
+| 一点異なるのが、2行目のログレベルを見ると `[warn]` となっていることが確認できます。
+| これは `location-snippets` で指定した `limit_req_log_level` により、ログレベルを変更した結果となります
+
+リソースの削除
+----
+
+こちらでは `snippets` を追加したVSへと変更したので、元の `snippets` の指定がない設定を再度反映します
+
+.. code-block:: cmdin
+
+  kubectl apply -f cafe-virtual-server.yaml
+  rm snippets-cafe-virtual-server.yaml
+
+Templateの変更
+====
+
+| NGINX Ingress Controller は Template で各リソースで指定されたパラメータを元に、NGINX の設定ファイルを生成しています。
+| お客様が求める通信要件やアプリケーションの内容によってはこのTemplateで生成される設定ファイルでは要件を十分に満たせない場合があります。
+| この章では、Template を意図した内容へ変更し、プラットフォームのベースとなる設定を変更する方法を確認します。
+
+https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/custom-templates/
+
+Templateファイルは以下フォルダに格納されています。
+
+https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/internal/configs
+
+- version1 : NGINX ( main `nginx.tmpl` 、Ingress `nginx.ingress.tmpl` ) 、NGINX Plus ( main `nginx-plus.tmpl` 、 Ingress `nginx-plus.ingress.tmpl` )のTemplateが格納されています 
+- version2 : NGINX ( `nginx.virtualserver.tmpl` ) 、 NGINX Plus ( `nginx-plus.virtualserver.tmpl` )の VirtualServer Templateが格納されています
+
+
+設定の追加
+----
+
+Template 用 ConfigMapの作成
+
+.. code-block:: cmdin
+
+  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
+
+  # ベースとなるファイルを作成します
+  cat << EOF > vs-custom-template.yaml
+  kind: ConfigMap
+  apiVersion: v1
+  metadata:
+    name: nginx-config
+    namespace: nginx-ingress
+  data:
+    virtualserver-template: |
+  EOF
+
+  # ファイル末尾に nginx-plus.virtualserver.tmpl の内容を追加します
+  sed "s/^/    /"  ~/kubernetes-ingress/internal/configs/version2/nginx-plus.virtualserver.tmpl >> vs-custom-template.yaml
+
+以下の内容を参考に、Directive を追加してください。
+
+.. code-block:: cmdin
+
+  vi vs-custom-template.yaml
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 3
+
+  ※省略※
+            {{ $proxyOrGRPC }}_set_header X-Forwarded-Proto {{ with $s.TLSRedirect }}{{ .BasedOn }}{{ else }}$scheme{{ end }};
+            {{ $proxyOrGRPC }}_set_header X-App-Authentication $http_x_authtype:$arg_userapikey;
+                {{ range $h := $l.ProxySetHeaders }}
+  ※省略※
+
+今回のサンプルは、NGINX Ingress Controller を経由する通信全てに新たなHTTP Header ``X-App-Authentication $http_x_authtype:$arg_userapikey;`` を追加する例となります
+
+ConfigMapをデプロイします。
+
+.. code-block:: cmdin
+
+  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
+  kubectl apply -f vs-custom-template.yaml
+
+
+反映した結果を確認します。ConfigMapの反映エラーは `kubectl logs <NIC Pod>` で確認いただけます。正しく反映されない場合はエラーの内容をよく確認して適宜対応してください。
+以下の場合、エラーなくコンフィグが正しく反映された例となります
+
+.. code-block:: cmdin
+
+  kubectl logs nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress --tail=5
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  2022/01/31 11:19:45 [notice] 20#20: worker process 261 exited with code 0
+  2022/01/31 11:19:45 [notice] 20#20: cache manager process 262 exited with code 0
+  2022/01/31 11:19:45 [notice] 20#20: signal 29 (SIGIO) received
+  2022/01/31 11:19:45 [notice] 20#20: signal 17 (SIGCHLD) received from 260
+  2022/01/31 11:19:45 [notice] 20#20: worker process 260 exited with code 0
+  2022/01/31 11:19:45 [notice] 20#20: signal 29 (SIGIO) received
+
+
+今回のサンプルではバックエンドに到達した通信の情報を確認するため、以下のコンテナイメージをデプロイしますサービスとして以下を利用します。
+
+https://hub.docker.com/r/rteller/nginx_echo
+
+バックエンドのアプリケーションの内容を以下コマンドで変更します
+
+.. code-block:: cmdin
+
+  sed -e "s#nginxdemos/nginx-hello:plain-text#rteller/nginx_echo:latest#g" -e "s#8080#8000#g" cafe.yaml  > echo-cafe.yaml
+
+変更した内容を確認します。
+
+.. code-block:: cmdin
+
+  diff -u cafe.yaml echo-cafe.yaml
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 7,8,10,11,19,20,28,29,31,32,40,41
+
+  --- cafe.yaml   2022-01-25 11:17:45.239371139 +0000
+  +++ echo-cafe.yaml      2022-01-31 11:25:29.065695861 +0000
+  @@ -14,9 +14,9 @@
+       spec:
+         containers:
+         - name: coffee
+  -        image: nginxdemos/nginx-hello:plain-text
+  +        image: rteller/nginx_echo:latest
+           ports:
+  -        - containerPort: 8080
+  +        - containerPort: 8000
+   ---
+   apiVersion: v1
+   kind: Service
+  @@ -25,7 +25,7 @@
+   spec:
+     ports:
+     - port: 80
+  -    targetPort: 8080
+  +    targetPort: 8000
+       protocol: TCP
+       name: http
+     selector:
+  @@ -47,9 +47,9 @@
+       spec:
+         containers:
+         - name: tea
+  -        image: nginxdemos/nginx-hello:plain-text
+  +        image: rteller/nginx_echo:latest
+           ports:
+  -        - containerPort: 8080
+  +        - containerPort: 8000
+   ---
+   apiVersion: v1
+   kind: Service
+  @@ -58,7 +58,7 @@
+   spec:
+     ports:
+     - port: 80
+  -    targetPort: 8080
+  +    targetPort: 8000
+       protocol: TCP
+       name: http
+     selector:
+
+
+変更した内容をデプロイします。
+
+.. code-block:: cmdin
+
+  kubectl apply -f echo-cafe.yaml
+
+新たにコンテナイメージを取得するため、デプロイに1分ほど必要となります。以下のように各Podが正しく動作していることを確認してください
+
+.. code-block:: cmdin
+
+  kubectl get pod
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME                      READY   STATUS    RESTARTS   AGE
+  coffee-57ffcb58cc-66fdq   1/1     Running   0          22s
+  coffee-57ffcb58cc-b8cgm   1/1     Running   0          8s
+  tea-56b4985bd5-lwgtb      1/1     Running   0          22s
+
+
+動作確認
+----
+
+Curlコマンドを用いて、サンプルリクエストを送信します。 `jq` コマンドを用いて、レスポンスのJSONデータからリクエストに含まれるHTTP Header情報を表示しています
+
+.. code-block:: cmdin
+
+  curl -s -H "Host: cafe.example.com" http://localhost/tea | jq .request.uri.headers
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 9
+
+  {
+    "Connection": "close",
+    "X-Real-IP": "10.1.1.9",
+    "X-Forwarded-For": "10.1.1.9",
+    "X-Forwarded-Host": "cafe.example.com",
+    "X-Forwarded-Port": "80",
+    "X-Forwarded-Proto": "http",
+    "X-App-Authentication": ":",
+    "Host": "cafe.example.com",
+    "User-Agent": "curl/7.68.0",
+    "Accept": "*/*"
+  }
+
+Curlコマンドでは指定していない `X-App-Authentication` というヘッダが追加されています。つまりこのヘッダがNGINX Ingress Controllerによって新たに追加されています。
+
+
+次に、対象の `X-App-Authentication` というヘッダに値が表示されるよう、サンプルリクエストを送ります。Templateに追加した内容の通り、ヘッダーに表示されていることが確認できます。
+
+.. NOTE::
+
+  Templateに追加したHTTP Headerの値は `$http_<name>` という書式で参照しています。HTTPヘッダの名称(<name>)はダッシュ( `-` )をアンダースコア( `_` )に置換して指定する必要があります
+
+.. code-block:: cmdin
+
+  curl -s -H "Host: cafe.example.com" -H "x-authtype: APIKEY" "http://localhost/tea?userapikey=ABCD1234EFGH" | jq .request.uri.headers
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+  :emphasize-lines: 9
+
+  {
+    "User-Agent": "curl/7.68.0",
+    "x-authtype": "APIKEY",
+    "X-Forwarded-Proto": "http",
+    "Connection": "close",
+    "Host": "cafe.example.com",
+    "Accept": "*/*",
+    "X-Forwarded-Host": "cafe.example.com",
+    "X-Forwarded-For": "10.1.1.9",
+    "X-App-Authentication": "APIKEY:ABCD1234EFGH",
+    "X-Real-IP": "10.1.1.9",
+    "X-Forwarded-Port": "80"
+  }
+
+通信のログを確認します。
+
+.. code-block:: cmdin
+
+  kubectl logs nginx-ingress-5ddc7f4f-4xhpn -n nginx-ingress --tail=5
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  10.1.1.9 - - [31/Jan/2022:11:27:26 +0000] "GET /tea HTTP/1.1" 200 849 "-" "curl/7.68.0" "-"
+  10.1.1.9 - - [31/Jan/2022:11:30:33 +0000] "GET /tea?userapikey=ABCD1234EFGH HTTP/1.1" 200 957 "-" "curl/7.68.0" "-"
+
+リソースの削除
+----
+
+.. code-block:: cmdin
+
+  # ConfigMap を初期化します
+  kubectl apply -f  ~/kubernetes-ingress/deployments/common/nginx-config.yaml
+  # 再度 Pod をデプロイします
+  kubectl replace --force -f ~/kubernetes-ingress/deployments/deployment/nginx-plus-ingress.yaml
+  
+  # 不要なファイルを削除します
+  rm vs-custom-template.yaml
+  rm echo-cafe.yaml
