@@ -25,8 +25,8 @@ NGINX App Protect WAF、NGINX App Protect DoS 双方のセキュリティモジ�
   cd ~/kubernetes-ingress/examples/custom-resources/dos
   cp syslog.yaml syslog.yaml-bak
   cp syslog2.yaml syslog2.yaml-bak
-  sed -i -e 's/3.31.2-buster/3.31.2/g' syslog.yaml > syslog.yaml
-  sed -i -e 's/3.31.2-buster/3.31.2/g' syslog2.yaml > syslog2.yaml
+  sed -i -e 's/3.31.2-buster/3.31.2/g' syslog.yaml 
+  sed -i -e 's/3.31.2-buster/3.31.2/g' syslog2.yaml
 
   # 以下、Diffコマンドを参考に、対象となるTagが変更されていることを確認
   diff -u syslog.yaml-bak syslog.yaml
