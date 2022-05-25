@@ -12,9 +12,9 @@ F5 Labs - Index
 座学資料
 ========
 
-このラボはNGINX Plus Ingress Controller のインストールから各種設定を行っていただけます。
+このラボは NGINX Plus Ingress Controller のインストールから各種設定を行っていただけます。
 
-NGINX Plusの基本的な動作や仕様について紹介しております。
+NGINX Plus Ingress Controller の基本的な動作や仕様について紹介しております。
 
 | 基本的な解説資料は以下を参照してください。
 | (ラボの実施内容と異なりますが、参考資料としてご利用いただけます)
