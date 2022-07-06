@@ -348,7 +348,7 @@ NodePortをデプロイします。
 .. NOTE::
    NGINX Plusをインストールする場合、こちらの手順「 `NGINX Plusのインストール (15min) <https://f5j-nginx-plus-lab1.readthedocs.io/en/latest/class1/module2/module2.html#nginx-plus-15min>`__」を参考に、NGINX Plusをインストールしてください。
 
-先程確認したNoder Portで割り当てられたポート番号宛に通信を転送するように、NGINXを設定します。
+先程確認したNodePortで割り当てられたポート番号宛に通信を転送するように、NGINXを設定します。
 
 .. code-block:: cmdin
   
