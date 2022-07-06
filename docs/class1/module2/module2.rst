@@ -8,7 +8,7 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 1. 環境セットアップ
 ====
 
-ファイルの取得します
+ファイルを取得します
 
 .. code-block:: cmdin
 
