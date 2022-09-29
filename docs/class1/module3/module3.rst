@@ -1406,9 +1406,9 @@ kty "oct" で利用する Keyの内容をBase64デコードした結果は以下
 
   eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6IjAwMDEifQ.eyJuYW1lIjoiUXVvdGF0aW9uIFN5c3RlbSIsInN1YiI6InF1b3RlcyIsImlzcyI6Ik15IEFQSSBHYXRld2F5In0.ggVOHYnVFB8GVPE-VOIo3jD71gTkLffAY0hQOGXPL2I
 
-| `JWT.io <https://jwt.io/>`__ を開き、 **Algorithm** が ``HS256`` で有ることを確認します。
+| `JWT.io <https://jwt.io/>`__ を開き、 **Algorithm** が ``HS256`` であることを確認します。
 | **VERIFY SIGNATURE** 欄の ``your-256-bit-secret`` に先程 ``jwk`` の内容をデコードして確認した文字列 ``fantasticjwt`` を入力してください。
-| 画面左側 **Eocoded** 欄に、``token.jwt`` の内容を貼り付け、左下の表示が ``Signature Verified`` となることを確認してください。
+| 画面左側 **Eocoded** 欄に、 ``token.jwt`` の内容を貼り付け、左下の表示が ``Signature Verified`` となることを確認してください。
 | この結果より、クライアントリクエストで利用するJWTは、検証可能なものであることが確認できます。またこのJWTに含まれる情報が右側に表示されますので合わせて確認ください。
 
    .. image:: ./media/jwtio_verify.jpg
