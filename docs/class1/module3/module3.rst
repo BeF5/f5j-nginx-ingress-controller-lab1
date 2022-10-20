@@ -1088,7 +1088,7 @@ Rewrite を用いて、URL Path を書換えることが可能です。
       action:
         proxy:
           upstream: tea
-          rewritePath: /service/$1/image/$2
+          rewritePath: /service/\$1/image/\$2
   EOF
 
   kubectl apply -f ../basic-configuration/cafe.yaml
