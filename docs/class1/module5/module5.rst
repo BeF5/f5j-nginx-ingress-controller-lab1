@@ -333,7 +333,7 @@ UDPの設定です。TCPとほぼ同様です
   #
   stream {
      upstream tcp5353_backend {
-        server node1:30292；    # DNS TCP(TCP/5353)に割り当てられたポート番号
+        server node1:30292;    # DNS TCP(TCP/5353)に割り当てられたポート番号
      }
      upstream udp53_backend {
         server node1:31482;     # DNS UDP(UDP/53))に割り当てられたポート番号
