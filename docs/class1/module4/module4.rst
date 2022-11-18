@@ -79,12 +79,39 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
 
 .. code-block:: cmdin
 
+  cd ~/kubernetes-ingress/examples/custom-resources/waf
   kubectl apply -f webapp.yaml
   kubectl apply -f ap-apple-uds.yaml
   kubectl apply -f ap-dataguard-alarm-policy.yaml
   kubectl apply -f ap-logconf.yaml
   kubectl apply -f waf.yaml
   kubectl apply -f virtual-server.yaml
+
+
+Syslogサーバのログの出力状況を確認します。新たに同ホストへ接続するターミナルを2つ用意し、それぞれのターミナルでログを表示してください
+
+SyslogサーバのPod名を確認します
+
+.. code-block:: cmdin
+  kubectl get pod
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME                       READY   STATUS    RESTARTS       AGE
+  syslog-2-96dfdf5c6-7t8d4   1/1     Running   0              1h
+  syslog-cccc648c6-2n9v4     1/1     Running   0              1h
+  webapp-64d444885-bgrj7     1/1     Running   0              6m
+
+syslog、それぞれのPOD名を参考に、追加するターミナルでログを表示してください。
+
+.. code-block:: cmdin
+
+  # 追加するターミナル1 で 'syslog' の情報を表示する
+  kubectl exec -it <syslog POD名> --  tail -f /var/log/messages
+
+
 
 
 リソースを確認
@@ -544,6 +571,7 @@ User Defined Signatureで指定した内容が正しく動作しているか確�
 
 .. code-block:: cmdin
 
+  ## cd ~/kubernetes-ingress/examples/custom-resources/waf
   kubectl delete -f webapp.yaml
   kubectl delete -f ap-apple-uds.yaml
   kubectl delete -f ap-dataguard-alarm-policy.yaml
