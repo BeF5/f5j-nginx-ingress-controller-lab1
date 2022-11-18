@@ -88,7 +88,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resou
   kubectl apply -f virtual-server.yaml
 
 
-Syslogサーバのログの出力状況を確認します。新たに同ホストへ接続するターミナルを1つ用意し、ターミナルでログを表示してください
+Syslogサーバのログの出力状況を確認します。新たに同ホストへ接続するターミナルを1つ用意し、ログを表示してください
 
 SyslogサーバのPod名を確認します
 
