@@ -32,6 +32,14 @@ Webinar(プレゼンテーション・デモ)
 `これから始めるNGINX基本セミナー～Ingress Controller編 <https://www.nginx.co.jp/resources/webinars/nginx-back-to-basic-ingress-controller-jp/>`__
 
 
+NGINX セットアップガイド トップページ
+====
+
+NGINX のその他ラボガイドは以下を参照してください
+
+- `NGINX セットアップガイド・ラボガイド <https://f5j-tech-info.readthedocs.io/ja/latest/content03/content3.html>`__
+
+
 
 .. toctree::
    :maxdepth: 3
