@@ -16,7 +16,7 @@ Deployment、NodePortの内容を修正しデプロイ
 ----
 
 TCP / UDP を分散するため、NGINX Ingress Controller のDeployment、NodePortの内容を修正しデプロイします。
-Deploymentのargsで指定するパラメータの詳細は [Command-line Arguments](https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/command-line-arguments)を参照してください
+Deploymentのargsで指定するパラメータの詳細は `Command-line Arguments <https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/command-line-arguments>`__ を参照してください
 
 .. code-block:: cmdin
   
