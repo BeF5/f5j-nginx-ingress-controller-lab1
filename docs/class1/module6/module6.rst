@@ -210,36 +210,36 @@ Snippetsを利用する場合、予めDeploymentのコマンドラインオプ�
 .. code-block:: cmdin
 
   cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration
-cat << EOF > snippets-cafe-virtual-server.yaml
-apiVersion: k8s.nginx.org/v1
-kind: VirtualServer
-metadata:
-  name: cafe
-spec:
-  http-snippets: |
-    limit_req_zone \$binary_remote_addr zone=mylimit:10m rate=1r/s;
-  host: cafe.example.com
-  tls:
-    secret: cafe-secret
-  server-snippets: |
-        limit_req zone=mylimit;
-  upstreams:
-  - name: tea
-    service: tea-svc
-    port: 80
-  - name: coffee
-    service: coffee-svc
-    port: 80
-  routes:
-  - path: /tea
-    location-snippets:
-      limit_req_log_level warn;
-    action:
-      pass: tea
-  - path: /coffee
-    action:
-      pass: coffee
-EOF
+  cat << EOF > snippets-cafe-virtual-server.yaml
+  apiVersion: k8s.nginx.org/v1
+  kind: VirtualServer
+  metadata:
+    name: cafe
+  spec:
+    http-snippets: |
+      limit_req_zone \$binary_remote_addr zone=mylimit:10m rate=1r/s;
+    host: cafe.example.com
+    tls:
+      secret: cafe-secret
+    server-snippets: |
+          limit_req zone=mylimit;
+    upstreams:
+    - name: tea
+      service: tea-svc
+      port: 80
+    - name: coffee
+      service: coffee-svc
+      port: 80
+    routes:
+    - path: /tea
+      location-snippets:
+        limit_req_log_level warn;
+      action:
+        pass: tea
+    - path: /coffee
+      action:
+        pass: coffee
+  EOF
 
 設定した内容を確認します。以下の通り指定し、各Snipettsにより設定を追加しています
 
