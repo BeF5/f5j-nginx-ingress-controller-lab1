@@ -13,9 +13,8 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 .. code-block:: cmdin
 
   cd ~/
-  git clone https://github.com/nginxinc/kubernetes-ingress/
+  git clone https://github.com/nginxinc/kubernetes-ingress/ --branch v3.1.1
   cd ~/kubernetes-ingress
-  git checkout v2.1.0
 
 
 ライセンスファイルをコピーしてください
@@ -34,7 +33,7 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 
 .. code-block:: cmdin
   
-  make debian-image-nap-dos-plus PREFIX=registry.example.com/root/nic/nginxplus-ingress-nap-dos TARGET=container TAG=2.1.0
+  make debian-image-nap-dos-plus PREFIX=registry.example.com/root/nic/nginxplus-ingress-nap-dos TARGET=container TAG=3.1.1
   # Image の Build は数分(約5分)必要となります
   docker images | grep nginxplus-ingress-nap-dos
 
@@ -42,7 +41,7 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
   :linenos:
   :caption: 実行結果サンプル
 
-  registry.example.com/root/nic/nginxplus-ingress-nap-dos   2.1.0     5b5cdc61cf76   31 seconds ago   611MB
+  registry.example.com/root/nic/nginxplus-ingress-nap-dos   3.1.1     0003d5b72586   About a minute ago   781MB
 
 
 Container Image のPushのためにレジストリへログイン
@@ -68,7 +67,7 @@ Container Image のPush
 
 .. code-block:: cmdin
   
-  docker push registry.example.com/root/nic/nginxplus-ingress-nap-dos:2.1.0
+  docker push registry.example.com/root/nic/nginxplus-ingress-nap-dos:3.1.1
 
 
 3. NGINX Ingress Controller環境のセットアップ
@@ -79,13 +78,16 @@ Container Image のPush
 .. code-block:: cmdin
   
   cd ~/kubernetes-ingress/deployments
+  # Create RBAC
   kubectl apply -f common/ns-and-sa.yaml
   kubectl apply -f rbac/rbac.yaml
   kubectl apply -f rbac/ap-rbac.yaml
   kubectl apply -f rbac/apdos-rbac.yaml
-  kubectl apply -f common/default-server-secret.yaml
+  # Create Common resources
+  kubectl apply -f ../examples/shared-examples/default-server-secret/default-server-secret.yaml
   kubectl apply -f common/nginx-config.yaml
   kubectl apply -f common/ingress-class.yaml
+  # Create Custom Resource
   kubectl apply -f common/crds/k8s.nginx.org_virtualservers.yaml
   kubectl apply -f common/crds/k8s.nginx.org_virtualserverroutes.yaml
   kubectl apply -f common/crds/k8s.nginx.org_transportservers.yaml
@@ -110,7 +112,7 @@ Deploymentの内容を確認
   :linenos:
   :caption: deployment/appprotect-dos-arb.yaml
 
-  apiVersion: apps/v1
+
   kind: Deployment
   metadata:
     name: appprotect-dos-arb
@@ -229,7 +231,7 @@ argsで指定するパラメータの詳細は `Command-line Arguments <https://
   spec:
      serviceAccountName: nginx-ingress
      containers:
-     - image: registry.example.com/root/nic/nginxplus-ingress-nap-dos:2.1.0  # 対象のレジストリを指定してください
+     - image: registry.example.com/root/nic/nginxplus-ingress-nap-dos:3.1.1  # 対象のレジストリを指定してください
      imagePullPolicy: IfNotPresent
      name: nginx-plus-ingress
   ** 省略 **
@@ -239,13 +241,14 @@ argsで指定するパラメータの詳細は `Command-line Arguments <https://
         - -default-server-tls-secret=$(POD_NAMESPACE)/default-server-secret
         - -enable-app-protect                            # App Protect WAFを有効にします
         - -enable-app-protect-dos                        # App Protect DoSを利用する場合、有効にします
-        #- -v=3 # Enables extensive logging. Useful for troubleshooting.
-        #- -report-ingress-status
-        #- -external-service=nginx-ingress
-        #- -enable-prometheus-metrics
-        #- -global-configuration=$(POD_NAMESPACE)/nginx-configuration
-        - -enable-preview-policies                       # OIDCに必要となるArgsを有効にします
-        - -enable-snippets                               # OIDCで一部設定を追加するためsnippetsを有効にします
+        - -enable-oidc                                   # (追加) OIDCに必要となるArgsを有効にします
+        - -enable-snippets                               # (追加) OIDCで一部設定を追加するためsnippetsを有効にします
+       #- -v=3 # Enables extensive logging. Useful for troubleshooting.
+       #- -report-ingress-status
+       #- -external-service=nginx-ingress
+       #- -enable-prometheus-metrics
+       #- -enable-service-insight
+       #- -global-configuration=$(POD_NAMESPACE)/nginx-configuration
 
 
 修正したマニフェストを指定しPodを作成します。

@@ -9,7 +9,7 @@ ConfigMapによる設定
 
 ConfigMapによる、設定内容の追加を確認します。
 
-https://github.com/nginxinc/kubernetes-ingress/tree/master/examples/custom-log-format
+https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/shared-examples/custom-log-format
 
 | 様々な項目を設定することが可能ですが、このサンプルでは ``log-format`` に関する動作を確認します。その他パラメータについては以下の記事を参照してください。
 | `ConfigMap Resource <https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/>`__
@@ -53,7 +53,7 @@ POD名を指定し、現在の設定を確認します
 
 .. code-block:: cmdin
 
-  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration/
+  cd ~/kubernetes-ingress/examples/shared-examples/custom-log-format
   cat << EOF > log-configmap.yaml
   kind: ConfigMap
   apiVersion: v1
@@ -196,7 +196,7 @@ Snippetsを利用する場合、予めDeploymentのコマンドラインオプ�
         -default-server-tls-secret=$(POD_NAMESPACE)/default-server-secret
         -enable-app-protect
         -enable-app-protect-dos
-        -enable-preview-policies
+        -enable-oidc
         -enable-snippets
    
   ** 省略 **
@@ -209,37 +209,37 @@ Snippetsを利用する場合、予めDeploymentのコマンドラインオプ�
 
 .. code-block:: cmdin
 
-  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration
-  cat << EOF > snippets-cafe-virtual-server.yaml
-  apiVersion: k8s.nginx.org/v1
-  kind: VirtualServer
-  metadata:
-    name: cafe
-  spec:
-    http-snippets: |
-      limit_req_zone $binary_remote_addr zone=mylimit:10m rate=1r/s;
-    host: cafe.example.com
-    tls:
-      secret: cafe-secret
-    server-snippets: |
-          limit_req zone=mylimit burst=20;
-    upstreams:
-    - name: tea
-      service: tea-svc
-      port: 80
-    - name: coffee
-      service: coffee-svc
-      port: 80
-    routes:
-    - path: /tea
-      location-snippets:
-        limit_req_log_level warn;
-      action:
-        pass: tea
-    - path: /coffee
-      action:
-        pass: coffee
-  EOF
+  cd ~/kubernetes-ingress/examples/custom-resources/basic-configuration
+cat << EOF > snippets-cafe-virtual-server.yaml
+apiVersion: k8s.nginx.org/v1
+kind: VirtualServer
+metadata:
+  name: cafe
+spec:
+  http-snippets: |
+    limit_req_zone \$binary_remote_addr zone=mylimit:10m rate=1r/s;
+  host: cafe.example.com
+  tls:
+    secret: cafe-secret
+  server-snippets: |
+        limit_req zone=mylimit;
+  upstreams:
+  - name: tea
+    service: tea-svc
+    port: 80
+  - name: coffee
+    service: coffee-svc
+    port: 80
+  routes:
+  - path: /tea
+    location-snippets:
+      limit_req_log_level warn;
+    action:
+      pass: tea
+  - path: /coffee
+    action:
+      pass: coffee
+EOF
 
 設定した内容を確認します。以下の通り指定し、各Snipettsにより設定を追加しています
 
@@ -442,7 +442,7 @@ https://docs.nginx.com/nginx-ingress-controller/configuration/global-configurati
 
 Templateファイルは以下フォルダに格納されています。
 
-https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/internal/configs
+https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/internal/configs
 
 - version1 : NGINX ( main ``nginx.tmpl`` 、Ingress ``nginx.ingress.tmpl`` ) 、NGINX Plus ( main ``nginx-plus.tmpl`` 、 Ingress ``nginx-plus.ingress.tmpl`` )のTemplateが格納されています 
 - version2 : NGINX ( ``nginx.virtualserver.tmpl`` ) 、 NGINX Plus ( ``nginx-plus.virtualserver.tmpl`` )の VirtualServer Templateが格納されています
@@ -480,12 +480,17 @@ Template 用 ConfigMapの作成
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 3
+  :emphasize-lines: 7
 
   ※省略※
-            {{ $proxyOrGRPC }}_set_header X-Forwarded-Proto {{ with $s.TLSRedirect }}{{ .BasedOn }}{{ else }}$scheme{{ end }};
-            {{ $proxyOrGRPC }}_set_header X-App-Authentication $http_x_authtype:$arg_userapikey;
-                {{ range $h := $l.ProxySetHeaders }}
+  541                 {{ if not $l.GRPCPass }}
+  542             proxy_http_version 1.1;
+  543             set $default_connection_header {{ if $l.HasKeepalive }}""{{ else }}close{{ end }};
+  544             proxy_set_header Upgrade $http_upgrade;
+  545             proxy_set_header Connection $vs_connection_header;
+  546             proxy_set_header X-App-Authentication $http_x_authtype:$arg_userapikey;
+  547             proxy_pass_request_headers {{ if $l.ProxyPassRequestHeaders }}on{{ else }}off{{ end }};
+  548                 {{ end }}
   ※省略※
 
 .. NOTE::

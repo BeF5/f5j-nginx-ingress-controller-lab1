@@ -2,14 +2,14 @@ NICによるTCP/UDPの通信制御
 ####
 
 この章では、実際にデプロイしたNGINX Ingress Controllerを使い、TCP/UDPのアプリケーションに対する通信制御方法を確認します
-設定例は `NGINX Inc GitHubの examples/custom-resources/ <https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources>`__ に管理されております
+設定例は `NGINX Inc GitHubの examples/custom-resources/ <https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resources>`__ に管理されております
 
 TCP / UDP の分散設定
 ====
 
 TCP / UDP を分散するためアプリケーションをデプロイします
 
-https://github.com/nginxinc/kubernetes-ingress/tree/v2.1.0/examples/custom-resources/basic-tcp-udp
+https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/basic-tcp-udp
 
 
 Deployment、NodePortの内容を修正しデプロイ
@@ -20,7 +20,7 @@ Deploymentのargsで指定するパラメータの詳細は [Command-line Argume
 
 .. code-block:: cmdin
   
-  ## cd ~/kubernetes-ingress/deployments
+  cd ~/kubernetes-ingress/deployments
   cp deployment/nginx-plus-ingress.yaml deployment/nginx-plus-ingress-tcpudp.yaml
   vi deployment/nginx-plus-ingress-tcpudp.yaml
 
@@ -278,7 +278,7 @@ UDPの設定です。TCPとほぼ同様です
 
 .. code-block:: cmdin
   
-  ## cd ~/kubernetes-ingress/deployments
+  cd ~/kubernetes-ingress/deployments
   kubectl apply -f service/nodeport-tcp.yaml
   kubectl apply -f service/nodeport-udp.yaml
   kubectl apply -f deployment/nginx-plus-ingress-tcpudp.yaml
@@ -287,7 +287,7 @@ UDPの設定です。TCPとほぼ同様です
 
 .. code-block:: cmdin
 
-  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-tcp-udp
+  cd ~/kubernetes-ingress/examples/custom-resources/basic-tcp-udp
   kubectl apply -f global-configuration.yaml
   kubectl apply -f dns.yaml
   kubectl apply -f transport-server-tcp.yaml
@@ -545,7 +545,7 @@ UDPでDNS Queryを送信します。Portは ``53`` です。
 
 .. code-block:: cmdin
 
-  ## cd ~/kubernetes-ingress/examples/custom-resources/basic-tcp-udp
+  cd ~/kubernetes-ingress/examples/custom-resources/basic-tcp-udp
   kubectl delete -f global-configuration.yaml
   kubectl delete -f dns.yaml
   kubectl delete -f transport-server-tcp.yaml
@@ -559,7 +559,7 @@ HTTP/HTTPSを待ち受ける設定に戻す場合、以下の操作を参考に�
 
 .. code-block:: cmdin
   
-  ## cd ~/kubernetes-ingress/deployments
+  cd ~/kubernetes-ingress/deployments
   kubectl delete -f service/nodeport-tcp.yaml
   kubectl delete -f service/nodeport-udp.yaml
   kubectl delete -f deployment/nginx-plus-ingress-tcpudp.yaml
