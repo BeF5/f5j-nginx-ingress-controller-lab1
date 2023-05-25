@@ -890,3 +890,527 @@ httpでアクセスした場合には ``302 Moved Temporarily`` が応答され�
   kubectl delete -f gateway.yaml
   kubectl delete -f cafe-routes.yaml
 
+
+通信内容の条件分岐(Advanced Routing)
+====
+
+より柔軟な通信の制御方法を確認します
+
+https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/advanced-routing
+
+サンプルアプリケーションをデプロイ
+----
+
+.. code-block:: cmdin
+
+  ## cd ~/nginx-kubernetes-gateway/examples/advanced-routing
+  kubectl apply -f cafe.yaml
+  kubectl apply -f gateway.yaml
+  kubectl apply -f cafe-routes.yaml
+
+リソースの確認
+----
+
+``cafe-route.yaml`` の内容を確認します。
+
+.. code-block:: cmdin
+
+  ## cd ~/nginx-kubernetes-gateway/examples/advanced-routing
+  cat cafe-routes.yaml
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  apiVersion: gateway.networking.k8s.io/v1beta1
+  kind: HTTPRoute
+  metadata:
+    name: coffee
+  spec:
+    parentRefs:
+    - name: gateway
+    hostnames:
+    - "cafe.example.com"
+    rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /coffee
+      backendRefs:
+      - name: coffee-v1-svc
+        port: 80
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /coffee
+        headers:
+        - name: version
+          value: v2
+      - path:
+          type: PathPrefix
+          value: /coffee
+        queryParams:
+        - name: TEST
+          value: v2
+      backendRefs:
+      - name: coffee-v2-svc
+        port: 80
+  ---
+  apiVersion: gateway.networking.k8s.io/v1beta1
+  kind: HTTPRoute
+  metadata:
+    name: tea
+  spec:
+    parentRefs:
+    - name: gateway
+    hostnames:
+    - "cafe.example.com"
+    rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /tea
+        method: POST
+      backendRefs:
+      - name: tea-post-svc
+        port: 80
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /tea
+        method: GET
+      backendRefs:
+      - name: tea-svc
+        port: 80
+
+1つ目が ``/coffee`` 、2つ目が ``/tea`` の内容となります。双方 ``rules`` が定義されており、その配下に通信の転送条件を指定しています
+設定の内容を読み解くと以下のようになります。
+
+- ``/cofee``
+
++------+-------+-----+-------------+
+|type  |key    |value|backend      |
++------+-------+-----+-------------+
+|header|version|v2   |coffee-v2-svc|
++------+-------+-----+-------------+
+|query |TEST   |v2   |coffee-v2-svc|
++------+-------+-----+-------------+
+|-     |-      |-    |coffee-v1-svc|
++------+-------+-----+-------------+
+
+- ``/tea``
+
++------+------+--------------+
+|type  | value| backend      |
++------+------+--------------+
+|method| POST | tea-post-svc |
++------+------+--------------+
+|method| GET  | tea-svc      | 
++------+------+--------------+
+
+
+.. code-block:: cmdin
+ 
+  kubectl get pod
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME                         READY   STATUS    RESTARTS   AGE
+  coffee-v1-6b78998db9-25vv6   1/1     Running   0          24s
+  coffee-v2-748cbbb49f-v4s47   1/1     Running   0          24s
+  tea-5c457db9-fwxwm           1/1     Running   0          24s
+  tea-post-7db8cd8bf-wz4sw     1/1     Running   0          24s
+
+.. code-block:: cmdin
+
+  kubectl get svc | grep -v kubernetes
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+  coffee-v1-svc   ClusterIP   10.98.220.232   <none>        80/TCP    34s
+  coffee-v2-svc   ClusterIP   10.98.18.61     <none>        80/TCP    33s
+  tea-post-svc    ClusterIP   10.101.63.1     <none>        80/TCP    33s
+  tea-svc         ClusterIP   10.105.150.72   <none>        80/TCP    33s
+
+
+.. code-block:: cmdin
+ 
+  kubectl get gateway
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME      CLASS   ADDRESS         PROGRAMMED   AGE
+  gateway   nginx   192.168.127.2                23s
+
+.. code-block:: cmdin
+ 
+  kubectl get httproute
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME     HOSTNAMES              AGE
+  coffee   ["cafe.example.com"]   22s
+  tea      ["cafe.example.com"]   22s
+
+
+
+動作確認
+----
+
+``/coffee`` 宛のリクエストでHTTPヘッダーに値を指定します
+
+.. code-block:: cmdin
+ 
+  curl -H "Host:cafe.example.com" http://localhost/coffee -H "version:v2"
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  Server address: 192.168.127.7:8080
+  Server name: coffee-v2-748cbbb49f-v4s47
+  Date: 25/May/2023:07:51:49 +0000
+  URI: /coffee
+  Request ID: 49189037592857bbdb7d814c80a7bce2
+
+``/coffee`` 宛のリクエストでQuery Parameterを指定します
+
+.. code-block:: cmdin
+ 
+  curl -H "Host:cafe.example.com" http://localhost/coffee?TEST=v2
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  erver address: 192.168.127.7:8080
+  Server name: coffee-v2-748cbbb49f-v4s47
+  Date: 25/May/2023:07:52:04 +0000
+  URI: /coffee?TEST=v2
+  Request ID: 88ef837322389f2ef34fd70b8be890d9
+
+``/coffee`` 宛のリクエストで何も指定を行いません
+
+.. code-block:: cmdin
+ 
+  curl -H "Host:cafe.example.com" http://localhost/coffee
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  Server address: 192.168.127.10:8080
+  Server name: coffee-v1-6b78998db9-25vv6
+  Date: 25/May/2023:07:52:16 +0000
+  URI: /coffee
+  Request ID: e3c5a1e8a74193c71906583d4dcbb4b6
+
+``/tea`` 宛のリクエストでPOST Methodを指定します
+
+.. code-block:: cmdin
+ 
+  curl -H "Host:cafe.example.com" http://localhost/tea -X POST
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  Server address: 192.168.127.8:8080
+  Server name: tea-post-7db8cd8bf-wz4sw
+  Date: 25/May/2023:07:52:32 +0000
+  URI: /tea
+  Request ID: 1a6f6f4d8c205e70001769f8450a784c
+
+``/tea`` 宛のリクエストでGET Methodを指定します
+
+.. code-block:: cmdin
+ 
+  curl -H "Host:cafe.example.com" http://localhost/tea -X GET
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  Server address: 192.168.127.14:8080
+  Server name: tea-5c457db9-fwxwm
+  Date: 25/May/2023:07:52:42 +0000
+  URI: /tea
+  Request ID: 68272b109b4e7f0aaf82d2b0f8541b35
+  
+
+``/tea`` 宛のリクエストでPUT Methodを指定します。こちらのMethodは条件に含まれていないためエラーとなります。
+
+.. code-block:: cmdin
+ 
+  curl -H "Host:cafe.example.com" http://localhost/tea -X PUT
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  <html>
+  <head><title>404 Not Found</title></head>
+  <body>
+  <center><h1>404 Not Found</h1></center>
+  <hr><center>nginx/1.23.4</center>
+  </body>
+  </html>
+
+
+リソースの削除
+----
+
+.. code-block:: cmdin
+ 
+  ## cd ~/nginx-kubernetes-gateway/examples/advanced-routing
+  kubectl delete -f cafe.yaml
+  kubectl delete -f gateway.yaml
+  kubectl delete -f cafe-routes.yaml
+
+
+割合を指定した分散 (Traffic Split)
+====
+
+トラフィック分割を確認します
+
+https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/traffic-splitting
+
+サンプルアプリケーションをデプロイ
+----
+
+.. code-block:: cmdin
+ 
+  cd ~/nginx-kubernetes-gateway/examples/traffic-splitting
+  kubectl apply -f cafe.yaml
+  kubectl apply -f gateway.yaml
+  kubectl apply -f cafe-route.yaml
+
+リソースの確認
+----
+
+作成したリソースの内容を確認します
+
+.. code-block:: cmdin
+ 
+  cat cafe-route.yaml
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  apiVersion: gateway.networking.k8s.io/v1beta1
+  kind: HTTPRoute
+  metadata:
+    name: cafe-route
+  spec:
+    parentRefs:
+    - name: gateway
+      sectionName: http
+    hostnames:
+    - "cafe.example.com"
+    rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /coffee
+      backendRefs:
+      - name: coffee-v1
+        port: 80
+        weight: 80
+      - name: coffee-v2
+        port: 80
+        weight: 20
+
+``backendRefs`` で通信の転送先サービスを指定する箇所で、 ``weight`` を指定しています。
+``coffee-v1`` が ``weight 80`` 、 ``coffee-v2`` が ``weight 20`` となります
+
+
+正しくリソースが作成されたことを確認します
+
+.. code-block:: cmdin
+ 
+   kubectl get gateway
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME      CLASS   ADDRESS         PROGRAMMED   AGE
+  gateway   nginx   192.168.127.2                12s
+
+
+.. code-block:: cmdin
+ 
+  kubectl get httproute
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME         HOSTNAMES              AGE
+  cafe-route   ["cafe.example.com"]   4s
+
+.. code-block:: cmdin
+ 
+  kubectl get pod
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME                         READY   STATUS    RESTARTS   AGE
+  coffee-v1-6b78998db9-vtpvz   1/1     Running   0          56s
+  coffee-v2-748cbbb49f-ndvp8   1/1     Running   0          56s
+
+.. code-block:: cmdin
+ 
+  kubectl get svc | grep -v kubernetes
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+  coffee-v1    ClusterIP   10.111.57.103   <none>        80/TCP    66s
+  coffee-v2    ClusterIP   10.97.133.169   <none>        80/TCP    66s
+
+
+動作確認
+----
+
+Curlコマンドで複数回リクエストを送ると、 ``coffee-v1`` 、 ``coffee-v2`` のそれぞれに転送されていることが確認できます
+
+.. code-block:: cmdin
+ 
+  curl -s -H "Host: cafe.example.com" http://localhost/coffee
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  Server address: 192.168.127.11:8080
+  Server name: coffee-v2-748cbbb49f-ndvp8
+  Date: 25/May/2023:08:19:17 +0000
+  URI: /coffee
+  Request ID: cc8c76a2a5e04c6dc43b99f7a740f8ae
+
+
+.. code-block:: cmdin
+ 
+  curl -s -H "Host: cafe.example.com" http://localhost/coffee
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  Server address: 192.168.127.13:8080
+  Server name: coffee-v1-6b78998db9-vtpvz
+  Date: 25/May/2023:08:19:20 +0000
+  URI: /coffee
+  Request ID: bb7154122f4fe64cccb002c113cdb364
+
+以下コマンドを参考に複数回Curlを実行し、その結果をファイルに記録します。記録の内容より ``coffee-v1`` に ``coffee-v2`` 転送した数を確認できます。 分散する割合は少しばらつきが発生しますが、参考として分散した数の結果を確認してください。
+
+.. code-block:: cmdin
+ 
+  ## cd ~/nginx-kubernetes-gateway/examples/traffic-splitting
+  > split.txt ;\
+  for i in {1..20}; \
+  do curl -s -H "Host: cafe.example.com" http://localhost/coffee | grep "Server name" >> split.txt ; \
+  done ; \
+  echo -n "v1:" ; grep v1 split.txt  | wc -l ; echo -n "v2:"  ; grep v2 split.txt  | wc -l
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  v1:16
+  v2:4
+
+実行タイミングによって結果は頻繁に変わりますが、大まかに 8:2 の割合で通信が転送できることがわかります。
+
+割合の変更
+----
+
+割合を ``8:2`` から、 ``5:5(同じ割合)`` に変更します。
+
+これから適用するHTTPRouteと現在設定している内容を比較します。
+
+.. code-block:: cmdin
+ 
+   diff -u cafe-route.yaml cafe-route-equal-weight.yaml
+   
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+   --- cafe-route.yaml     2023-05-25 08:58:27.326066185 +0900
+   +++ cafe-route-equal-weight.yaml        2023-05-25 08:58:27.326066185 +0900
+   @@ -19,4 +19,4 @@
+          weight: 80
+        - name: coffee-v2
+          port: 80
+   -      weight: 20
+   +      weight: 80
+
+差分から、 ``coffee-v2`` を ``weight 80`` とすることで、 ``1:1`` の割合となるようにしています。
+
+設定を反映します。
+
+.. code-block:: cmdin
+ 
+  kubectl apply -f cafe-route-equal-weight.yaml
+
+
+動作確認
+----
+
+Curlコマンドの結果に変化はありません。
+
+
+
+.. code-block:: cmdin
+ 
+  curl -s -H "Host: cafe.example.com" http://localhost/coffee
+
+以下コマンドを実行し、転送される割合を確認します。
+
+.. code-block:: cmdin
+ 
+  ## cd ~/nginx-kubernetes-gateway/examples/traffic-splitting
+  > split-equal.txt ;\
+  for i in {1..20}; \
+  do curl -s -H "Host: cafe.example.com" http://localhost/coffee | grep "Server name" >> split-equal.txt ; \
+  done ; \
+  echo -n "v1:" ; grep v1 split-equal.txt  | wc -l ; echo -n "v2:"  ; grep v2 split-equal.txt  | wc -l
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  v1:10
+  v2:10
+
+指定した割合となっていることが確認できます
+
+リソースの削除
+----
+
+.. code-block:: cmdin
+ 
+  ## cd ~/nginx-kubernetes-gateway/examples/traffic-splitting
+  kubectl delete -f gateway.yaml
+  kubectl delete -f cafe-route-equal-weight.yaml
+  kubectl delete -f cafe.yaml
+
+
+

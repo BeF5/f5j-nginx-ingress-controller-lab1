@@ -753,7 +753,7 @@ Virtual Serverの内容を確認します。 ``cafe-virtual-server.yaml`` の ``
 動作確認
 ----
 
- Curlコマンドで複数回リクエストを送ると、 ``coffee-v1`` 、 ``coffee-v2`` のそれぞれに転送されていることが確認できます。
+Curlコマンドで複数回リクエストを送ると、 ``coffee-v1`` 、 ``coffee-v2`` のそれぞれに転送されていることが確認できます。
 
 .. code-block:: cmdin
  
