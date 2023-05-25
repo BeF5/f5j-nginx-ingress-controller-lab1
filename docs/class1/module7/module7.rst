@@ -1,4 +1,4 @@
-Kubernetes Gateway による通信制御
+Kubernetes Gateway のセットアップ
 ####
 
 NGINXをDataplaneとしてKubernetes Gatewayを利用する方法を紹介します。
