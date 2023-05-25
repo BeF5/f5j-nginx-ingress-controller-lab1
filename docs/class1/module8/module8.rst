@@ -693,24 +693,6 @@ HTTPRouteを3つ指定しています。
   tea                 ["cafe.example.com"]   99s
 
 
-.. code-block:: cmdin
- 
-  kubectl get pod
-
-.. code-block:: bash
-  :linenos:
-  :caption: 実行結果サンプル
- 
-.. code-block:: cmdin
- 
-  kubectl get pod
-
-.. code-block:: bash
-  :linenos:
-  :caption: 実行結果サンプル
- 
-
-
 動作確認
 ----
 
@@ -723,6 +705,7 @@ HTTPRouteを3つ指定しています。
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 10,16,19
 
   *   Trying 127.0.0.1:80...
   * TCP_NODELAY set
@@ -763,6 +746,7 @@ httpでアクセスした場合には ``302 Moved Temporarily`` が応答され�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 21-26,36
 
   * Added cafe.example.com:443:127.0.0.1 to DNS cache
   * Hostname cafe.example.com was found in DNS cache
@@ -826,6 +810,7 @@ httpでアクセスした場合には ``302 Moved Temporarily`` が応答され�
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 21-26,36
 
   * Added cafe.example.com:443:127.0.0.1 to DNS cache
   * Hostname cafe.example.com was found in DNS cache
@@ -921,6 +906,7 @@ https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/advanced
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 10-33,44-60
 
   apiVersion: gateway.networking.k8s.io/v1beta1
   kind: HTTPRoute
@@ -990,24 +976,25 @@ https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/advanced
 
 +------+-------+-----+-------------+
 |type  |key    |value|backend      |
-+------+-------+-----+-------------+
++======+=======+=====+=============+
 |header|version|v2   |coffee-v2-svc|
 +------+-------+-----+-------------+
 |query |TEST   |v2   |coffee-v2-svc|
 +------+-------+-----+-------------+
-|-     |-      |-    |coffee-v1-svc|
+|\-    |\-     |\-   |coffee-v1-svc|
 +------+-------+-----+-------------+
 
 - ``/tea``
 
 +------+------+--------------+
 |type  | value| backend      |
-+------+------+--------------+
++======+======+==============+
 |method| POST | tea-post-svc |
 +------+------+--------------+
 |method| GET  | tea-svc      | 
 +------+------+--------------+
 
+リソースを確認します
 
 .. code-block:: cmdin
  
@@ -1066,6 +1053,8 @@ https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/advanced
 動作確認
 ----
 
+先程の表に示した内容と同じ結果となることを確認します。
+
 ``/coffee`` 宛のリクエストでHTTPヘッダーに値を指定します
 
 .. code-block:: cmdin
@@ -1075,6 +1064,7 @@ https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/advanced
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   Server address: 192.168.127.7:8080
   Server name: coffee-v2-748cbbb49f-v4s47
@@ -1091,6 +1081,7 @@ https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/advanced
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   erver address: 192.168.127.7:8080
   Server name: coffee-v2-748cbbb49f-v4s47
@@ -1107,6 +1098,7 @@ https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/advanced
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   Server address: 192.168.127.10:8080
   Server name: coffee-v1-6b78998db9-25vv6
@@ -1123,6 +1115,7 @@ https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/advanced
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   Server address: 192.168.127.8:8080
   Server name: tea-post-7db8cd8bf-wz4sw
@@ -1139,6 +1132,7 @@ https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/advanced
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   Server address: 192.168.127.14:8080
   Server name: tea-5c457db9-fwxwm
@@ -1206,6 +1200,7 @@ https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/traffic-
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 16-22
 
   apiVersion: gateway.networking.k8s.io/v1beta1
   kind: HTTPRoute
@@ -1296,6 +1291,7 @@ Curlコマンドで複数回リクエストを送ると、 ``coffee-v1`` 、 ``c
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   Server address: 192.168.127.11:8080
   Server name: coffee-v2-748cbbb49f-ndvp8
@@ -1311,6 +1307,7 @@ Curlコマンドで複数回リクエストを送ると、 ``coffee-v1`` 、 ``c
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 2
 
   Server address: 192.168.127.13:8080
   Server name: coffee-v1-6b78998db9-vtpvz
@@ -1352,6 +1349,7 @@ Curlコマンドで複数回リクエストを送ると、 ``coffee-v1`` 、 ``c
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 7-8
 
    --- cafe-route.yaml     2023-05-25 08:58:27.326066185 +0900
    +++ cafe-route-equal-weight.yaml        2023-05-25 08:58:27.326066185 +0900
