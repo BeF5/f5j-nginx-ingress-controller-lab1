@@ -225,7 +225,7 @@ argsで指定するパラメータの詳細は `Command-line Arguments <https://
 .. code-block:: yaml
   :linenos:
   :caption: deployment/nginx-plus-ingress.yaml
-  :emphasize-lines: 5,13,14,20,21
+  :emphasize-lines: 5,12-16
 
   ** 省略 **
   spec:
