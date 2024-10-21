@@ -22,6 +22,7 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 なお、SSL証明書および鍵ファイルは以下に配置しています。
 
 JumpBox：C:\Users\user\Desktop\Key
+
 ubuntu-host1：/home/ubuntu/
 
 .. code-block:: cmdin
