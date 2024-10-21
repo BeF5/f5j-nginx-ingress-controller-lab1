@@ -20,6 +20,7 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 ライセンスファイルをコピーしてください
 ファイルが配置されていない場合、トライアルを申請し証明書と鍵を取得してください
 なお、SSL証明書および鍵ファイルは以下に配置しています。
+
 JumpBox：C:\Users\user\Desktop\Key
 ubuntu-host1：/home/ubuntu/
 
