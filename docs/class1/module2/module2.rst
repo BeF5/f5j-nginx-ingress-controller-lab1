@@ -34,7 +34,7 @@ ubuntu-host1：/home/ubuntu/
 ====
 
 | NGINX Plus ＋ NGINX App Protectのコンテナイメージを作成します
-| 参考： `Building the Ingress Controller Image <https://docs.nginx.com/nginx-ingress-controller/installation/building-ingress-controller-image>`__
+| 参考： `Building the Ingress Controller Image <https://docs.nginx.com/nginx-ingress-controller/installation/build-nginx-ingress-controller/#build-image>`__
 
 .. code-block:: cmdin
   
