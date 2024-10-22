@@ -72,7 +72,7 @@ Container Image のPush
 
 .. code-block:: cmdin
   
-  docker push registry.example.com/root/nic/nginxplus-ingress-nap-dos:3.1.1
+  docker push registry.example.com/root/nic/nginxplus-ingress-nap-dos:3.7.0
 
 
 3. NGINX Ingress Controller環境のセットアップ
