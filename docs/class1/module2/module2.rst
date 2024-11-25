@@ -13,7 +13,7 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 .. code-block:: cmdin
 
   cd ~/
-  git clone https://github.com/nginxinc/kubernetes-ingress/ --branch v3.7.0
+  git clone https://github.com/nginxinc/kubernetes-ingress/ --branch v3.1.1
   cd ~/kubernetes-ingress
 
 
@@ -38,7 +38,7 @@ ubuntu-host1：/home/ubuntu/
 
 .. code-block:: cmdin
   
-  make debian-image-nap-dos-plus PREFIX=registry.example.com/root/nic/nginxplus-ingress-nap-dos TARGET=container TAG=3.7.0
+  make debian-image-nap-dos-plus PREFIX=registry.example.com/root/nic/nginxplus-ingress-nap-dos TARGET=container TAG=3.1.1
   # Image の Build は数分(約5分)必要となります
   docker images | grep nginxplus-ingress-nap-dos
 
@@ -46,7 +46,7 @@ ubuntu-host1：/home/ubuntu/
   :linenos:
   :caption: 実行結果サンプル
 
-  registry.example.com/root/nic/nginxplus-ingress-nap-dos   3.7.0     9eca3c333eb6   About a minute ago   659MB
+  registry.example.com/root/nic/nginxplus-ingress-nap-dos   3.1.1     9eca3c333eb6   About a minute ago   659MB
 
 
 Container Image のPushのためにレジストリへログイン
@@ -72,7 +72,7 @@ Container Image のPush
 
 .. code-block:: cmdin
   
-  docker push registry.example.com/root/nic/nginxplus-ingress-nap-dos:3.7.0
+  docker push registry.example.com/root/nic/nginxplus-ingress-nap-dos:3.1.1
 
 
 3. NGINX Ingress Controller環境のセットアップ
