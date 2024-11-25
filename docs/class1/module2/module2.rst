@@ -7,6 +7,12 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 
 1. 環境セットアップ
 ====
+HOMEを設定
+
+.. code-block:: cmdin
+
+  cd /home/ubuntu/
+  source .bashrc
 
 ファイルを取得します
 
