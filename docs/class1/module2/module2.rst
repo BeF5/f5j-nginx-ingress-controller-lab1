@@ -7,12 +7,11 @@ NGINX Ingress Controller(NIC) 環境のセットアップ
 
 1. 環境セットアップ
 ====
-HOMEを設定
+UDFのWEB SHELLを使用する場合は以下を実行ください。
 
 .. code-block:: cmdin
 
-  cd /home/ubuntu/
-  source .bashrc
+  su ubuntu
 
 ファイルを取得します
 
