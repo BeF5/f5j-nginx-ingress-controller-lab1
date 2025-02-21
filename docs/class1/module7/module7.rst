@@ -82,7 +82,7 @@ Kubernetes Gateway 用のNGINXが起動していることを確認します
 .. code-block:: cmdin
 
   ## cd nginx-kubernetes-gateway
-  cat << EOF > nodeport-config.yaml
+  cat << EOF > ../nginx-kubernetes-gateway-conf/nodeport-config.yaml
   apiVersion: v1
   kind: Service
   metadata:
@@ -109,7 +109,7 @@ Kubernetes Gateway 用のNGINXが起動していることを確認します
         targetPort: 443
         nodePort: 31438
   EOF
-  kubectl apply -f nodeport-config.yaml
+  kubectl apply -f ../nginx-kubernetes-gateway-conf/nodeport-config.yaml
 
 以下コマンドでポート確認します
 
