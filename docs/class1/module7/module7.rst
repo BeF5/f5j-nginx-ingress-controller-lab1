@@ -60,7 +60,7 @@ Gateway APIリソースをデプロイします
 .. code-block:: cmdin
 
   ## cd nginx-kubernetes-gateway
-  kubectl apply -f deploy.yaml
+  kubectl apply -f ../nginx-kubernetes-gateway-conf/deploy.yaml
 
 Kubernetes Gateway 用のNGINXが起動していることを確認します
 
