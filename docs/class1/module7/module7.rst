@@ -82,28 +82,34 @@ Kubernetes Gateway 用のNGINXが起動していることを確認します
 .. code-block:: cmdin
 
   ## cd nginx-kubernetes-gateway
-  cp deploy/manifests/service/nodeport.yaml  deploy/manifests/service/nodeport.yaml-
-  cat << EOF > deploy/manifests/service/nodeport.yaml
+  cat << EOF > nodeport-config.yaml
   apiVersion: v1
   kind: Service
   metadata:
     name: nginx-gateway
     namespace: nginx-gateway
+    labels:
+      app.kubernetes.io/name: nginx-gateway-fabric
+      app.kubernetes.io/instance: ngf
+      app.kubernetes.io/version: "1.6.1"
   spec:
     type: NodePort
-    ports:
-    - port: 80
-      targetPort: 80
-      protocol: TCP
-      name: http
-    - port: 443
-      targetPort: 443
-      protocol: TCP
-      name: https
     selector:
-      app: nginx-gateway
+      app.kubernetes.io/name: nginx-gateway-fabric
+      app.kubernetes.io/instance: ngf
+    ports:
+      - name: http
+        port: 80
+        protocol: TCP
+        targetPort: 80
+        nodePort: 31437
+      - name: https
+        port: 443
+        protocol: TCP
+        targetPort: 443
+        nodePort: 31438
   EOF
-  kubectl apply -f deploy/manifests/service/nodeport.yaml
+  kubectl apply -f nodeport-config.yaml
 
 以下コマンドでポート確認します
 
