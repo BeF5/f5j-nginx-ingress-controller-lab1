@@ -52,23 +52,15 @@ Gateway APIリソースをデプロイします
 .. code-block:: cmdin
 
   ## cd nginx-kubernetes-gateway
-  kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v0.7.0/standard-install.yaml
+  kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.1" | kubectl apply -f -
+  kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.1/deploy/crds.yaml
 
 必要となるリソースをデプロイします
 
 .. code-block:: cmdin
 
   ## cd nginx-kubernetes-gateway
-  kubectl apply -f deploy/manifests/namespace.yaml
-  kubectl apply -f deploy/manifests/gatewayclass.yaml
-  kubectl apply -f deploy/manifests/nginx-gateway.yaml
-
-Config Mapをデプロイします
-
-.. code-block:: cmdin
-
-  ## cd nginx-kubernetes-gateway
-  kubectl create configmap njs-modules --from-file=internal/nginx/modules/src/httpmatches.js -n nginx-gateway
+  kubectl apply -f deploy.yaml
 
 Kubernetes Gateway 用のNGINXが起動していることを確認します
 
