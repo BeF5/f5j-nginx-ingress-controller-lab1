@@ -121,8 +121,8 @@ Kubernetes Gateway 用のNGINXが起動していることを確認します
   :linenos:
   :caption: 実行結果サンプル
 
-  NAME            TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-  nginx-gateway   NodePort   10.110.155.239   <none>        80:32203/TCP,443:31483/TCP   28m
+  NAME            TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+  nginx-gateway   NodePort   10.110.101.67   <none>        80:31437/TCP,443:31438/TCP   21m
 
 
 
@@ -150,10 +150,10 @@ Kubernetes Gateway 用のNGINXが起動していることを確認します
   #
   stream {
      upstream tcp80_backend {
-        server node1:32203;    # HTTP(TCP/80)に割り当てられたポート番号
+        server node1:31437;    # HTTP(TCP/80)に割り当てられたポート番号
      }
      upstream tcp443_backend {
-        server node1:31483;     # HTTPS(TCP/443)に割り当てられたポート番号
+        server node1:31438;     # HTTPS(TCP/443)に割り当てられたポート番号
      }
   
      server {
