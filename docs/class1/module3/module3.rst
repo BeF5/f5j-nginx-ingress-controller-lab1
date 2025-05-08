@@ -432,7 +432,7 @@ curlコマンドでリクエストを送信します。作成したWebアプリ�
 
 .. code-block:: cmdin
  
-  ## cd ~/kubernetes-ingress/examples/custom-resources/cross-namespace-configuration]
+  ## cd ~/kubernetes-ingress/examples/custom-resources/cross-namespace-configuration
   kubectl delete -f tea-virtual-server-route.yaml
   kubectl delete -f cafe-virtual-server.yaml
   kubectl delete -f coffee-virtual-server-route.yaml
