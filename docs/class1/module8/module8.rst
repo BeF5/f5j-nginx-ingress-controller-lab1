@@ -2,13 +2,13 @@ Kubernetes Gateway による通信制御
 ####
 
 NGINXをDataplaneとしてKubernetes Gatewayを利用する方法を紹介します。
-Kubernetes Gatewayの情報は `GitHub: nginx-kubernetes-gateway <https://github.com/nginxinc/nginx-kubernetes-gateway>`__ を参照してください
+Kubernetes Gatewayの情報は `GitHub: nginx-gateway-fabric <https://github.com/nginxinc/nginx-gateway-fabric>`__ を参照してください
 
 .. NOTE::
   本資料作成時点では、NGINX OSSを利用した動作確認となります
 
 この章では、実際にデプロイしたNGINX Kubernetes Gatewayを使った通信制御方法を確認します
-設定例は `GitHub nginx-kubernetes-gateway/examples <https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples>`__ の内容となります
+設定例は `GitHub nginx-gateway-fabric/examples <https://github.com/nginxinc/nginx-gateway-fabric/tree/main/examples>`__ の内容となります
 
 
 シンプルなWebアプリケーション
@@ -16,14 +16,14 @@ Kubernetes Gatewayの情報は `GitHub: nginx-kubernetes-gateway <https://github
 
 シンプルなWebアプリケーションをデプロイします。
 
-https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/cafe-example
+https://github.com/nginxinc/nginx-gateway-fabric/tree/main/examples/cafe-example
 
 サンプルアプリケーションをデプロイ
 ----
 
 .. code-block:: cmdin
  
-  cd ~/nginx-kubernetes-gateway/examples/cafe-example/
+  cd ~/nginx-gateway-fabric/examples/cafe-example/
   kubectl apply -f cafe.yaml
   kubectl apply -f gateway.yaml
   kubectl apply -f cafe-routes.yaml
@@ -512,7 +512,7 @@ HTTP RouteはHTTP通信の転送に関連するリソースです。
 
 .. code-block:: cmdin
  
-  cd ~/nginx-kubernetes-gateway/examples/cafe-example/
+  cd ~/nginx-gateway-fabric/examples/cafe-example/
   kubectl delete -f cafe.yaml
   kubectl delete -f gateway.yaml
   kubectl delete -f cafe-routes.yaml
@@ -522,14 +522,14 @@ HTTPSの処理
 
 HTTPSの終端とWebアプリケーションをデプロイします。
 
-https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/https-termination
+https://github.com/nginxinc/nginx-gateway-fabric/tree/main/examples/https-termination
 
 サンプルアプリケーションをデプロイ
 ----
 
 .. code-block:: cmdin
 
-  cd ~/nginx-kubernetes-gateway/examples/https-termination
+  cd ~/nginx-gateway-fabric/examples/https-termination
   kubectl apply -f cafe.yaml
   kubectl apply -f cafe-secret.yaml
   kubectl apply -f gateway.yaml
@@ -869,7 +869,7 @@ httpでアクセスした場合には ``302 Moved Temporarily`` が応答され�
 
 .. code-block:: cmdin
  
-  cd ~/nginx-kubernetes-gateway/examples/cafe-example/
+  cd ~/nginx-gateway-fabric/examples/cafe-example/
   kubectl delete -f cafe.yaml
   kubectl delete -f cafe-secret.yaml
   kubectl delete -f gateway.yaml
@@ -881,14 +881,14 @@ httpでアクセスした場合には ``302 Moved Temporarily`` が応答され�
 
 より柔軟な通信の制御方法を確認します
 
-https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/advanced-routing
+https://github.com/nginxinc/nginx-gateway-fabric/tree/main/examples/advanced-routing
 
 サンプルアプリケーションをデプロイ
 ----
 
 .. code-block:: cmdin
 
-  ## cd ~/nginx-kubernetes-gateway/examples/advanced-routing
+  ## cd ~/nginx-gateway-fabric/examples/advanced-routing
   kubectl apply -f cafe.yaml
   kubectl apply -f gateway.yaml
   kubectl apply -f cafe-routes.yaml
@@ -900,7 +900,7 @@ https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/advanced
 
 .. code-block:: cmdin
 
-  ## cd ~/nginx-kubernetes-gateway/examples/advanced-routing
+  ## cd ~/nginx-gateway-fabric/examples/advanced-routing
   cat cafe-routes.yaml
 
 .. code-block:: bash
@@ -1165,7 +1165,7 @@ https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/advanced
 
 .. code-block:: cmdin
  
-  ## cd ~/nginx-kubernetes-gateway/examples/advanced-routing
+  ## cd ~/nginx-gateway-fabric/examples/advanced-routing
   kubectl delete -f cafe.yaml
   kubectl delete -f gateway.yaml
   kubectl delete -f cafe-routes.yaml
@@ -1176,14 +1176,14 @@ https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/advanced
 
 トラフィック分割を確認します
 
-https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/traffic-splitting
+https://github.com/nginxinc/nginx-gateway-fabric/tree/main/examples/traffic-splitting
 
 サンプルアプリケーションをデプロイ
 ----
 
 .. code-block:: cmdin
  
-  cd ~/nginx-kubernetes-gateway/examples/traffic-splitting
+  cd ~/nginx-gateway-fabric/examples/traffic-splitting
   kubectl apply -f cafe.yaml
   kubectl apply -f gateway.yaml
   kubectl apply -f cafe-route.yaml
@@ -1319,7 +1319,7 @@ Curlコマンドで複数回リクエストを送ると、 ``coffee-v1`` 、 ``c
 
 .. code-block:: cmdin
  
-  ## cd ~/nginx-kubernetes-gateway/examples/traffic-splitting
+  ## cd ~/nginx-gateway-fabric/examples/traffic-splitting
   > split.txt ;\
   for i in {1..20}; \
   do curl -s -H "Host: cafe.example.com" http://localhost/coffee | grep "Server name" >> split.txt ; \
@@ -1384,7 +1384,7 @@ Curlコマンドの結果に変化はありません。
 
 .. code-block:: cmdin
  
-  ## cd ~/nginx-kubernetes-gateway/examples/traffic-splitting
+  ## cd ~/nginx-gateway-fabric/examples/traffic-splitting
   > split-equal.txt ;\
   for i in {1..20}; \
   do curl -s -H "Host: cafe.example.com" http://localhost/coffee | grep "Server name" >> split-equal.txt ; \
@@ -1405,7 +1405,7 @@ Curlコマンドの結果に変化はありません。
 
 .. code-block:: cmdin
  
-  ## cd ~/nginx-kubernetes-gateway/examples/traffic-splitting
+  ## cd ~/nginx-gateway-fabric/examples/traffic-splitting
   kubectl delete -f gateway.yaml
   kubectl delete -f cafe-route-equal-weight.yaml
   kubectl delete -f cafe.yaml
