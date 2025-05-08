@@ -1612,11 +1612,9 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resou
 **Administration Console** を開きます。ログイン画面が表示されますので以下の情報でログインしてください。
 
 * ログイン情報
-=============  ============
-**usename**    admin  
-=============  ============
-**password**   admin
-=============  ============
+|------------|------------|
+| **username** | admin  |
+| **password** | admin  |
 
   .. image:: ./media/keycloak_login.jpg
      :width: 500
