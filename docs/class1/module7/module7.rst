@@ -44,14 +44,14 @@ Gateway APIはKubernetesにおいて、既存のIngressに比べより柔軟な�
 .. code-block:: cmdin
 
   cd ~/ 
-  git clone https://github.com/nginxinc/nginx-kubernetes-gateway.git
-  cd nginx-kubernetes-gateway
+  git clone https://github.com/nginxinc/nginx-gateway-fabric.git
+  cd nginx-gateway-fabric
 
 Gateway APIリソースをデプロイします
 
 .. code-block:: cmdin
 
-  ## cd nginx-kubernetes-gateway
+  ## cd nginx-gateway-fabric
   kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.1" | kubectl apply -f -
   kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.1/deploy/crds.yaml
 
@@ -59,14 +59,14 @@ Gateway APIリソースをデプロイします
 
 .. code-block:: cmdin
 
-  ## cd nginx-kubernetes-gateway
+  ## cd nginx-gateway-fabric
   kubectl apply -f ../nginx-kubernetes-gateway-conf/deploy.yaml
 
 Kubernetes Gateway 用のNGINXが起動していることを確認します
 
 .. code-block:: cmdin
 
-  ## cd nginx-kubernetes-gateway
+  ## cd nginx-gateway-fabric
   kubectl get pods -n nginx-gateway
 
 .. code-block:: bash
@@ -81,7 +81,7 @@ Kubernetes Gateway 用のNGINXが起動していることを確認します
 
 .. code-block:: cmdin
 
-  ## cd nginx-kubernetes-gateway
+  ## cd nginx-gateway-fabric
   cat << EOF > ../nginx-kubernetes-gateway-conf/nodeport-config.yaml
   apiVersion: v1
   kind: Service
