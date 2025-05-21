@@ -2,7 +2,7 @@ NICによるWebアプリの通信制御
 ####
 
 この章では、実際にデプロイしたNGINX Ingress Controllerを使い、様々なサンプルアプリケーションを動作させ、その設定方法や動きを確認いただきます。
-設定例は `NGINX Inc GitHubの examples/custom-resources/ <https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resources>`__ に管理されております
+設定例は `NGINX Inc GitHubの examples/custom-resources/ <https://github.com/nginx/kubernetes-ingress/tree/v3.1.1/examples/custom-resources>`__ に管理されております
 
 シンプルなWebアプリケーションのデプロイ
 ====
@@ -10,7 +10,7 @@ NICによるWebアプリの通信制御
 シンプルなWebアプリケーションをデプロイします。
 Kubernetes環境で、Webアプリケーションをデプロイします。そのアプリケーションに対し通信制御を行うVirtualServer、及びHTTPSに必要な証明書をデプロイします。
 
-https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/basic-configuration
+https://github.com/nginx/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/basic-configuration
 
 サンプルアプリケーションをデプロイ
 ----
@@ -238,7 +238,7 @@ curlコマンドでリクエストを送信します。作成したWebアプリ�
 複数アプリケーション・チームを想定した VS / VSR 設定
 ====
 
-https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/cross-namespace-configuration
+https://github.com/nginx/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/cross-namespace-configuration
 
 NGINX Ingress Controller はCRDを用い、Virtual Server / Virtual Server Router / Policy といったリソースを使うことで、権限と設定範囲を適切に管理することが可能です。
 ここでは、通信を待ち受けるため ``cafe`` namespace に、VirtualServer をデプロイします。そして ``tea`` / ``coffee`` namespace に アプリケーションと、アプリケーション宛に通信を転送するための VirtualServerRoute をデプロイします。 
@@ -445,7 +445,7 @@ curlコマンドでリクエストを送信します。作成したWebアプリ�
 通信内容による条件分岐・サービスへの転送
 ====
 
-https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/advanced-routing
+https://github.com/nginx/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/advanced-routing
 
 | 通信の内容に応じて転送するサービスを制御するサンプルです。
 | ユーザの属性毎に転送するサービスを変更したり、開発中アプリケーションに対するリクエストを識別し通信を制御したりする場合などに利用します
@@ -661,7 +661,7 @@ Curlコマンドで動作を確認します。
 割合を指定した分散 (Traffic Split)
 ====
 
-https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/traffic-splitting
+https://github.com/nginx/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/traffic-splitting
 
 割合を指定し、トラフィックを分散することができます。
 
@@ -820,7 +820,7 @@ Curlコマンドで複数回リクエストを送ると、 ``coffee-v1`` 、 ``c
 IPアドレスによる通信の制御 (Access Control)
 ====
 
-https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/access-control
+https://github.com/nginx/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/access-control
 
 Policyにより通信制御を行う方法を確認します。リクエストの送信元IPアドレスに応じて通信の許可・拒否を行う方法を確認します。
 
@@ -1048,7 +1048,7 @@ curlコマンドで動作を確認します。以下のように通信が ``許�
 URL Path の 変換 (Rewrite)
 ====
 
-https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/rewrites
+https://github.com/nginx/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/rewrites
 
 
 Rewrite を用いて、URL Path を書換えることが可能です。
@@ -1300,7 +1300,7 @@ Virtual Serverの定義内容を確認します。route に 3つのPathを定義
 Ingress Controller で JWT Validation のデプロイ
 ====
 
-https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/jwt
+https://github.com/nginx/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/jwt
 
 
 NGINX Ingress Controller で JWT の Validation を行い、通信制御を行うことが可能です。
@@ -1566,7 +1566,7 @@ curlコマンドで動作を確認します。以下のように通信が ``許�
 Ingress Controller で OIDC RPのデプロイ
 ====
 
-https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/oidc
+https://github.com/nginx/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/oidc
 
 | NGINX Ingress Controller による JWT の制御に加え、NGINXより提供するJavaScript Moduleを利用することにより、OIDCのRPとして動作することが可能です。
 | このサンプルでは、KeycloakをIDPとして動作させ、クライアントのリクエストを適切に認証することを確認いただけます。
@@ -1880,7 +1880,7 @@ nginx-user  test
 Ingress MTLS
 ====
 
-https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/ingress-mtls
+https://github.com/nginx/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/ingress-mtls
 
 サンプルアプリケーションをデプロイ
 ----
@@ -2204,7 +2204,7 @@ https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resou
 Egress MTLS
 ====
 
-https://github.com/nginxinc/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/egress-mtls
+https://github.com/nginx/kubernetes-ingress/tree/v3.1.1/examples/custom-resources/egress-mtls
 
 サンプルアプリケーションをデプロイ
 ----
