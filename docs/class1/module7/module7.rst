@@ -1,8 +1,8 @@
-Kubernetes Gateway のセットアップ
+NGINX Gateway Fabricのセットアップ
 ####
 
 NGINXをDataplaneとしてKubernetes Gatewayを利用する方法を紹介します。
-Kubernetes Gatewayの情報は `GitHub: nginx-kubernetes-gateway <https://github.com/nginxinc/nginx-kubernetes-gateway>`__ を参照してください
+NGINX Gateway Fabricの情報は `GitHub: nginx-gateway-fabric <https://github.com/nginx/nginx-gateway-fabric>`__ を参照してください
 
 .. NOTE::
   本資料作成時点では、NGINX OSSを利用した動作確認となります
