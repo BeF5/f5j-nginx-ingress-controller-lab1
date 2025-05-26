@@ -299,7 +299,7 @@ argsで指定するパラメータの詳細は `Command-line Arguments <https://
 ====
 
 本ラボの環境ではKubernetesへのアクセスを受けるため、NGINX Ingress Controllerを外部へNodePortで公開します。
-以下コマンドで設定の内容を確認します。type NodePortでHTTP、HTTPSで待ち受ける設定であることを確認します。
+``service/nodeport.yaml`` の設定内容を確認します。type NodePortでHTTP、HTTPSで待ち受ける設定であることを確認します。
 
 .. code-block:: yaml
   :linenos:
