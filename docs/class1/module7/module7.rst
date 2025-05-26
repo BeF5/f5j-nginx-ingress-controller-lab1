@@ -77,7 +77,7 @@ Kubernetes Gateway 用のNGINXが起動していることを確認します
   nginx-gateway-67cb7f7d65-gq8jp   2/2     Running   0          7m5s
 
 外部へNodePortで公開します。
-一分内容を追記し、NodePort Serviceをデプロイします
+内容を追記し、NodePort Serviceをデプロイします
 
 .. code-block:: cmdin
 
