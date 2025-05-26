@@ -56,7 +56,7 @@ https://github.com/nginxinc/nginx-gateway-fabric/tree/main/examples/cafe-example
 
 .. code-block:: cmdin
  
-  cat gateway.yaml
+  cat cafe-routes.yaml
 
 .. code-block:: bash
   :linenos:
