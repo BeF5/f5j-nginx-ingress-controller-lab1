@@ -89,8 +89,8 @@ Kubernetes Gateway 用のNGINXが起動していることを確認します
     name: nginx-gateway
     namespace: nginx-gateway
     labels:
-      app.kubernetes.io/name: nginx-gateway-fabric
-      app.kubernetes.io/instance: ngf
+      app.kubernetes.io/name: nginx-gateway
+      app.kubernetes.io/instance: nginx-gateway
       app.kubernetes.io/version: "1.6.1"
   spec:
     type: NodePort
