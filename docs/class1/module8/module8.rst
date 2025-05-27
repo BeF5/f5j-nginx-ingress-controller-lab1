@@ -110,8 +110,8 @@ https://github.com/nginxinc/nginx-gateway-fabric/tree/main/examples/cafe-example
   :linenos:
   :caption: 実行結果サンプル
 
-  NAME      CLASS   ADDRESS         PROGRAMMED   AGE
-  gateway   nginx   192.168.127.2                54s
+  NAME      CLASS   ADDRESS   PROGRAMMED   AGE
+  gateway   nginx             True         72s
 
 httproute を確認します。 ``cafe.example.com`` のHostnameに対し、 ``coffee`` と ``tea`` がデプロイされています
 
