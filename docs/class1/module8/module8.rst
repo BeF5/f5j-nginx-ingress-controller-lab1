@@ -531,9 +531,10 @@ https://github.com/nginxinc/nginx-gateway-fabric/tree/main/examples/https-termin
 
   cd ~/nginx-gateway-fabric/examples/https-termination
   kubectl apply -f cafe.yaml
-  kubectl apply -f cafe-secret.yaml
   kubectl apply -f gateway.yaml
   kubectl apply -f cafe-routes.yaml
+  kubectl apply -f certificate-ns-and-cafe-secret.yaml
+  kubectl apply -f reference-grant.yaml
 
 リソースの確認
 ----
@@ -659,13 +660,13 @@ HTTPRouteを3つ指定しています。
 
 .. code-block:: cmdin
  
-  kubectl get secret | grep cafe
+  kubectl get secret
 
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
 
-  cafe-secret           kubernetes.io/tls                     2      75s
+  default-token-rs5nm   kubernetes.io/service-account-token   3      182d
 
 
 .. code-block:: cmdin
@@ -676,8 +677,8 @@ HTTPRouteを3つ指定しています。
   :linenos:
   :caption: 実行結果サンプル
 
-  NAME      CLASS   ADDRESS         PROGRAMMED   AGE
-  gateway   nginx   192.168.127.2                95s
+  NAME      CLASS   ADDRESS   PROGRAMMED   AGE
+  gateway   nginx             True         100s
 
 .. code-block:: cmdin
  
@@ -737,7 +738,7 @@ httpでアクセスした場合には ``302 Moved Temporarily`` が応答され�
 
 次にHTTPSで通信ができることを確認します
 
-``https`` で ``cafe.example.com`` の ``/tea`` に対してリクエストを送ります
+``https`` で ``cafe.example.com`` の ``/coffee`` に対してリクエストを送ります
 
 .. code-block:: cmdin
  
@@ -869,12 +870,12 @@ httpでアクセスした場合には ``302 Moved Temporarily`` が応答され�
 
 .. code-block:: cmdin
  
-  cd ~/nginx-gateway-fabric/examples/cafe-example/
+  cd ~/nginx-gateway-fabric/examples/https-termination
   kubectl delete -f cafe.yaml
-  kubectl delete -f cafe-secret.yaml
   kubectl delete -f gateway.yaml
   kubectl delete -f cafe-routes.yaml
-
+  kubectl delete -f certificate-ns-and-cafe-secret.yaml
+  kubectl delete -f reference-grant.yaml
 
 通信内容の条件分岐(Advanced Routing)
 ====
