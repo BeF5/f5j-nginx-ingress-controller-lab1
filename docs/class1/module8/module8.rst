@@ -874,8 +874,8 @@ httpでアクセスした場合には ``302 Moved Temporarily`` が応答され�
   kubectl delete -f cafe.yaml
   kubectl delete -f gateway.yaml
   kubectl delete -f cafe-routes.yaml
-  kubectl delete -f certificate-ns-and-cafe-secret.yaml
   kubectl delete -f reference-grant.yaml
+  kubectl delete -f certificate-ns-and-cafe-secret.yaml
 
 通信内容の条件分岐(Advanced Routing)
 ====
